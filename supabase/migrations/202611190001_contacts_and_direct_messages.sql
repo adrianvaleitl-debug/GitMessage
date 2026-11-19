@@ -70,7 +70,7 @@ begin
 
   select c.id into existing_id
   from public.conversations c
-  where coalesce(c.is_group, false) = false
+  where c.kind = 'group' = false
     and exists (
       select 1 from public.conversation_members m
       where m.conversation_id = c.id and m.user_id = current_user_id
@@ -90,8 +90,8 @@ begin
     return existing_id;
   end if;
 
-  insert into public.conversations (title, is_group, created_by)
-  values (target_email, false, current_user_id)
+  insert into public.conversations (kind, title, created_by)
+  values ('direct', null, current_user_id)
   returning id into new_id;
 
   insert into public.conversation_members (conversation_id, user_id)
@@ -111,11 +111,11 @@ as $$
   select
     c.id,
     case
-      when coalesce(c.is_group, false) then c.title
+      when c.kind = 'group' then c.title
       else coalesce(other_user.email::text, c.title, 'Direct message')
     end as title,
     c.updated_at,
-    coalesce(c.is_group, false) as is_group
+    (c.kind = 'group') as is_group
   from public.conversations c
   join public.conversation_members mine
     on mine.conversation_id = c.id and mine.user_id = auth.uid()

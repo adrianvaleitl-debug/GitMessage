@@ -70,7 +70,7 @@ begin
 
   select c.id into existing_id
   from public.conversations c
-  where c.kind = 'group' = false
+  where c.kind = 'direct'
     and exists (
       select 1 from public.conversation_members m
       where m.conversation_id = c.id and m.user_id = current_user_id

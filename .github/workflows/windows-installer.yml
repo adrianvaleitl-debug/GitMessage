@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
 permissions:
-  contents: read
+  contents: write
 jobs:
   build:
     runs-on: windows-latest
@@ -29,3 +29,12 @@ jobs:
           name: GitMessage-Windows-Installer
           path: release/*.exe
           if-no-files-found: error
+
+      - name: Publish installer to GitHub Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: gitmessage-build-${{ github.run_number }}
+          name: GitMessage build ${{ github.run_number }}
+          body: Automated Windows installer build from commit ${{ github.sha }}.
+          prerelease: true
+          files: release/*.exe

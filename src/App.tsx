@@ -3,7 +3,7 @@ import type { FormEvent } from "react";
 import { supabase } from "./lib/supabase";
 import {
   MessageCircle, Search, Plus, Send, Settings, Users, LogOut, Sparkles,
-  ShieldCheck, X, Moon, Sun, MoreHorizontal, ArrowUpRight, Check, Command,
+  ShieldCheck, X, Moon, Sun, MoreHorizontal, ArrowUpRight, Check,
   RefreshCw, PanelLeftClose, PanelLeftOpen
 } from "lucide-react";
 

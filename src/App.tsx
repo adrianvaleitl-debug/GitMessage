@@ -1,4 +1,5 @@
-import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import type { FormEvent } from "react";
 import { supabase } from "./lib/supabase";
 import {
   MessageCircle, Search, Plus, Send, Settings, Users, LogOut, Sparkles,

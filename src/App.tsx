@@ -25,7 +25,6 @@ export default function App() {
   const [draft, setDraft] = useState("");
   const [query, setQuery] = useState("");
   const [modal, setModal] = useState<"new" | "settings" | null>(null);
-  const [newTitle, setNewTitle] = useState("");
   const [contactEmail, setContactEmail] = useState("");
   const [contactResults, setContactResults] = useState<ContactMatch[]>([]);
   const [contactLoading, setContactLoading] = useState(false);

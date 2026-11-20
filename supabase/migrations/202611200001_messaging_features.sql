@@ -96,6 +96,20 @@ drop policy if exists gm_calls_insert on public.gitmessage_call_signals;
 create policy gm_calls_insert on public.gitmessage_call_signals for insert to authenticated
 with check (sender_id=auth.uid() and exists (select 1 from public.conversation_members cm where cm.conversation_id=conversation_id and cm.user_id=auth.uid()) and exists (select 1 from public.conversation_members cm where cm.conversation_id=conversation_id and cm.user_id=recipient_id));
 
+drop policy if exists gm_messages_update_own on public.messages;
+create policy gm_messages_update_own on public.messages for update to authenticated
+using (sender_id=auth.uid() and exists(select 1 from public.conversation_members cm where cm.conversation_id=messages.conversation_id and cm.user_id=auth.uid()))
+with check (sender_id=auth.uid() and exists(select 1 from public.conversation_members cm where cm.conversation_id=messages.conversation_id and cm.user_id=auth.uid()));
+
+drop policy if exists gm_messages_delete_own on public.messages;
+create policy gm_messages_delete_own on public.messages for delete to authenticated
+using (sender_id=auth.uid() and exists(select 1 from public.conversation_members cm where cm.conversation_id=messages.conversation_id and cm.user_id=auth.uid()));
+
+drop policy if exists gm_profiles_read_authenticated on public.profiles;
+create policy gm_profiles_read_authenticated on public.profiles for select to authenticated using (true);
+drop policy if exists gm_profiles_update_own on public.profiles;
+create policy gm_profiles_update_own on public.profiles for update to authenticated using (id=auth.uid()) with check (id=auth.uid());
+
 create or replace function public.create_group_conversation(group_title text, member_ids uuid[])
 returns uuid language plpgsql security definer set search_path=public,auth as $$
 declare new_id uuid; member_id uuid; current_user_id uuid := auth.uid();

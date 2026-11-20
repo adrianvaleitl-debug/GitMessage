@@ -48,7 +48,7 @@ export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [lightMode, setLightMode] = useState(true);
   const endRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);\n  const peerRef = useRef<RTCPeerConnection | null>(null);\n  const localStreamRef = useRef<MediaStream | null>(null);\n  const remoteAudioRef = useRef<HTMLAudioElement>(null);\n  const [callState, setCallState] = useState<"idle" | "calling" | "incoming" | "connected">("idle");\n  const [pendingCall, setPendingCall] = useState<any>(null);\n  const [callKind, setCallKind] = useState<"audio" | "video">("audio");
+  const inputRef = useRef<HTMLInputElement>(null);\n  const peerRef = useRef<RTCPeerConnection | null>(null);\n  const localStreamRef = useRef<MediaStream | null>(null);\n  const remoteAudioRef = useRef<HTMLAudioElement>(null);\n  const remoteVideoRef = useRef<HTMLVideoElement>(null);\n  const localVideoRef = useRef<HTMLVideoElement>(null);\n  const callRecipientRef = useRef<string>("");\n  const [callState, setCallState] = useState<"idle" | "calling" | "incoming" | "connected">("idle");\n  const [pendingCall, setPendingCall] = useState<any>(null);\n  const [callKind, setCallKind] = useState<"audio" | "video">("audio");
 
   useEffect(() => {
     if (!supabase) { setAuthReady(true); return; }
@@ -345,7 +345,7 @@ export default function App() {
     const peer = new RTCPeerConnection({ iceServers: [{ urls: "stun:stun.l.google.com:19302" }, { urls: "stun:stun1.l.google.com:19302" }] });
     peerRef.current = peer;
     peer.onicecandidate = event => { if (event.candidate) void sendCallSignal(recipientId, "ice", { candidate: event.candidate.toJSON() }); };
-    peer.ontrack = event => { if (remoteAudioRef.current) remoteAudioRef.current.srcObject = event.streams[0]; setCallState("connected"); };
+    peer.ontrack = event => { if (remoteAudioRef.current) remoteAudioRef.current.srcObject = event.streams[0]; if (remoteVideoRef.current) remoteVideoRef.current.srcObject = event.streams[0]; setCallState("connected"); };
     peer.onconnectionstatechange = () => {
       if (peer.connectionState === "connected") setCallState("connected");
       if (["failed","closed","disconnected"].includes(peer.connectionState)) setCallState("idle");
@@ -357,10 +357,10 @@ export default function App() {
     if (!supabase || !active || !session || callState !== "idle") return;
     const { data: members, error } = await supabase.from("conversation_members").select("user_id").eq("conversation_id",active).neq("user_id",session.user.id).limit(1);
     if (error || !members?.length) { setNotice(error?.message || "No other person is in this conversation."); return; }
-    const recipient = members[0].user_id as string;
+    const recipient = members[0].user_id as string;\n    callRecipientRef.current = recipient;
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio:true, video:kind==="video" });
-      localStreamRef.current = stream; setCallKind(kind); setCallState("calling");
+      localStreamRef.current = stream; setCallKind(kind); setCallState("calling");\n      if (localVideoRef.current) localVideoRef.current.srcObject = stream;
       const peer = await makePeer(recipient);
       stream.getTracks().forEach(track => peer.addTrack(track,stream));
       const offer = await peer.createOffer();
@@ -397,7 +397,7 @@ export default function App() {
     const channel = supabase.channel("gitmessage-call-signals-" + session.user.id)
       .on("postgres_changes",{event:"INSERT",schema:"public",table:"gitmessage_call_signals",filter:"recipient_id=eq."+session.user.id},async payload => {
         const signal = payload.new as any;
-        if (signal.signal_type === "offer" && callState === "idle") { setPendingCall(signal); setCallState("incoming"); return; }
+        if (signal.signal_type === "offer" && callState === "idle") { setPendingCall(signal); setCallKind(signal.payload?.kind === "video" ? "video" : "audio"); setCallState("incoming"); return; }
         if (signal.signal_type === "answer" && peerRef.current && signal.sender_id) {
           await peerRef.current.setRemoteDescription(new RTCSessionDescription(signal.payload.description));
           setCallState("connected");
@@ -462,7 +462,7 @@ export default function App() {
             const mine = message.sender_id === session.user.id;
             return <div key={message.id} className={"message-line" + (mine ? " mine" : "")}><div className="message-content"><div className="message-bubble">{message.body}</div><div className="message-actions"><button title="Like" onClick={() => void toggleReaction(message.id, "❤️")}>❤️</button><button title="Laugh" onClick={() => void toggleReaction(message.id, "😂")}>😂</button><button title="Surprised" onClick={() => void toggleReaction(message.id, "😮")}>😮</button><button title="Open attachment" onClick={() => void openAttachment(message.id)}><Paperclip size={12}/></button>{mine && !message.deleted_at && <><button title="Edit message" onClick={() => void editMessage(message)}><Pencil size={12}/></button><button title="Delete message" onClick={() => void deleteMessage(message)}><Trash2 size={12}/></button></>}</div>{(reactions[message.id] || []).length > 0 && <div className="reaction-strip">{Array.from(new Set((reactions[message.id] || []).map(r => r.emoji))).map(emoji => <button key={emoji} onClick={() => void toggleReaction(message.id, emoji)}>{emoji} {(reactions[message.id] || []).filter(r => r.emoji === emoji).length}</button>)}</div>}<div className="message-meta">{message.edited_at && <span>Edited</span>}{mine ? <><span>You</span><Check size={12}/>{readMessageIds.includes(message.id) && <span>Read</span>}</> : <span>{current?.title || "Message"}</span>}<time>{new Date(message.created_at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</time></div></div></div>;
           }) : <div className="empty-conversation"><div className="empty-art"><div className="art-ring ring-one"/><div className="art-ring ring-two"/><div className="art-core"><MessageCircle size={27}/></div><span className="art-spark spark-one"/><span className="art-spark spark-two"/></div><div className="eyebrow">A SPACE OF YOUR OWN</div><h3>Every good conversation<br/><span>starts somewhere.</span></h3><p>Send the first message and let it unfold.</p></div> : <div className="empty-conversation"><div className="empty-art"><div className="art-ring ring-one"/><div className="art-ring ring-two"/><div className="art-core"><Sparkles size={27}/></div><span className="art-spark spark-one"/><span className="art-spark spark-two"/></div><div className="eyebrow">YOUR PEOPLE, YOUR PLACE</div><h3>Make room for<br/><span>the good stuff.</span></h3><p>Choose a conversation or create a new one.</p><button className="empty-create" onClick={() => setModal("new")}><Plus size={15}/> New conversation</button></div>}
-          <div ref={endRef}/><audio ref={remoteAudioRef} autoPlay/>
+          <div ref={endRef}/><audio ref={remoteAudioRef} autoPlay/><video ref={remoteVideoRef} autoPlay playsInline className={"remote-call-video" + (callState !== "idle" && callKind === "video" ? " visible" : "")}/><video ref={localVideoRef} autoPlay muted playsInline className={"local-call-video" + (callState !== "idle" && callKind === "video" ? " visible" : "")}/>
         </div>
         <form className="composer-area" onSubmit={sendMessage}><input ref={fileInputRef} type="file" hidden onChange={event => { const file=event.target.files?.[0]; void uploadAttachment(file); event.target.value=""; }}/><div className="composer-glass"><button type="button" className="glass-icon" title={recording ? "Stop voice message" : "Record voice message"} disabled={!active || sending} onClick={() => void toggleVoiceRecording()}>{recording ? <MicOff size={17}/> : <Mic size={17}/>}</button><button type="button" className="glass-icon" title="Attach file" disabled={!active || sending} onClick={() => fileInputRef.current?.click()}><Paperclip size={17}/></button><textarea rows={1} value={draft} onChange={e => void updateDraft(e.target.value)} onKeyDown={event => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); void sendMessage(); } }} placeholder={active ? "iMessage…" : "Choose a conversation first"} disabled={!active || sending}/><button className="send-button" type="submit" disabled={!active || !draft.trim() || sending} title="Send message"><Send size={17}/></button></div><div className="composer-caption"><span>{recording ? "Recording voice message…" : "Messages are synced in real time"}</span><span><kbd>ENTER</kbd> TO SEND <i>·</i> <kbd>SHIFT + ENTER</kbd> NEW LINE</span></div>{notice && <p className="notice inline">{notice}</p>}</form>
       </section>

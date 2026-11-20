@@ -2,9 +2,9 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { supabase } from "./lib/supabase";
 import {
-  MessageCircle, MessageSquare, Search, Plus, ArrowUp, Settings, Users, LogOut, Sparkles,
+  MessageCircle, Search, Plus, ArrowUp, Settings, Users, LogOut, Sparkles,
   ShieldCheck, X, Moon, Sun, MoreHorizontal, ArrowUpRight, Check,
-  RefreshCw, UserRoundPlus, Mail, Paperclip, Pencil, Trash2, Mic, MicOff, Phone, Video, PhoneOff
+  RefreshCw, UserRoundPlus, Paperclip, Pencil, Trash2, Mic, MicOff, Phone, Video, PhoneOff
 } from "lucide-react";
 
 type Conversation = { id: string; title: string | null; updated_at?: string; is_group?: boolean };

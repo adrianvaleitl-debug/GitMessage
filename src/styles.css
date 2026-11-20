@@ -408,3 +408,53 @@ body{--gm-titlebar-clear:transparent}
 .sidebar-brand,.account-chip,.search-field,.list-heading,.settings-row,.header-tools,.composer-area{animation:gm-ui-enter .35s var(--gm-ease) both}
 @keyframes gm-ui-enter{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
+
+/* Final interaction polish requested: flat text hover, solid type, clear title-bar zone */
+.auth-copy h1 span,.empty-conversation h3 span,.brand-lockup span,.eyebrow,
+.gradient-text,.text-gradient{
+  background:none!important;background-image:none!important;
+  -webkit-background-clip:border-box!important;background-clip:border-box!important;
+  -webkit-text-fill-color:currentColor!important;color:inherit!important;
+}
+.desktop-shell{padding-top:44px!important}
+.auth-shell{padding-top:50px!important}
+.conversation-header{padding-right:155px!important}
+.header-tools{margin-right:0}
+.sidebar-brand{padding-right:5px}
+.titlebar-drag-region{height:38px}
+.glass-icon,.settings-row,.preference-row,.contact-start-button,.list-empty button,.empty-create{
+  background:transparent!important;box-shadow:none!important;
+}
+.glass-icon:hover,.settings-row:hover,.preference-row:hover,.contact-start-button:hover,.list-empty button:hover,.empty-create:hover{
+  color:#1688f8!important;background:transparent!important;border-color:transparent!important;
+  box-shadow:none!important;transform:translateY(-1px);
+}
+.glass-icon:hover svg,.settings-row:hover svg,.preference-row:hover svg,.contact-start-button:hover svg{color:#1688f8!important}
+.send-button{
+  width:34px!important;height:34px!important;border-radius:50%!important;
+  border:0!important;background:#1688f8!important;color:#fff!important;
+  box-shadow:none!important;padding:0!important;
+}
+.send-button:hover:not(:disabled){background:#1688f8!important;color:#fff!important;transform:scale(1.08)}
+.send-button:active:not(:disabled){transform:scale(.91)}
+.primary-button{background:#1688f8!important;background-image:none!important;color:#fff!important;box-shadow:none!important;border:0!important}
+.primary-button:hover:not(:disabled){background:#1688f8!important;color:#fff!important;filter:brightness(1.08)}
+.conversation-item.active{background:rgba(255,255,255,.09)!important}
+.conversation-item:hover{background:rgba(255,255,255,.045)!important}
+.message-line{animation:gm-message-arrive-v2 .42s cubic-bezier(.16,1,.3,1) both}
+@keyframes gm-message-arrive-v2{0%{opacity:0;transform:translateY(16px) scale(.94);filter:blur(4px)}60%{opacity:1;transform:translateY(-2px) scale(1.008);filter:blur(0)}100%{opacity:1;transform:translateY(0) scale(1)}}
+.message-bubble{transition:transform .22s cubic-bezier(.16,1,.3,1),box-shadow .22s ease!important}
+.message-line:hover .message-bubble{transform:translateY(-2px)}
+.conversation-item{transition:transform .24s cubic-bezier(.16,1,.3,1),background-color .2s,border-color .2s!important}
+.conversation-item:hover{transform:translateX(4px)}
+.sidebar,.conversation-pane{animation:gm-panel-enter .5s cubic-bezier(.16,1,.3,1) both}
+.conversation-pane{animation-delay:.04s}
+@keyframes gm-panel-enter{from{opacity:0;transform:translateY(9px) scale(.992)}to{opacity:1;transform:translateY(0) scale(1)}}
+.composer-glass{transition:box-shadow .28s ease,border-color .28s ease,transform .28s cubic-bezier(.16,1,.3,1)!important}
+.composer-glass:focus-within{transform:translateY(-2px)}
+.modal-card{animation:gm-modal-enter .38s cubic-bezier(.16,1,.3,1) both!important}
+@keyframes gm-modal-enter{0%{opacity:0;transform:translateY(18px) scale(.95);filter:blur(4px)}70%{opacity:1;transform:translateY(-2px) scale(1.006);filter:blur(0)}100%{opacity:1;transform:translateY(0) scale(1)}}
+.light .glass-icon:hover,.light .settings-row:hover,.light .preference-row:hover,.light .contact-start-button:hover,.light .list-empty button:hover,.light .empty-create:hover{color:#087cf0!important;background:transparent!important}
+@media(max-width:1100px){.conversation-header{padding-right:145px!important}}
+@media(prefers-reduced-motion:reduce){.sidebar,.conversation-pane,.message-line,.modal-card{animation:none!important}}

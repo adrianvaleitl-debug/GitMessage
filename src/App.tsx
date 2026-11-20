@@ -434,9 +434,14 @@ export default function App() {
     } catch (error) { setNotice(error instanceof Error ? error.message : "Could not accept call."); }
   }
 
-  async function endCall() {
+  async function endCall(notifyRemote = true) {
+    if (notifyRemote && supabase && callRecipientRef.current && callState !== "incoming") await sendCallSignal(callRecipientRef.current,"hangup",{});
+    callRecipientRef.current = "";
     if (localStreamRef.current) localStreamRef.current.getTracks().forEach(track => track.stop());
     localStreamRef.current = null;
+    if (localVideoRef.current) localVideoRef.current.srcObject = null;
+    if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
+    if (remoteAudioRef.current) remoteAudioRef.current.srcObject = null;
     if (peerRef.current) peerRef.current.close();
     peerRef.current = null;
     setPendingCall(null); setCallState("idle");

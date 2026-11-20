@@ -47,7 +47,8 @@ export default function App() {
   const [someoneTyping, setSomeoneTyping] = useState(false);
   const [readMessageIds, setReadMessageIds] = useState<string[]>([]);
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [lightMode, setLightMode] = useState(true);
+  const [lightMode, setLightMode] = useState(() => { try { return localStorage.getItem("gitmessage-theme") !== "dark"; } catch { return true; } });
+  useEffect(() => { try { localStorage.setItem("gitmessage-theme", lightMode ? "light" : "dark"); } catch { /* Storage may be unavailable. */ } }, [lightMode]);
   const endRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const peerRef = useRef<RTCPeerConnection | null>(null);

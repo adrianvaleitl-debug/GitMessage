@@ -16,6 +16,8 @@ export default function App() {
   const [authReady, setAuthReady] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [invitationCode, setInvitationCode] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [authMode, setAuthMode] = useState<"signin" | "signup">("signin");
   const [notice, setNotice] = useState("");
   const [busy, setBusy] = useState(false);
@@ -167,11 +169,12 @@ export default function App() {
     event?.preventDefault();
     if (!supabase) { setNotice("GitMessage is missing its Supabase configuration. Rebuild the installer with the repository secret set."); return; }
     if (!email.trim() || !password) { setNotice("Enter your email address and password."); return; }
-    if (authMode === "signup" && password.length < 6) { setNotice("Use a password with at least 6 characters."); return; }
+    if (authMode === "signup" && password.length < 8) { setNotice("Use at least 8 characters for a stronger password."); return; }
+    if (authMode === "signup" && !invitationCode.trim()) { setNotice("Enter your invitation code to create an account."); return; }
     setBusy(true); setNotice("");
     const result = authMode === "signin"
       ? await supabase.auth.signInWithPassword({ email: email.trim(), password })
-      : await supabase.auth.signUp({ email: email.trim(), password });
+      : await supabase.auth.signUp({ email: email.trim(), password, options: { data: { invitation_code: invitationCode.trim() } } });
     setBusy(false);
     if (result.error) setNotice(result.error.message);
     else if (authMode === "signup" && !result.data.session) setNotice("Account created. Check your email to confirm it, then sign in.");
@@ -341,19 +344,19 @@ export default function App() {
       <div className="aurora aurora-one"/><div className="aurora aurora-two"/><div className="aurora aurora-three"/>
       <div className="auth-top"><div className="brand-lockup"><span className="brand-icon"><MessageCircle size={19}/></span><span>GitMessage</span></div><span className="top-caption">A little more connected.</span></div>
       <section className="auth-layout">
-        <div className="auth-copy"><div className="eyebrow"><span className="eyebrow-dot"/> YOUR WORLD, IN ONE PLACE</div><h1>Closer,<br/><span>even apart.</span></h1><p>Good conversations deserve a space that feels as considered as the words inside them.</p><div className="auth-proof"><span className="proof-icon"><ShieldCheck size={17}/></span><span><b>Private by design</b><small>Your account is secured with Supabase authentication.</small></span></div></div>
+        <div className="auth-copy"><div className="eyebrow">MESSAGES, MADE SIMPLE</div><h1>Stay close.<br/><span>Say more.</span></h1><p>Simple, private conversations with the people who matter.</p></div>
         <form className="auth-card glass-panel" onSubmit={authenticate}>
           <div className="card-glint"/>
-          <div className="auth-card-heading"><div className="auth-symbol"><MessageCircle size={22}/></div><div><h2>{authMode === "signin" ? "Welcome back" : "Make it yours"}</h2><p>{authMode === "signin" ? "Sign in to pick up where you left off." : "Create your GitMessage account."}</p></div></div>
+          <div className="auth-card-heading"><div className="auth-symbol"><MessageCircle size={22}/></div><div><h2>{authMode === "signin" ? "Sign in" : "Create account"}</h2><p>{authMode === "signin" ? "Your conversations are waiting." : "A few details and you are in."}</p></div></div>
           <label htmlFor="email">Email address</label><input id="email" autoComplete="email" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com"/>
-          <label htmlFor="password">Password</label><input id="password" autoComplete={authMode === "signin" ? "current-password" : "new-password"} type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="At least 6 characters"/>
+          <label htmlFor="password">Password</label><div className="password-wrap"><input id="password" autoComplete={authMode === "signin" ? "current-password" : "new-password"} type={showPassword ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)} placeholder={authMode === "signup" ? "At least 8 characters" : "Your password"}/><button type="button" onClick={() => setShowPassword(value => !value)}>{showPassword ? "Hide" : "Show"}</button></div>{authMode === "signup" && <><label htmlFor="invitation-code">Invitation code</label><input id="invitation-code" autoComplete="off" value={invitationCode} onChange={e => setInvitationCode(e.target.value)} placeholder="Enter your invite code"/></>}
           <button className="primary-button" type="submit" disabled={busy}>{busy ? "One moment…" : authMode === "signin" ? "Sign in" : "Create account"}<ArrowUpRight size={17}/></button>
           <button type="button" className="switch-auth" onClick={() => { setAuthMode(authMode === "signin" ? "signup" : "signin"); setNotice(""); }}>{authMode === "signin" ? "New here? Create an account" : "Already have an account? Sign in"}</button>
           {notice && <p className="notice">{notice}</p>}
           <div className="auth-foot"><ShieldCheck size={14}/> Encrypted connection to your account</div>
         </form>
       </section>
-      <div className="auth-bottom"><span>GITMESSAGE</span><span>MADE FOR THE MOMENTS BETWEEN.</span><span>01 — 03</span></div>
+      
     </main>
   );
 

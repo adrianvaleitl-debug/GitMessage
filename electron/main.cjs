@@ -5,6 +5,7 @@ function createWindow() {
   const win = new BrowserWindow({
     width: 1440, height: 920, minWidth: 980, minHeight: 650,
     backgroundColor: "#252629",
+    icon: path.join(__dirname, "../public/gitmessage-icon.svg"),
     titleBarStyle: "hidden",
     titleBarOverlay: { color: "#252629", symbolColor: "#ffffff", height: 38 },
     webPreferences: { preload: path.join(__dirname, "preload.cjs"), contextIsolation: true, nodeIntegration: false, sandbox: true }

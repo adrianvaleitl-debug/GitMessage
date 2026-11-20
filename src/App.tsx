@@ -46,7 +46,7 @@ export default function App() {
   const [someoneTyping, setSomeoneTyping] = useState(false);
   const [readMessageIds, setReadMessageIds] = useState<string[]>([]);
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [lightMode, setLightMode] = useState(false);
+  const [lightMode, setLightMode] = useState(true);
   const endRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 

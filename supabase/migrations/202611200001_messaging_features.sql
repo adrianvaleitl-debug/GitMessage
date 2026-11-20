@@ -49,6 +49,7 @@ create table if not exists public.gitmessage_call_signals (
 alter table public.messages add column if not exists edited_at timestamptz;
 alter table public.messages add column if not exists deleted_at timestamptz;
 
+alter table public.profiles enable row level security;
 alter table public.gitmessage_reactions enable row level security;
 alter table public.gitmessage_read_receipts enable row level security;
 alter table public.gitmessage_attachments enable row level security;

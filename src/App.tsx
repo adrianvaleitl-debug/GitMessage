@@ -7,7 +7,7 @@ import {
   RefreshCw, PanelLeftClose, PanelLeftOpen, UserRoundPlus, Mail
 } from "lucide-react";
 
-type Conversation = { id: string; title: string | null; updated_at?: string };
+type Conversation = { id: string; title: string | null; updated_at?: string; is_group?: boolean };
 type Message = { id: string; body: string; sender_id: string; created_at: string };
 type ContactMatch = { user_id: string; email: string };
 
@@ -24,10 +24,14 @@ export default function App() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [draft, setDraft] = useState("");
   const [query, setQuery] = useState("");
-  const [modal, setModal] = useState<"new" | "settings" | null>(null);
+  const [modal, setModal] = useState<"new" | "group" | "profile" | "settings" | null>(null);
   const [contactEmail, setContactEmail] = useState("");
   const [contactResults, setContactResults] = useState<ContactMatch[]>([]);
   const [contactLoading, setContactLoading] = useState(false);
+  const [groupTitle, setGroupTitle] = useState("");
+  const [groupMembers, setGroupMembers] = useState<ContactMatch[]>([]);
+  const [profileUsername, setProfileUsername] = useState("");
+  const [profileDisplayName, setProfileDisplayName] = useState("");
   const [sending, setSending] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [lightMode, setLightMode] = useState(false);
@@ -140,6 +144,32 @@ export default function App() {
     if (!data?.length) setNotice("No GitMessage account found for that exact email address.");
   }
 
+  async function createGroupConversation() {
+    if (!supabase || !groupTitle.trim() || groupMembers.length === 0) return;
+    setBusy(true); setNotice("");
+    const { data, error } = await supabase.rpc("create_group_conversation", { group_title: groupTitle.trim(), member_ids: groupMembers.map(user => user.user_id) });
+    setBusy(false);
+    if (error) { setNotice(error.message); return; }
+    await loadConversations(); setActive(data as string); setModal(null); setGroupTitle(""); setGroupMembers([]); setContactEmail(""); setContactResults([]);
+  }
+
+  async function loadProfile() {
+    if (!supabase || !session) return;
+    const { data, error } = await supabase.from("profiles").select("username,display_name").eq("id", session.user.id).single();
+    if (error) { setNotice(error.message); return; }
+    setProfileUsername(data.username || ""); setProfileDisplayName(data.display_name || ""); setModal("profile");
+  }
+
+  async function saveProfile(event: FormEvent) {
+    event.preventDefault();
+    if (!supabase) return;
+    setBusy(true); setNotice("");
+    const { error } = await supabase.rpc("update_gitmessage_profile", { new_username: profileUsername, new_display_name: profileDisplayName });
+    setBusy(false);
+    if (error) { setNotice(error.message); return; }
+    setModal("settings");
+  }
+
   async function startDirectConversation(user: ContactMatch) {
     if (!supabase) return;
     setBusy(true); setNotice("");
@@ -215,7 +245,7 @@ export default function App() {
           </button>)}
           {filtered.length === 0 && <div className="list-empty"><div className="empty-orb"><MessageCircle size={19}/></div><b>{query ? "Nothing found" : "A quiet beginning"}</b><p>{query ? "Try another name." : "Start a conversation to see it here."}</p>{!query && <button onClick={() => setModal("new")}>Start a conversation <Plus size={14}/></button>}</div>}
         </div>
-        <div className="sidebar-bottom"><div className="sync-card"><span className="sync-icon"><Sparkles size={16}/></span><span><b>All caught up</b><small>Your space, in sync.</small></span><span className="sync-pulse"/></div><button className="settings-row" onClick={() => setModal("settings")}><Settings size={17}/> Preferences <span>›</span></button><div className="sidebar-footer"><span>GITMESSAGE DESKTOP</span><span>•</span><span>DESKTOP</span></div></div>
+        <div className="sidebar-bottom"><div className="sync-card"><span className="sync-icon"><Sparkles size={16}/></span><span><b>All caught up</b><small>Your space, in sync.</small></span><span className="sync-pulse"/></div><button className="settings-row" onClick={() => setModal("profile")}><UserRoundPlus size={17}/> Edit profile <span>›</span></button><button className="settings-row" onClick={() => setModal("group")}><Users size={17}/> New group <span>›</span></button><button className="settings-row" onClick={() => setModal("settings")}><Settings size={17}/> Preferences <span>›</span></button><div className="sidebar-footer"><span>GITMESSAGE DESKTOP</span><span>•</span><span>DESKTOP</span></div></div>
       </aside>
       {!sidebarOpen && <button className="reopen-sidebar glass-icon" title="Show sidebar" onClick={() => setSidebarOpen(true)}><PanelLeftOpen size={18}/></button>}
       <section className="conversation-pane glass-panel">
@@ -231,6 +261,8 @@ export default function App() {
       </section>
       {modal && <div className="modal-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) setModal(null); }}><section className="modal-card glass-panel">
         <button className="modal-close glass-icon" onClick={() => setModal(null)} title="Close"><X size={17}/></button>
+        {modal === "group" ? <><div className="modal-icon"><Users size={20}/></div><div className="eyebrow">BRING EVERYONE TOGETHER</div><h2>New group</h2><p className="modal-description">Name the group, then add people by their exact GitMessage email.</p><label htmlFor="group-title">Group name</label><input id="group-title" value={groupTitle} onChange={e => setGroupTitle(e.target.value)} placeholder="Weekend plans"/><form onSubmit={searchContacts}><label htmlFor="group-contact-email">Add a member</label><div className="contact-search-input"><Mail size={16}/><input id="group-contact-email" type="email" value={contactEmail} onChange={e => setContactEmail(e.target.value)} placeholder="friend@example.com"/></div><button className="primary-button" type="submit" disabled={contactLoading || !contactEmail.trim()}>{contactLoading ? "Searching…" : "Find account"}<Search size={17}/></button></form>{contactResults.map(user => <div className="contact-result" key={user.user_id}><div className="contact-result-avatar">{user.email.slice(0,1).toUpperCase()}</div><div className="contact-result-copy"><b>{user.email.split("@")[0]}</b><small>{user.email}</small></div><button className="contact-start-button" onClick={() => { setGroupMembers(rows => rows.some(x => x.user_id === user.user_id) ? rows : [...rows,user]); setContactResults([]); setContactEmail(""); }}>Add</button></div>)}{groupMembers.map(user => <div className="contact-result" key={user.user_id}><div className="contact-result-copy"><b>{user.email}</b><small>Added to group</small></div><button className="contact-start-button" onClick={() => setGroupMembers(rows => rows.filter(x => x.user_id !== user.user_id))}>Remove</button></div>)}<button className="primary-button" disabled={busy || !groupTitle.trim() || groupMembers.length===0} onClick={() => void createGroupConversation()}>{busy ? "Creating…" : "Create group"}<Users size={17}/></button>{notice && <p className="notice">{notice}</p>}</> : null}
+        {modal === "profile" ? <><div className="modal-icon"><UserRoundPlus size={20}/></div><div className="eyebrow">YOUR IDENTITY</div><h2>Edit profile</h2><p className="modal-description">Choose the name and username other people see.</p><form onSubmit={saveProfile}><label htmlFor="profile-display-name">Display name</label><input id="profile-display-name" value={profileDisplayName} onChange={e => setProfileDisplayName(e.target.value)} maxLength={48}/><label htmlFor="profile-username">Username</label><input id="profile-username" value={profileUsername} onChange={e => setProfileUsername(e.target.value)} maxLength={24}/><button className="primary-button" type="submit" disabled={busy}>{busy ? "Saving…" : "Save profile"}<Check size={17}/></button></form>{notice && <p className="notice">{notice}</p>}</> : null}
         {modal === "new" ? <><div className="modal-icon"><UserRoundPlus size={20}/></div><div className="eyebrow">FIND YOUR PEOPLE</div><h2>New message</h2><p className="modal-description">Enter someone's exact email address to find their GitMessage account and start a private chat.</p><form onSubmit={searchContacts}><label htmlFor="contact-email">Email address</label><div className="contact-search-input"><Mail size={16}/><input id="contact-email" autoFocus type="email" value={contactEmail} onChange={e => setContactEmail(e.target.value)} placeholder="friend@example.com"/></div><button className="primary-button" type="submit" disabled={contactLoading || !contactEmail.trim()}>{contactLoading ? "Searching…" : "Find account"}<Search size={17}/></button></form>{contactResults.map(user => <div className="contact-result" key={user.user_id}><div className="contact-result-avatar">{user.email.slice(0,1).toUpperCase()}</div><div className="contact-result-copy"><b>{user.email.split("@")[0]}</b><small>{user.email}</small></div><button className="contact-start-button" disabled={busy} onClick={() => void startDirectConversation(user)}>{busy ? "Opening…" : "Message"}<ArrowUpRight size={14}/></button></div>)}{notice && <p className="notice">{notice}</p>}</> : <><div className="modal-icon"><Settings size={20}/></div><div className="eyebrow">YOUR GITMESSAGE</div><h2>Preferences</h2><p className="modal-description">A few details about your space.</p><div className="settings-account"><div className="account-avatar large">{(session.user.email || "G").slice(0,1).toUpperCase()}</div><div><b>{session.user.email}</b><small>Signed in account</small></div></div><button className="preference-row" onClick={() => setLightMode(value => !value)}><span className="preference-icon">{lightMode ? <Sun size={17}/> : <Moon size={17}/>}</span><span><b>Appearance</b><small>{lightMode ? "Light glass" : "Midnight glass"}</small></span><span className="preference-action">{lightMode ? "Light" : "Dark"}</span></button><button className="preference-row signout-row" onClick={() => void signOut()}><span className="preference-icon"><LogOut size={17}/></span><span><b>Sign out</b><small>Sign out of this device</small></span><span className="preference-action">›</span></button></>}
       </section></div>}
     </main>

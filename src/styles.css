@@ -68,3 +68,11 @@ body{background:#070a11}
 .contact-start-button{display:flex;align-items:center;gap:5px;padding:8px 10px;border:1px solid #ffffff24;border-radius:9px;background:#9bb8ff20;color:#d8e4ff;font-size:9px;font-weight:600}
 .contact-start-button:hover{background:#9bb8ff35}
 .contact-start-button:disabled{opacity:.5;cursor:wait}
+
+.message-actions{display:flex;align-items:center;gap:4px;margin:5px 4px 0;opacity:.68}
+.message-actions button,.reaction-strip button{display:inline-flex;align-items:center;gap:4px;padding:4px 6px;border:1px solid #ffffff17;border-radius:8px;background:#ffffff09;color:#aebde0;font-size:10px}
+.message-actions button:hover,.reaction-strip button:hover{background:#ffffff18;color:#fff}
+.message-actions svg{display:block}
+.reaction-strip{display:flex;gap:5px;margin:5px 4px 0}
+.reaction-strip button{border-radius:20px;background:#91b7ff17;color:#dbe6ff}
+.light .message-actions button,.light .reaction-strip button{color:#435779;border-color:#cbd6ea;background:#ffffffb0}

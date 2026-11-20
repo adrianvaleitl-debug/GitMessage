@@ -458,3 +458,14 @@ body{--gm-titlebar-clear:transparent}
 .light .glass-icon:hover,.light .settings-row:hover,.light .preference-row:hover,.light .contact-start-button:hover,.light .list-empty button:hover,.light .empty-create:hover{color:#087cf0!important;background:transparent!important}
 @media(max-width:1100px){.conversation-header{padding-right:145px!important}}
 @media(prefers-reduced-motion:reduce){.sidebar,.conversation-pane,.message-line,.modal-card{animation:none!important}}
+
+
+/* Minimal brand mark: plain outline glyph, no gradient or glossy badge */
+.brand-icon{
+  width:30px!important;height:30px!important;border-radius:9px!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  color:var(--text)!important;background:transparent!important;
+  background-image:none!important;border:0!important;box-shadow:none!important;
+}
+.brand-icon svg{width:16px;height:16px;stroke-width:1.8}
+.light .brand-icon{color:#202124!important;background:transparent!important;box-shadow:none!important}

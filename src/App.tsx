@@ -36,7 +36,8 @@ export default function App() {
   const [profileDisplayName, setProfileDisplayName] = useState("");
   const [profileAvatar, setProfileAvatar] = useState("");
   const [friendRequests, setFriendRequests] = useState<any[]>([]);
-  const [avatarBusy, setAvatarBusy] = useState(false);\n  const [desktopAlerts, setDesktopAlerts] = useState(typeof Notification !== "undefined" && Notification.permission === "granted");
+  const [avatarBusy, setAvatarBusy] = useState(false);
+  const [desktopAlerts, setDesktopAlerts] = useState(typeof Notification !== "undefined" && Notification.permission === "granted");
   const [sending, setSending] = useState(false);
   const [reactions, setReactions] = useState<Record<string, {emoji:string;user_id:string}[]>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -48,7 +49,16 @@ export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [lightMode, setLightMode] = useState(true);
   const endRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);\n  const peerRef = useRef<RTCPeerConnection | null>(null);\n  const localStreamRef = useRef<MediaStream | null>(null);\n  const remoteAudioRef = useRef<HTMLAudioElement>(null);\n  const remoteVideoRef = useRef<HTMLVideoElement>(null);\n  const localVideoRef = useRef<HTMLVideoElement>(null);\n  const callRecipientRef = useRef<string>("");\n  const [callState, setCallState] = useState<"idle" | "calling" | "incoming" | "connected">("idle");\n  const [pendingCall, setPendingCall] = useState<any>(null);\n  const [callKind, setCallKind] = useState<"audio" | "video">("audio");
+  const inputRef = useRef<HTMLInputElement>(null);
+  const peerRef = useRef<RTCPeerConnection | null>(null);
+  const localStreamRef = useRef<MediaStream | null>(null);
+  const remoteAudioRef = useRef<HTMLAudioElement>(null);
+  const remoteVideoRef = useRef<HTMLVideoElement>(null);
+  const localVideoRef = useRef<HTMLVideoElement>(null);
+  const callRecipientRef = useRef<string>("");
+  const [callState, setCallState] = useState<"idle" | "calling" | "incoming" | "connected">("idle");
+  const [pendingCall, setPendingCall] = useState<any>(null);
+  const [callKind, setCallKind] = useState<"audio" | "video">("audio");
 
   useEffect(() => {
     if (!supabase) { setAuthReady(true); return; }
@@ -102,7 +112,8 @@ export default function App() {
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages", filter: "conversation_id=eq." + active },
         payload => setMessages(current => {
           const incoming = payload.new as Message;
-          if (incoming.sender_id !== session?.user?.id && document.hidden && typeof Notification !== "undefined" && Notification.permission === "granted") new Notification("New GitMessage", { body: incoming.body });\n          return current.some(message => message.id === incoming.id) ? current : [...current, incoming];
+          if (incoming.sender_id !== session?.user?.id && document.hidden && typeof Notification !== "undefined" && Notification.permission === "granted") new Notification("New GitMessage", { body: incoming.body });
+          return current.some(message => message.id === incoming.id) ? current : [...current, incoming];
         }))
       .subscribe();
     return () => { alive = false; void supabase!.removeChannel(channel); };
@@ -207,12 +218,49 @@ export default function App() {
 
   async function loadProfile() {
     if (!supabase || !session) return;
-    const { data, error } = await supabase.from("profiles").select("username,display_name").eq("id", session.user.id).single();
+    setModal("profile"); setBusy(true); setNotice("");
+    const { data, error } = await supabase.rpc("get_my_gitmessage_profile");
+    setBusy(false);
     if (error) { setNotice(error.message); return; }
-    setProfileUsername(data.username || ""); setProfileDisplayName(data.display_name || ""); setModal("profile");
+    const profile = Array.isArray(data) ? data[0] : data;
+    setProfileUsername(profile?.username || "");
+    setProfileDisplayName(profile?.display_name || "");
+    setProfileAvatar(profile?.avatar_path ? supabase.storage.from("gitmessage-avatars").getPublicUrl(profile.avatar_path).data.publicUrl : "");
   }
 
-  async function sendFriendRequest(user: ContactMatch) {\n    if (!supabase) return;\n    const { error } = await supabase.rpc("send_gitmessage_friend_request", { target_user_id: user.user_id });\n    setNotice(error ? error.message : "Friend request sent.");\n  }\n\n  async function loadFriendRequests() {\n    if (!supabase || !session) return;\n    setModal("friends");\n    const { data, error } = await supabase.from("friend_requests").select("id,sender_id,created_at").eq("recipient_id", session.user.id).eq("status","pending").order("created_at",{ascending:false});\n    if (error) setNotice(error.message); else setFriendRequests(data || []);\n  }\n\n  async function respondFriendRequest(id: string, accept: boolean) {\n    if (!supabase) return;\n    const { error } = await supabase.rpc("respond_gitmessage_friend_request", { request_id:id, accept_request:accept });\n    if (error) setNotice(error.message); else setFriendRequests(rows => rows.filter(row => row.id !== id));\n  }\n\n  async function uploadAvatar(file?: File) {\n    if (!supabase || !session || !file) return;\n    if (!["image/jpeg","image/png","image/webp"].includes(file.type) || file.size > 5*1024*1024) { setNotice("Choose a JPG, PNG or WebP image under 5 MB."); return; }\n    setAvatarBusy(true);\n    const path = session.user.id + "/" + crypto.randomUUID() + "." + (file.type === "image/png" ? "png" : file.type === "image/webp" ? "webp" : "jpg");\n    const uploaded = await supabase.storage.from("gitmessage-avatars").upload(path,file,{upsert:false,contentType:file.type});\n    if (uploaded.error) { setNotice(uploaded.error.message); setAvatarBusy(false); return; }\n    const updated = await supabase.from("profiles").update({avatar_path:path}).eq("id",session.user.id);\n    setAvatarBusy(false);\n    if (updated.error) { setNotice(updated.error.message); return; }\n    setProfileAvatar(supabase.storage.from("gitmessage-avatars").getPublicUrl(path).data.publicUrl);\n  }\n\n  async function saveProfile(event: FormEvent) {
+  async function sendFriendRequest(user: ContactMatch) {
+    if (!supabase) return;
+    const { error } = await supabase.rpc("send_gitmessage_friend_request", { target_user_id: user.user_id });
+    setNotice(error ? error.message : "Friend request sent.");
+  }
+
+  async function loadFriendRequests() {
+    if (!supabase || !session) return;
+    setModal("friends");
+    const { data, error } = await supabase.from("friend_requests").select("id,sender_id,created_at").eq("recipient_id", session.user.id).eq("status","pending").order("created_at",{ascending:false});
+    if (error) setNotice(error.message); else setFriendRequests(data || []);
+  }
+
+  async function respondFriendRequest(id: string, accept: boolean) {
+    if (!supabase) return;
+    const { error } = await supabase.rpc("respond_gitmessage_friend_request", { request_id:id, accept_request:accept });
+    if (error) setNotice(error.message); else setFriendRequests(rows => rows.filter(row => row.id !== id));
+  }
+
+  async function uploadAvatar(file?: File) {
+    if (!supabase || !session || !file) return;
+    if (!["image/jpeg","image/png","image/webp"].includes(file.type) || file.size > 5*1024*1024) { setNotice("Choose a JPG, PNG or WebP image under 5 MB."); return; }
+    setAvatarBusy(true);
+    const path = session.user.id + "/" + crypto.randomUUID() + "." + (file.type === "image/png" ? "png" : file.type === "image/webp" ? "webp" : "jpg");
+    const uploaded = await supabase.storage.from("gitmessage-avatars").upload(path,file,{upsert:false,contentType:file.type});
+    if (uploaded.error) { setNotice(uploaded.error.message); setAvatarBusy(false); return; }
+    const updated = await supabase.from("profiles").update({avatar_path:path}).eq("id",session.user.id);
+    setAvatarBusy(false);
+    if (updated.error) { setNotice(updated.error.message); return; }
+    setProfileAvatar(supabase.storage.from("gitmessage-avatars").getPublicUrl(path).data.publicUrl);
+  }
+
+  async function saveProfile(event: FormEvent) {
     event.preventDefault();
     if (!supabase) return;
     setBusy(true); setNotice("");
@@ -357,10 +405,12 @@ export default function App() {
     if (!supabase || !active || !session || callState !== "idle") return;
     const { data: members, error } = await supabase.from("conversation_members").select("user_id").eq("conversation_id",active).neq("user_id",session.user.id).limit(1);
     if (error || !members?.length) { setNotice(error?.message || "No other person is in this conversation."); return; }
-    const recipient = members[0].user_id as string;\n    callRecipientRef.current = recipient;
+    const recipient = members[0].user_id as string;
+    callRecipientRef.current = recipient;
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio:true, video:kind==="video" });
-      localStreamRef.current = stream; setCallKind(kind); setCallState("calling");\n      if (localVideoRef.current) localVideoRef.current.srcObject = stream;
+      localStreamRef.current = stream; setCallKind(kind); setCallState("calling");
+      if (localVideoRef.current) localVideoRef.current.srcObject = stream;
       const peer = await makePeer(recipient);
       stream.getTracks().forEach(track => peer.addTrack(track,stream));
       const offer = await peer.createOffer();
@@ -408,7 +458,14 @@ export default function App() {
     return () => { void supabase!.removeChannel(channel); };
   }, [session, callState]);
 
-  async function enableDesktopAlerts() {\n    if (typeof Notification === "undefined") { setNotice("Desktop notifications are not supported here."); return; }\n    const permission = await Notification.requestPermission();\n    setDesktopAlerts(permission === "granted");\n    setNotice(permission === "granted" ? "Desktop alerts enabled while GitMessage is running." : "Notification permission was not granted.");\n  }\n\n  async function signOut() {
+  async function enableDesktopAlerts() {
+    if (typeof Notification === "undefined") { setNotice("Desktop notifications are not supported here."); return; }
+    const permission = await Notification.requestPermission();
+    setDesktopAlerts(permission === "granted");
+    setNotice(permission === "granted" ? "Desktop alerts enabled while GitMessage is running." : "Notification permission was not granted.");
+  }
+
+  async function signOut() {
     if (!supabase) return;
     const { error } = await supabase.auth.signOut();
     if (error) setNotice(error.message);

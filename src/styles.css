@@ -335,3 +335,76 @@ body{background:#f5f5f7;color:#1c1c1e}
 .conversation-header:after{content:"";position:absolute;pointer-events:none;left:12%;right:12%;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.7),transparent);animation:gm-glass-shimmer 5s ease-in-out infinite}
 @media(max-width:850px){.desktop-shell{padding:7px;gap:7px}.sidebar,.conversation-pane{border-radius:20px!important}.conversation-header{margin:7px 7px 0;padding:0 12px}.message-canvas{margin:7px 7px 0;padding:18px 12px}.composer-area{margin:7px;padding:0 5px 8px}}
 @media(prefers-reduced-motion:reduce){.message-line{animation:none}}
+
+
+/* Clean, solid Liquid Glass pass: no gradients, stronger motion */
+:root{--gm-ease:cubic-bezier(.2,.75,.25,1)}
+html,body,#root{background:#252629}
+body{background:#252629!important}
+.auth-shell{background:#252629!important}
+.desktop-shell{background:#252629!important}
+.desktop-shell:not(.light){background:#252629!important}
+.desktop-aurora,.aurora,.boot-orb{display:none!important}
+.glass-panel,.sidebar,.conversation-pane{
+  background:rgba(55,56,60,.76)!important;
+  border:1px solid rgba(255,255,255,.13)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.10),0 16px 48px rgba(0,0,0,.20)!important;
+  backdrop-filter:blur(30px) saturate(145%)!important;
+  -webkit-backdrop-filter:blur(30px) saturate(145%)!important;
+}
+.conversation-pane{background:rgba(43,44,48,.70)!important}
+.conversation-header{background:rgba(255,255,255,.045)!important;border-bottom:1px solid rgba(255,255,255,.10)!important}
+.message-canvas{background:transparent!important}
+.message-bubble,.message-line:not(.mine) .message-bubble{
+  background:rgba(255,255,255,.10)!important;
+  border:1px solid rgba(255,255,255,.12)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.08),0 4px 14px rgba(0,0,0,.08)!important;
+  backdrop-filter:blur(18px) saturate(135%)!important;
+}
+.message-line.mine .message-bubble{
+  background:#1688f8!important;border:1px solid rgba(255,255,255,.22)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.18),0 5px 16px rgba(0,0,0,.12)!important;
+}
+.composer-glass{background:rgba(255,255,255,.095)!important;border:1px solid rgba(255,255,255,.19)!important;box-shadow:inset 0 1px rgba(255,255,255,.10),0 8px 24px rgba(0,0,0,.16)!important;backdrop-filter:blur(28px) saturate(145%)!important}
+.send-button,.primary-button,.brand-icon,.account-avatar,.conversation-avatar,.header-avatar,.auth-symbol,.modal-icon,.empty-orb,.art-core{
+  background-color:rgba(255,255,255,.12)!important;background-image:none!important;
+}
+.send-button{background:#1688f8!important;color:white!important}
+.primary-button{background:#1688f8!important;color:white!important;box-shadow:none!important}
+.brand-icon{color:#fff!important;box-shadow:none!important}
+.conversation-item.active{background:rgba(255,255,255,.10)!important;box-shadow:inset 0 1px rgba(255,255,255,.08)!important}
+.sync-card,.empty-orb,.art-core,.auth-card,.modal-card{background:rgba(255,255,255,.075)!important;background-image:none!important}
+.auth-copy h1 span,.empty-conversation h3 span{background:none!important;color:inherit!important}
+.card-glint{background:rgba(255,255,255,.28)!important}
+.light,.desktop-shell.light{background:#e9eaed!important;color:#202124}
+.light .sidebar,.light .conversation-pane,.light .glass-panel{background:rgba(255,255,255,.78)!important;border-color:rgba(255,255,255,.85)!important;box-shadow:0 12px 40px rgba(25,30,40,.08)!important}
+.light .conversation-pane{background:rgba(250,250,252,.78)!important}
+.light .message-bubble{background:#e6e6e9!important;color:#202124!important;border-color:transparent!important}
+.light .message-line.mine .message-bubble{background:#1688f8!important;color:white!important}
+.light .composer-glass{background:rgba(255,255,255,.82)!important;border-color:rgba(255,255,255,.9)!important}
+.light .conversation-header{background:rgba(255,255,255,.45)!important}
+.light .primary-button,.light .send-button{background:#1688f8!important;color:white!important}
+button,.conversation-item,.glass-icon,.message-bubble,.composer-glass,.sidebar,.conversation-pane,.modal-card,.auth-card{
+  transition:background-color .22s var(--gm-ease),border-color .22s var(--gm-ease),box-shadow .25s var(--gm-ease),transform .25s var(--gm-ease),opacity .2s var(--gm-ease),backdrop-filter .25s var(--gm-ease);
+}
+.glass-icon{background:transparent!important;border-color:transparent!important;box-shadow:none!important}
+.glass-icon:hover{background:rgba(255,255,255,.10)!important;border-color:rgba(255,255,255,.12)!important;transform:scale(1.07)}
+/* The Electron title-bar overlay sits above the page; keep its control strip visually clear. */
+body{--gm-titlebar-clear:transparent}
+@keyframes gm-message-pop{0%{opacity:0;transform:translateY(13px) scale(.965);filter:blur(2px)}65%{opacity:1;transform:translateY(-2px) scale(1.005);filter:blur(0)}100%{opacity:1;transform:translateY(0) scale(1)}}
+.message-line{animation:gm-message-pop .38s var(--gm-ease) both}
+.message-line:nth-last-child(1){animation-delay:0ms}
+.message-line:nth-last-child(2){animation-delay:25ms}
+.message-line:nth-last-child(3){animation-delay:45ms}
+.conversation-item{transform:translateX(0)}
+.conversation-item:hover{transform:translateX(3px);background:rgba(255,255,255,.075)!important}
+.send-button:hover:not(:disabled),.primary-button:hover:not(:disabled){transform:translateY(-2px) scale(1.035);filter:brightness(1.08)}
+.send-button:active:not(:disabled),.primary-button:active:not(:disabled){transform:scale(.94)}
+.composer-glass:focus-within{transform:translateY(-2px);border-color:rgba(90,170,255,.48)!important;box-shadow:0 0 0 3px rgba(22,136,248,.12),0 12px 28px rgba(0,0,0,.16)!important}
+.modal-backdrop{animation:gm-backdrop-in .22s ease both}
+.modal-card{animation:gm-modal-spring .34s var(--gm-ease) both}
+@keyframes gm-backdrop-in{from{opacity:0}to{opacity:1}}
+@keyframes gm-modal-spring{from{opacity:0;transform:translateY(15px) scale(.96)}70%{transform:translateY(-2px) scale(1.005)}to{opacity:1;transform:translateY(0) scale(1)}}
+.sidebar-brand,.account-chip,.search-field,.list-heading,.settings-row,.header-tools,.composer-area{animation:gm-ui-enter .35s var(--gm-ease) both}
+@keyframes gm-ui-enter{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}

@@ -4,11 +4,11 @@ import { supabase } from "./lib/supabase";
 import {
   MessageCircle, Search, Plus, Send, Settings, Users, LogOut, Sparkles,
   ShieldCheck, X, Moon, Sun, MoreHorizontal, ArrowUpRight, Check,
-  RefreshCw, PanelLeftClose, PanelLeftOpen, UserRoundPlus, Mail
+  RefreshCw, PanelLeftClose, PanelLeftOpen, UserRoundPlus, Mail, Paperclip, Pencil, Trash2, Smile
 } from "lucide-react";
 
 type Conversation = { id: string; title: string | null; updated_at?: string; is_group?: boolean };
-type Message = { id: string; body: string; sender_id: string; created_at: string };
+type Message = { id: string; body: string; sender_id: string; created_at: string; edited_at?: string | null; deleted_at?: string | null };
 type ContactMatch = { user_id: string; email: string };
 
 export default function App() {
@@ -33,6 +33,8 @@ export default function App() {
   const [profileUsername, setProfileUsername] = useState("");
   const [profileDisplayName, setProfileDisplayName] = useState("");
   const [sending, setSending] = useState(false);
+  const [reactions, setReactions] = useState<Record<string, {emoji:string;user_id:string}[]>>({});
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [lightMode, setLightMode] = useState(false);
   const endRef = useRef<HTMLDivElement>(null);
@@ -79,7 +81,7 @@ export default function App() {
     let alive = true;
     const load = async () => {
       const { data, error } = await supabase!.from("messages")
-        .select("id,body,sender_id,created_at").eq("conversation_id", active)
+        .select("id,body,sender_id,created_at,edited_at,deleted_at").eq("conversation_id", active)
         .order("created_at", { ascending: true }).limit(300);
       if (!alive) return;
       if (error) setNotice(error.message);
@@ -193,13 +195,66 @@ export default function App() {
     setSending(true);
     const { data, error } = await supabase.from("messages")
       .insert({ conversation_id: active, sender_id: session.user.id, body })
-      .select("id,body,sender_id,created_at").single();
+      .select("id,body,sender_id,created_at,edited_at,deleted_at").single();
     setSending(false);
     if (error) { setNotice(error.message); return; }
     if (data) setMessages(rows => rows.some(m => m.id === data.id) ? rows : [...rows, data as Message]);
     setDraft("");
     setNotice("");
   }
+
+  async function toggleReaction(messageId: string, emoji: string) {
+    if (!supabase || !session) return;
+    const existing = (reactions[messageId] || []).find(r => r.emoji === emoji && r.user_id === session.user.id);
+    const result = existing
+      ? await supabase.from("gitmessage_reactions").delete().eq("message_id", messageId).eq("user_id", session.user.id).eq("emoji", emoji)
+      : await supabase.from("gitmessage_reactions").insert({ message_id: messageId, user_id: session.user.id, emoji });
+    if (result.error) { setNotice(result.error.message); return; }
+    const { data } = await supabase.from("gitmessage_reactions").select("emoji,user_id").eq("message_id", messageId);
+    setReactions(rows => ({ ...rows, [messageId]: (data || []) as {emoji:string;user_id:string}[] }));
+  }
+
+  async function editMessage(message: Message) {
+    if (!supabase || message.sender_id !== session.user.id || message.deleted_at) return;
+    const next = window.prompt("Edit message", message.body);
+    if (next === null || !next.trim() || next.trim() === message.body) return;
+    const { error } = await supabase.from("messages").update({ body: next.trim(), edited_at: new Date().toISOString() }).eq("id", message.id);
+    if (error) { setNotice(error.message); return; }
+    setMessages(rows => rows.map(row => row.id === message.id ? { ...row, body: next.trim(), edited_at: new Date().toISOString() } : row));
+  }
+
+  async function deleteMessage(message: Message) {
+    if (!supabase || message.sender_id !== session.user.id) return;
+    if (!window.confirm("Delete this message?")) return;
+    const { error } = await supabase.from("messages").update({ body: "This message was deleted.", deleted_at: new Date().toISOString() }).eq("id", message.id);
+    if (error) { setNotice(error.message); return; }
+    setMessages(rows => rows.map(row => row.id === message.id ? { ...row, body: "This message was deleted.", deleted_at: new Date().toISOString() } : row));
+  }
+
+  async function uploadAttachment(file?: File) {
+    if (!supabase || !active || !session || !file) return;
+    if (file.size > 25 * 1024 * 1024) { setNotice("Files must be 25 MB or smaller."); return; }
+    setSending(true); setNotice("");
+    const path = active + "/" + session.user.id + "/" + crypto.randomUUID() + "-" + file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+    const uploaded = await supabase.storage.from("gitmessage-attachments").upload(path, file, { contentType: file.type || "application/octet-stream", upsert: false });
+    if (uploaded.error) { setSending(false); setNotice(uploaded.error.message); return; }
+    const { data: message, error } = await supabase.from("messages").insert({ conversation_id: active, sender_id: session.user.id, body: "📎 " + file.name }).select("id,body,sender_id,created_at,edited_at,deleted_at").single();
+    if (error || !message) { setSending(false); setNotice(error?.message || "Could not create attachment message."); return; }
+    const { error: metadataError } = await supabase.from("gitmessage_attachments").insert({ message_id: message.id, conversation_id: active, user_id: session.user.id, file_name: file.name, storage_path: path, mime_type: file.type || "application/octet-stream", size_bytes: file.size });
+    setSending(false);
+    if (metadataError) { setNotice(metadataError.message); return; }
+    setMessages(rows => rows.some(row => row.id === message.id) ? rows : [...rows, message as Message]);
+  }
+
+  useEffect(() => {
+    if (!supabase || messages.length === 0) { setReactions({}); return; }
+    const ids = messages.map(message => message.id);
+    void supabase.from("gitmessage_reactions").select("message_id,emoji,user_id").in("message_id", ids).then(({data}) => {
+      const grouped: Record<string, {emoji:string;user_id:string}[]> = {};
+      (data || []).forEach((row: any) => { (grouped[row.message_id] ||= []).push({emoji:row.emoji,user_id:row.user_id}); });
+      setReactions(grouped);
+    });
+  }, [messages]);
 
   async function signOut() {
     if (!supabase) return;
@@ -253,11 +308,11 @@ export default function App() {
         <div className="message-canvas">
           {active ? messages.length ? messages.map(message => {
             const mine = message.sender_id === session.user.id;
-            return <div key={message.id} className={"message-line" + (mine ? " mine" : "")}><div className="message-content"><div className="message-bubble">{message.body}</div><div className="message-meta">{mine ? <><span>You</span><Check size={12}/></> : <span>{current?.title || "Message"}</span>}<time>{new Date(message.created_at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</time></div></div></div>;
+            return <div key={message.id} className={"message-line" + (mine ? " mine" : "")}><div className="message-content"><div className="message-bubble">{message.body}</div><div className="message-actions"><button title="Like" onClick={() => void toggleReaction(message.id, "❤️")}>❤️</button><button title="Laugh" onClick={() => void toggleReaction(message.id, "😂")}>😂</button><button title="Surprised" onClick={() => void toggleReaction(message.id, "😮")}>😮</button>{mine && !message.deleted_at && <><button title="Edit message" onClick={() => void editMessage(message)}><Pencil size={12}/></button><button title="Delete message" onClick={() => void deleteMessage(message)}><Trash2 size={12}/></button></>}</div>{(reactions[message.id] || []).length > 0 && <div className="reaction-strip">{Array.from(new Set((reactions[message.id] || []).map(r => r.emoji))).map(emoji => <button key={emoji} onClick={() => void toggleReaction(message.id, emoji)}>{emoji} {(reactions[message.id] || []).filter(r => r.emoji === emoji).length}</button>)}</div>}<div className="message-meta">{message.edited_at && <span>Edited</span>}{mine ? <><span>You</span><Check size={12}/></> : <span>{current?.title || "Message"}</span>}<time>{new Date(message.created_at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</time></div></div></div>;
           }) : <div className="empty-conversation"><div className="empty-art"><div className="art-ring ring-one"/><div className="art-ring ring-two"/><div className="art-core"><MessageCircle size={27}/></div><span className="art-spark spark-one"/><span className="art-spark spark-two"/></div><div className="eyebrow">A SPACE OF YOUR OWN</div><h3>Every good conversation<br/><span>starts somewhere.</span></h3><p>Send the first message and let it unfold.</p></div> : <div className="empty-conversation"><div className="empty-art"><div className="art-ring ring-one"/><div className="art-ring ring-two"/><div className="art-core"><Sparkles size={27}/></div><span className="art-spark spark-one"/><span className="art-spark spark-two"/></div><div className="eyebrow">YOUR PEOPLE, YOUR PLACE</div><h3>Make room for<br/><span>the good stuff.</span></h3><p>Choose a conversation or create a new one.</p><button className="empty-create" onClick={() => setModal("new")}><Plus size={15}/> New conversation</button></div>}
           <div ref={endRef}/>
         </div>
-        <form className="composer-area" onSubmit={sendMessage}><div className="composer-glass"><textarea rows={1} value={draft} onChange={e => setDraft(e.target.value)} onKeyDown={event => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); void sendMessage(); } }} placeholder={active ? "iMessage…" : "Choose a conversation first"} disabled={!active || sending}/><button className="send-button" type="submit" disabled={!active || !draft.trim() || sending} title="Send message"><Send size={17}/></button></div><div className="composer-caption"><span>Messages are synced in real time</span><span><kbd>ENTER</kbd> TO SEND <i>·</i> <kbd>SHIFT + ENTER</kbd> NEW LINE</span></div>{notice && <p className="notice inline">{notice}</p>}</form>
+        <form className="composer-area" onSubmit={sendMessage}><input ref={fileInputRef} type="file" hidden onChange={event => { const file=event.target.files?.[0]; void uploadAttachment(file); event.target.value=""; }}/><div className="composer-glass"><button type="button" className="glass-icon" title="Attach file" disabled={!active || sending} onClick={() => fileInputRef.current?.click()}><Paperclip size={17}/></button><textarea rows={1} value={draft} onChange={e => setDraft(e.target.value)} onKeyDown={event => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); void sendMessage(); } }} placeholder={active ? "iMessage…" : "Choose a conversation first"} disabled={!active || sending}/><button className="send-button" type="submit" disabled={!active || !draft.trim() || sending} title="Send message"><Send size={17}/></button></div><div className="composer-caption"><span>Messages are synced in real time</span><span><kbd>ENTER</kbd> TO SEND <i>·</i> <kbd>SHIFT + ENTER</kbd> NEW LINE</span></div>{notice && <p className="notice inline">{notice}</p>}</form>
       </section>
       {modal && <div className="modal-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) setModal(null); }}><section className="modal-card glass-panel">
         <button className="modal-close glass-icon" onClick={() => setModal(null)} title="Close"><X size={17}/></button>

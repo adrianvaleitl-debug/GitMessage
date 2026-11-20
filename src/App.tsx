@@ -4,7 +4,7 @@ import { supabase } from "./lib/supabase";
 import {
   MessageCircle, Search, Plus, Send, Settings, Users, LogOut, Sparkles,
   ShieldCheck, X, Moon, Sun, MoreHorizontal, ArrowUpRight, Check,
-  RefreshCw, PanelLeftClose, PanelLeftOpen, UserRoundPlus, Mail, Paperclip, Pencil, Trash2, Mic, MicOff
+  RefreshCw, PanelLeftClose, PanelLeftOpen, UserRoundPlus, Mail, Paperclip, Pencil, Trash2, Mic, MicOff, Phone, Video, PhoneOff
 } from "lucide-react";
 
 type Conversation = { id: string; title: string | null; updated_at?: string; is_group?: boolean };
@@ -48,7 +48,7 @@ export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [lightMode, setLightMode] = useState(true);
   const endRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);\n  const peerRef = useRef<RTCPeerConnection | null>(null);\n  const localStreamRef = useRef<MediaStream | null>(null);\n  const remoteAudioRef = useRef<HTMLAudioElement>(null);\n  const [callState, setCallState] = useState<"idle" | "calling" | "incoming" | "connected">("idle");\n  const [pendingCall, setPendingCall] = useState<any>(null);\n  const [callKind, setCallKind] = useState<"audio" | "video">("audio");
 
   useEffect(() => {
     if (!supabase) { setAuthReady(true); return; }
@@ -333,6 +333,81 @@ export default function App() {
     });
   }, [messages]);
 
+  async function sendCallSignal(recipientId: string, signalType: string, payload: any = {}) {
+    if (!supabase || !active || !session) return;
+    const { error } = await supabase.from("gitmessage_call_signals").insert({
+      conversation_id: active, sender_id: session.user.id, recipient_id: recipientId, signal_type: signalType, payload
+    });
+    if (error) setNotice(error.message);
+  }
+
+  async function makePeer(recipientId: string) {
+    const peer = new RTCPeerConnection({ iceServers: [{ urls: "stun:stun.l.google.com:19302" }, { urls: "stun:stun1.l.google.com:19302" }] });
+    peerRef.current = peer;
+    peer.onicecandidate = event => { if (event.candidate) void sendCallSignal(recipientId, "ice", { candidate: event.candidate.toJSON() }); };
+    peer.ontrack = event => { if (remoteAudioRef.current) remoteAudioRef.current.srcObject = event.streams[0]; setCallState("connected"); };
+    peer.onconnectionstatechange = () => {
+      if (peer.connectionState === "connected") setCallState("connected");
+      if (["failed","closed","disconnected"].includes(peer.connectionState)) setCallState("idle");
+    };
+    return peer;
+  }
+
+  async function startCall(kind: "audio" | "video") {
+    if (!supabase || !active || !session || callState !== "idle") return;
+    const { data: members, error } = await supabase.from("conversation_members").select("user_id").eq("conversation_id",active).neq("user_id",session.user.id).limit(1);
+    if (error || !members?.length) { setNotice(error?.message || "No other person is in this conversation."); return; }
+    const recipient = members[0].user_id as string;
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio:true, video:kind==="video" });
+      localStreamRef.current = stream; setCallKind(kind); setCallState("calling");
+      const peer = await makePeer(recipient);
+      stream.getTracks().forEach(track => peer.addTrack(track,stream));
+      const offer = await peer.createOffer();
+      await peer.setLocalDescription(offer);
+      await sendCallSignal(recipient,"offer",{description:offer,kind});
+    } catch (error) { setNotice(error instanceof Error ? error.message : "Could not start the call. Check microphone/camera permissions."); await endCall(); }
+  }
+
+  async function acceptCall() {
+    if (!pendingCall || !supabase || !session) return;
+    try {
+      const kind = pendingCall.payload?.kind === "video" ? "video" : "audio";
+      const stream = await navigator.mediaDevices.getUserMedia({audio:true,video:kind==="video"});
+      localStreamRef.current = stream; setCallKind(kind);
+      const peer = await makePeer(pendingCall.sender_id);
+      stream.getTracks().forEach(track => peer.addTrack(track,stream));
+      await peer.setRemoteDescription(new RTCSessionDescription(pendingCall.payload.description));
+      const answer = await peer.createAnswer(); await peer.setLocalDescription(answer);
+      await sendCallSignal(pendingCall.sender_id,"answer",{description:answer});
+      setPendingCall(null); setCallState("calling");
+    } catch (error) { setNotice(error instanceof Error ? error.message : "Could not accept call."); }
+  }
+
+  async function endCall() {
+    if (localStreamRef.current) localStreamRef.current.getTracks().forEach(track => track.stop());
+    localStreamRef.current = null;
+    if (peerRef.current) peerRef.current.close();
+    peerRef.current = null;
+    setPendingCall(null); setCallState("idle");
+  }
+
+  useEffect(() => {
+    if (!supabase || !session) return;
+    const channel = supabase.channel("gitmessage-call-signals-" + session.user.id)
+      .on("postgres_changes",{event:"INSERT",schema:"public",table:"gitmessage_call_signals",filter:"recipient_id=eq."+session.user.id},async payload => {
+        const signal = payload.new as any;
+        if (signal.signal_type === "offer" && callState === "idle") { setPendingCall(signal); setCallState("incoming"); return; }
+        if (signal.signal_type === "answer" && peerRef.current && signal.sender_id) {
+          await peerRef.current.setRemoteDescription(new RTCSessionDescription(signal.payload.description));
+          setCallState("connected");
+        } else if (signal.signal_type === "ice" && peerRef.current && signal.payload?.candidate) {
+          try { await peerRef.current.addIceCandidate(new RTCIceCandidate(signal.payload.candidate)); } catch { /* Candidate can arrive before remote description. */ }
+        } else if (["hangup","reject"].includes(signal.signal_type)) { await endCall(); }
+      }).subscribe();
+    return () => { void supabase!.removeChannel(channel); };
+  }, [session, callState]);
+
   async function signOut() {
     if (!supabase) return;
     const { error } = await supabase.auth.signOut();
@@ -381,17 +456,17 @@ export default function App() {
       </aside>
       {!sidebarOpen && <button className="reopen-sidebar glass-icon" title="Show sidebar" onClick={() => setSidebarOpen(true)}><PanelLeftOpen size={18}/></button>}
       <section className="conversation-pane glass-panel">
-        <header className="conversation-header"><div className="header-person"><div className="header-avatar"><Users size={18}/></div><div><h2>{current?.title || "Your messages"}</h2><p><span className="status-light"/> {someoneTyping ? "Someone is typing…" : current ? "Conversation space" : "A little room for good conversations"}</p></div></div><div className="header-tools"><span className="live-pill"><i/> LIVE SYNC</span><button className="glass-icon" title="Refresh conversations" onClick={() => void loadConversations()}><RefreshCw size={16}/></button><button className="glass-icon" title="Preferences" onClick={() => setModal("settings")}><Settings size={16}/></button></div></header>
+        <header className="conversation-header"><div className="header-person"><div className="header-avatar"><Users size={18}/></div><div><h2>{current?.title || "Your messages"}</h2><p><span className="status-light"/> {someoneTyping ? "Someone is typing…" : current ? "Conversation space" : "A little room for good conversations"}</p></div></div><div className="header-tools"><button className="glass-icon" title="Voice call" disabled={!active || callState!=="idle"} onClick={() => void startCall("audio")}><Phone size={16}/></button><button className="glass-icon" title="Video call" disabled={!active || callState!=="idle"} onClick={() => void startCall("video")}><Video size={16}/></button><span className="live-pill"><i/> LIVE SYNC</span><button className="glass-icon" title="Refresh conversations" onClick={() => void loadConversations()}><RefreshCw size={16}/></button><button className="glass-icon" title="Preferences" onClick={() => setModal("settings")}><Settings size={16}/></button></div></header>
         <div className="message-canvas">
           {active ? messages.length ? messages.map(message => {
             const mine = message.sender_id === session.user.id;
             return <div key={message.id} className={"message-line" + (mine ? " mine" : "")}><div className="message-content"><div className="message-bubble">{message.body}</div><div className="message-actions"><button title="Like" onClick={() => void toggleReaction(message.id, "❤️")}>❤️</button><button title="Laugh" onClick={() => void toggleReaction(message.id, "😂")}>😂</button><button title="Surprised" onClick={() => void toggleReaction(message.id, "😮")}>😮</button><button title="Open attachment" onClick={() => void openAttachment(message.id)}><Paperclip size={12}/></button>{mine && !message.deleted_at && <><button title="Edit message" onClick={() => void editMessage(message)}><Pencil size={12}/></button><button title="Delete message" onClick={() => void deleteMessage(message)}><Trash2 size={12}/></button></>}</div>{(reactions[message.id] || []).length > 0 && <div className="reaction-strip">{Array.from(new Set((reactions[message.id] || []).map(r => r.emoji))).map(emoji => <button key={emoji} onClick={() => void toggleReaction(message.id, emoji)}>{emoji} {(reactions[message.id] || []).filter(r => r.emoji === emoji).length}</button>)}</div>}<div className="message-meta">{message.edited_at && <span>Edited</span>}{mine ? <><span>You</span><Check size={12}/>{readMessageIds.includes(message.id) && <span>Read</span>}</> : <span>{current?.title || "Message"}</span>}<time>{new Date(message.created_at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</time></div></div></div>;
           }) : <div className="empty-conversation"><div className="empty-art"><div className="art-ring ring-one"/><div className="art-ring ring-two"/><div className="art-core"><MessageCircle size={27}/></div><span className="art-spark spark-one"/><span className="art-spark spark-two"/></div><div className="eyebrow">A SPACE OF YOUR OWN</div><h3>Every good conversation<br/><span>starts somewhere.</span></h3><p>Send the first message and let it unfold.</p></div> : <div className="empty-conversation"><div className="empty-art"><div className="art-ring ring-one"/><div className="art-ring ring-two"/><div className="art-core"><Sparkles size={27}/></div><span className="art-spark spark-one"/><span className="art-spark spark-two"/></div><div className="eyebrow">YOUR PEOPLE, YOUR PLACE</div><h3>Make room for<br/><span>the good stuff.</span></h3><p>Choose a conversation or create a new one.</p><button className="empty-create" onClick={() => setModal("new")}><Plus size={15}/> New conversation</button></div>}
-          <div ref={endRef}/>
+          <div ref={endRef}/><audio ref={remoteAudioRef} autoPlay/>
         </div>
         <form className="composer-area" onSubmit={sendMessage}><input ref={fileInputRef} type="file" hidden onChange={event => { const file=event.target.files?.[0]; void uploadAttachment(file); event.target.value=""; }}/><div className="composer-glass"><button type="button" className="glass-icon" title={recording ? "Stop voice message" : "Record voice message"} disabled={!active || sending} onClick={() => void toggleVoiceRecording()}>{recording ? <MicOff size={17}/> : <Mic size={17}/>}</button><button type="button" className="glass-icon" title="Attach file" disabled={!active || sending} onClick={() => fileInputRef.current?.click()}><Paperclip size={17}/></button><textarea rows={1} value={draft} onChange={e => void updateDraft(e.target.value)} onKeyDown={event => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); void sendMessage(); } }} placeholder={active ? "iMessage…" : "Choose a conversation first"} disabled={!active || sending}/><button className="send-button" type="submit" disabled={!active || !draft.trim() || sending} title="Send message"><Send size={17}/></button></div><div className="composer-caption"><span>{recording ? "Recording voice message…" : "Messages are synced in real time"}</span><span><kbd>ENTER</kbd> TO SEND <i>·</i> <kbd>SHIFT + ENTER</kbd> NEW LINE</span></div>{notice && <p className="notice inline">{notice}</p>}</form>
       </section>
-      {modal && <div className="modal-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) setModal(null); }}><section className="modal-card glass-panel">
+      {callState !== "idle" && <div className="call-banner">{callState === "incoming" ? "Incoming " + callKind + " call" : callState === "connected" ? "Call connected" : "Calling…"}{callState === "incoming" && <button onClick={() => void acceptCall()}>Answer</button>}<button onClick={() => void endCall()}><PhoneOff size={14}/> End</button></div>}{modal && <div className="modal-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) setModal(null); }}><section className="modal-card glass-panel">
         <button className="modal-close glass-icon" onClick={() => setModal(null)} title="Close"><X size={17}/></button>
         {modal === "group" ? <><div className="modal-icon"><Users size={20}/></div><div className="eyebrow">BRING EVERYONE TOGETHER</div><h2>New group</h2><p className="modal-description">Name the group, then add people by their exact GitMessage email.</p><label htmlFor="group-title">Group name</label><input id="group-title" value={groupTitle} onChange={e => setGroupTitle(e.target.value)} placeholder="Weekend plans"/><form onSubmit={searchContacts}><label htmlFor="group-contact-email">Add a member</label><div className="contact-search-input"><Mail size={16}/><input id="group-contact-email" type="email" value={contactEmail} onChange={e => setContactEmail(e.target.value)} placeholder="friend@example.com"/></div><button className="primary-button" type="submit" disabled={contactLoading || !contactEmail.trim()}>{contactLoading ? "Searching…" : "Find account"}<Search size={17}/></button></form>{contactResults.map(user => <div className="contact-result" key={user.user_id}><div className="contact-result-avatar">{user.email.slice(0,1).toUpperCase()}</div><div className="contact-result-copy"><b>{user.email.split("@")[0]}</b><small>{user.email}</small></div><button className="contact-start-button" onClick={() => { setGroupMembers(rows => rows.some(x => x.user_id === user.user_id) ? rows : [...rows,user]); setContactResults([]); setContactEmail(""); }}>Add</button></div>)}{groupMembers.map(user => <div className="contact-result" key={user.user_id}><div className="contact-result-copy"><b>{user.email}</b><small>Added to group</small></div><button className="contact-start-button" onClick={() => setGroupMembers(rows => rows.filter(x => x.user_id !== user.user_id))}>Remove</button></div>)}<button className="primary-button" disabled={busy || !groupTitle.trim() || groupMembers.length===0} onClick={() => void createGroupConversation()}>{busy ? "Creating…" : "Create group"}<Users size={17}/></button>{notice && <p className="notice">{notice}</p>}</> : null}
         {modal === "friends" ? <><div className="modal-icon"><Users size={20}/></div><div className="eyebrow">YOUR PEOPLE</div><h2>Friend requests</h2><p className="modal-description">Accept requests to add people to your contacts.</p>{friendRequests.length ? friendRequests.map(request => <div className="contact-result" key={request.id}><div className="contact-result-avatar">G</div><div className="contact-result-copy"><b>GitMessage user</b><small>Wants to connect</small></div><button className="contact-start-button" onClick={() => void respondFriendRequest(request.id,true)}>Accept</button><button className="contact-start-button" onClick={() => void respondFriendRequest(request.id,false)}>Decline</button></div>) : <p className="modal-description">No pending friend requests.</p>}{notice && <p className="notice">{notice}</p>}</> : null}

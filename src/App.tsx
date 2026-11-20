@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { supabase } from "./lib/supabase";
 import {
-  MessageCircle, Search, Plus, ArrowUp, Settings, Users, LogOut, Sparkles,
+  MessageCircle, MessageSquare, Search, Plus, ArrowUp, Settings, Users, LogOut, Sparkles,
   ShieldCheck, X, Moon, Sun, MoreHorizontal, ArrowUpRight, Check,
   RefreshCw, UserRoundPlus, Mail, Paperclip, Pencil, Trash2, Mic, MicOff, Phone, Video, PhoneOff
 } from "lucide-react";
@@ -482,7 +482,7 @@ export default function App() {
   if (!session) return (
     <main className={"auth-shell" + (lightMode ? " light" : "")}>
       <div className="aurora aurora-one"/><div className="aurora aurora-two"/><div className="aurora aurora-three"/>
-      <div className="auth-top"><div className="brand-lockup"><span className="brand-icon"><MessageCircle size={19}/></span><span>GitMessage</span></div><span className="top-caption">A little more connected.</span></div>
+      <div className="auth-top"><div className="brand-lockup"><span className="brand-icon"><MessageSquare size={16} strokeWidth={1.8}/></span><span>GitMessage</span></div><span className="top-caption">A little more connected.</span></div>
       <section className="auth-layout">
         <div className="auth-copy"><div className="eyebrow">MESSAGES, MADE SIMPLE</div><h1>Stay close.<br/><span>Say more.</span></h1><p>Simple, private conversations with the people who matter.</p></div>
         <form className="auth-card glass-panel" onSubmit={authenticate}>
@@ -504,7 +504,7 @@ export default function App() {
     <main className={"desktop-shell" + (lightMode ? " light" : "")}>
       <div className="desktop-aurora aurora-one"/><div className="desktop-aurora aurora-two"/>
       <aside className="sidebar glass-panel">
-        <div className="sidebar-brand"><div className="brand-lockup"><span className="brand-icon"><MessageCircle size={18}/></span><span>GitMessage</span></div></div>
+        <div className="sidebar-brand"><div className="brand-lockup"><span className="brand-icon"><MessageSquare size={16} strokeWidth={1.8}/></span><span>GitMessage</span></div></div>
         <div className="account-chip"><div className="account-avatar">{(session.user.email || "G").slice(0,1).toUpperCase()}</div><div className="account-copy"><b>{session.user.email?.split("@")[0]}</b><small><i/> Online</small></div><button className="glass-icon tiny" title="Account settings" onClick={() => setModal("settings")}><MoreHorizontal size={18}/></button></div>
         <div className="search-field"><Search size={16}/><input ref={inputRef} value={query} onChange={e => setQuery(e.target.value)} placeholder="Find a conversation"/><kbd>⌘ K</kbd></div>
         <div className="list-heading"><span>YOUR MESSAGES</span><button className="glass-icon tiny" title="New conversation" onClick={() => setModal("new")}><Plus size={17}/></button></div>

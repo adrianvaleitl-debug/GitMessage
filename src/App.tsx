@@ -4,7 +4,7 @@ import { supabase } from "./lib/supabase";
 import {
   MessageCircle, Search, Plus, Send, Settings, Users, LogOut, Sparkles,
   ShieldCheck, X, Moon, Sun, MoreHorizontal, ArrowUpRight, Check,
-  RefreshCw, PanelLeftClose, PanelLeftOpen, UserRoundPlus, Mail, Paperclip, Pencil, Trash2, Smile, Mic, MicOff
+  RefreshCw, PanelLeftClose, PanelLeftOpen, UserRoundPlus, Mail, Paperclip, Pencil, Trash2, Mic, MicOff
 } from "lucide-react";
 
 type Conversation = { id: string; title: string | null; updated_at?: string; is_group?: boolean };

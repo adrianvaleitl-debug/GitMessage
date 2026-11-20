@@ -46,7 +46,6 @@ export default function App() {
   const [recording, setRecording] = useState(false);
   const [someoneTyping, setSomeoneTyping] = useState(false);
   const [readMessageIds, setReadMessageIds] = useState<string[]>([]);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
   const [lightMode, setLightMode] = useState(() => { try { return localStorage.getItem("gitmessage-theme") !== "dark"; } catch { return true; } });
   useEffect(() => { try { localStorage.setItem("gitmessage-theme", lightMode ? "light" : "dark"); } catch { /* Storage may be unavailable. */ } }, [lightMode]);
   const endRef = useRef<HTMLDivElement>(null);
@@ -504,7 +503,7 @@ export default function App() {
   return (
     <main className={"desktop-shell" + (lightMode ? " light" : "")}>
       <div className="desktop-aurora aurora-one"/><div className="desktop-aurora aurora-two"/>
-      <aside className={"sidebar glass-panel" + (!sidebarOpen ? " collapsed" : "")}>
+      <aside className="sidebar glass-panel">
         <div className="sidebar-brand"><div className="brand-lockup"><span className="brand-icon"><MessageCircle size={18}/></span><span>GitMessage</span></div></div>
         <div className="account-chip"><div className="account-avatar">{(session.user.email || "G").slice(0,1).toUpperCase()}</div><div className="account-copy"><b>{session.user.email?.split("@")[0]}</b><small><i/> Online</small></div><button className="glass-icon tiny" title="Account settings" onClick={() => setModal("settings")}><MoreHorizontal size={18}/></button></div>
         <div className="search-field"><Search size={16}/><input ref={inputRef} value={query} onChange={e => setQuery(e.target.value)} placeholder="Find a conversation"/><kbd>⌘ K</kbd></div>

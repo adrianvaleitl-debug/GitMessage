@@ -249,3 +249,89 @@ body{background:#f5f5f7;color:#1c1c1e}
 @keyframes gm-modal-in{from{opacity:0;transform:translateY(9px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
 @media(max-width:850px){.desktop-shell{grid-template-columns:245px minmax(0,1fr)}.sidebar{padding:14px 10px}.conversation-header{padding:0 15px}.message-canvas,.composer-area{padding-left:16px;padding-right:16px}}
+
+
+/* Reference-matched Liquid Glass iMessage treatment */
+.desktop-shell{
+  background:
+    radial-gradient(ellipse at 18% 12%,rgba(255,255,255,.10),transparent 42%),
+    radial-gradient(ellipse at 86% 88%,rgba(115,155,220,.13),transparent 38%),
+    var(--app-bg);
+  gap:12px;padding:12px;
+}
+.desktop-shell:not(.light){--app-bg:#252629;--panel:rgba(48,49,53,.72);--panel-2:rgba(255,255,255,.075);--line:rgba(255,255,255,.13);--text:#f7f7f8;--muted:#b0b1b7;--hover:rgba(255,255,255,.09);--bubble-in:rgba(255,255,255,.12)}
+.desktop-shell.light{--app-bg:#dfe3e9;--panel:rgba(255,255,255,.58);--panel-2:rgba(255,255,255,.48);--line:rgba(255,255,255,.68);--text:#202126;--muted:#777b84;--hover:rgba(255,255,255,.48);--bubble-in:rgba(232,233,236,.92)}
+.sidebar,.conversation-pane{
+  background:linear-gradient(145deg,color-mix(in srgb,var(--panel) 88%,white 12%),var(--panel))!important;
+  border:1px solid var(--line)!important;border-radius:25px!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.24),0 18px 55px rgba(0,0,0,.14)!important;
+  backdrop-filter:blur(32px) saturate(165%)!important;
+  -webkit-backdrop-filter:blur(32px) saturate(165%)!important;
+}
+.sidebar{border-right:1px solid var(--line)!important;padding:18px 13px 13px}
+.conversation-pane{position:relative;isolation:isolate}
+.conversation-header{
+  height:76px;margin:10px 12px 0;padding:0 20px;flex-shrink:0;
+  border:1px solid var(--line);border-radius:20px;
+  background:color-mix(in srgb,var(--panel) 76%,transparent);
+  box-shadow:inset 0 1px rgba(255,255,255,.26),0 8px 28px rgba(0,0,0,.07);
+  backdrop-filter:blur(28px) saturate(175%);-webkit-backdrop-filter:blur(28px) saturate(175%);
+  transition:background .25s,border-color .25s,box-shadow .25s;
+}
+.message-canvas{
+  margin:10px 12px 0;padding:25px clamp(20px,7vw,105px);
+  border-radius:22px;background:rgba(255,255,255,.035);
+  scroll-behavior:smooth;
+}
+.light .message-canvas{background:rgba(255,255,255,.22)}
+.message-bubble{
+  background:linear-gradient(145deg,rgba(255,255,255,.19),rgba(255,255,255,.085))!important;
+  border:1px solid rgba(255,255,255,.2)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.22),0 5px 16px rgba(0,0,0,.07)!important;
+  backdrop-filter:blur(18px) saturate(155%);-webkit-backdrop-filter:blur(18px) saturate(155%);
+  padding:11px 16px!important;border-radius:20px 20px 20px 7px!important;
+  transition:transform .18s cubic-bezier(.2,.8,.2,1),box-shadow .18s;
+}
+.message-line:hover .message-bubble{transform:translateY(-1px)}
+.message-line.mine .message-bubble{
+  background:linear-gradient(145deg,#269cff,#087cf0 78%)!important;
+  border:1px solid rgba(255,255,255,.35)!important;color:#fff!important;
+  border-radius:20px 20px 7px 20px!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.35),0 7px 20px rgba(0,122,255,.22)!important;
+}
+.light .message-bubble{background:rgba(235,235,239,.88)!important;color:#202126!important;border-color:rgba(255,255,255,.72)!important;box-shadow:inset 0 1px #fff,0 4px 14px rgba(50,60,80,.07)!important}
+.light .message-line.mine .message-bubble{background:linear-gradient(145deg,#39a7ff,#087cf0)!important;color:#fff!important}
+.composer-area{
+  margin:10px 12px 12px;padding:0 clamp(16px,5vw,75px) 12px;
+  border:0!important;background:transparent!important;
+}
+.composer-glass{
+  min-height:58px;height:auto;padding:7px 10px 7px 18px;border-radius:24px!important;
+  background:linear-gradient(120deg,rgba(255,255,255,.24),rgba(255,255,255,.10))!important;
+  border:1px solid rgba(255,255,255,.32)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.48),0 9px 30px rgba(0,0,0,.13)!important;
+  backdrop-filter:blur(34px) saturate(180%)!important;-webkit-backdrop-filter:blur(34px) saturate(180%)!important;
+}
+.desktop-shell:not(.light) .composer-glass{background:linear-gradient(120deg,rgba(255,255,255,.15),rgba(255,255,255,.07))!important;border-color:rgba(255,255,255,.2)!important}
+.light .composer-glass{background:rgba(255,255,255,.62)!important;border-color:rgba(255,255,255,.85)!important}
+.composer-glass:focus-within{transform:translateY(-1px);box-shadow:inset 0 1px rgba(255,255,255,.5),0 0 0 3px rgba(0,122,255,.10),0 12px 32px rgba(0,0,0,.14)!important}
+.send-button{width:39px;height:39px;border-radius:50%!important;background:linear-gradient(145deg,#48b3ff,#087cf0)!important;color:#fff!important;border:1px solid rgba(255,255,255,.55)!important;box-shadow:inset 0 1px rgba(255,255,255,.55),0 4px 13px rgba(0,122,255,.28)!important}
+.glass-icon{border:1px solid transparent;border-radius:50%;transition:background .2s,border-color .2s,transform .2s,box-shadow .2s}
+.glass-icon:hover{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.25);box-shadow:0 4px 14px rgba(0,0,0,.08);transform:scale(1.07)}
+.conversation-item.active{background:color-mix(in srgb,var(--accent) 17%,var(--panel))!important;border:1px solid color-mix(in srgb,var(--accent) 20%,var(--line))!important;box-shadow:inset 0 1px rgba(255,255,255,.18)!important}
+.search-field,.contact-search-input{background:color-mix(in srgb,var(--panel-2) 85%,transparent);backdrop-filter:blur(18px);border:1px solid var(--line)}
+.modal-card,.auth-card{
+  background:linear-gradient(145deg,rgba(255,255,255,.20),rgba(255,255,255,.08))!important;
+  border:1px solid rgba(255,255,255,.26)!important;
+  backdrop-filter:blur(38px) saturate(170%)!important;-webkit-backdrop-filter:blur(38px) saturate(170%)!important;
+  box-shadow:inset 0 1px rgba(255,255,255,.28),0 24px 75px rgba(0,0,0,.24)!important;
+}
+.light .modal-card,.light .auth-card{background:rgba(255,255,255,.78)!important;border-color:rgba(255,255,255,.9)!important}
+.desktop-shell .brand-icon{background:linear-gradient(145deg,#fff,#dceaff 55%,#a9c9ff);color:#1767b8;border:1px solid rgba(255,255,255,.8);box-shadow:inset 0 1px #fff,0 4px 12px rgba(0,122,255,.15)}
+.conversation-item,.settings-row,.header-tools .glass-icon{transition:all .2s cubic-bezier(.2,.8,.2,1)}
+.message-line{animation:gm-message-arrive .32s cubic-bezier(.2,.85,.25,1) both}
+@keyframes gm-message-arrive{from{opacity:0;transform:translateY(11px) scale(.975);filter:blur(3px)}to{opacity:1;transform:translateY(0) scale(1);filter:blur(0)}}
+@keyframes gm-glass-shimmer{0%,100%{opacity:.55}50%{opacity:1}}
+.conversation-header:after{content:"";position:absolute;pointer-events:none;left:12%;right:12%;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.7),transparent);animation:gm-glass-shimmer 5s ease-in-out infinite}
+@media(max-width:850px){.desktop-shell{padding:7px;gap:7px}.sidebar,.conversation-pane{border-radius:20px!important}.conversation-header{margin:7px 7px 0;padding:0 12px}.message-canvas{margin:7px 7px 0;padding:18px 12px}.composer-area{margin:7px;padding:0 5px 8px}}
+@media(prefers-reduced-motion:reduce){.message-line{animation:none}}

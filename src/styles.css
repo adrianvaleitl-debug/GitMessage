@@ -469,3 +469,9 @@ body{--gm-titlebar-clear:transparent}
 }
 .brand-icon svg{width:16px;height:16px;stroke-width:1.8}
 .light .brand-icon{color:#202124!important;background:transparent!important;box-shadow:none!important}
+
+/* Authentication method selector and updated brand mark */
+.auth-method-switch{display:flex;gap:6px;padding:4px;margin:0 0 16px;border:1px solid var(--line,rgba(128,128,128,.2));border-radius:12px;background:rgba(128,128,128,.08)}
+.auth-method-switch button{flex:1;border:0;border-radius:9px;padding:9px 12px;background:transparent;color:inherit;font:inherit;cursor:pointer;opacity:.68}
+.auth-method-switch button.selected{background:rgba(128,128,128,.2);opacity:1;box-shadow:0 1px 5px rgba(0,0,0,.08)}
+.brand-icon img{width:27px;height:27px;display:block;object-fit:contain;border-radius:8px}

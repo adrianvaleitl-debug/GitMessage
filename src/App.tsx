@@ -104,6 +104,45 @@ export default function App() {
   }, [active]);
 
   useEffect(() => {
+    if (!supabase || !session || !messages.length) { setReadMessageIds([]); return; }
+    const incoming = messages.filter(message => message.sender_id !== session.user.id);
+    if (incoming.length) {
+      void supabase.from("gitmessage_read_receipts").upsert(
+        incoming.map(message => ({ message_id: message.id, user_id: session.user.id, read_at: new Date().toISOString() })),
+        { onConflict: "message_id,user_id" }
+      );
+    }
+    const ownIds = messages.filter(message => message.sender_id === session.user.id).map(message => message.id);
+    if (!ownIds.length) { setReadMessageIds([]); return; }
+    void supabase.from("gitmessage_read_receipts").select("message_id").in("message_id", ownIds).neq("user_id", session.user.id)
+      .then(({ data }) => setReadMessageIds((data || []).map(row => row.message_id)));
+  }, [messages, session]);
+
+  useEffect(() => {
+    if (!supabase || !active || !session) { setSomeoneTyping(false); return; }
+    const refreshTyping = async () => {
+      const { data } = await supabase!.from("gitmessage_typing").select("user_id,updated_at").eq("conversation_id", active).neq("user_id", session.user.id);
+      setSomeoneTyping((data || []).some(row => Date.now() - new Date(row.updated_at).getTime() < 5000));
+    };
+    void refreshTyping();
+    const channel = supabase.channel("gitmessage-typing-" + active)
+      .on("postgres_changes", { event: "*", schema: "public", table: "gitmessage_typing", filter: "conversation_id=eq." + active }, () => void refreshTyping())
+      .subscribe();
+    return () => { void supabase!.removeChannel(channel); };
+  }, [active, session]);
+
+  async function updateDraft(value: string) {
+    setDraft(value);
+    if (!supabase || !active || !session) return;
+    if (value.trim()) {
+      const { error } = await supabase.from("gitmessage_typing").upsert({ conversation_id: active, user_id: session.user.id, updated_at: new Date().toISOString() });
+      if (error) setNotice(error.message);
+    } else {
+      await supabase.from("gitmessage_typing").delete().eq("conversation_id", active).eq("user_id", session.user.id);
+    }
+  }
+
+  useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [messages]);
 

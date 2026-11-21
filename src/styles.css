@@ -667,16 +667,16 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
 .contact-result-copy.profile-name-trigger b,.contact-result-copy.profile-name-trigger small{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 
-/* Restore the intended left-to-right application layout. */
-.desktop-shell{display:grid!important;grid-template-columns:64px 258px minmax(0,1fr) 250px!important;grid-template-rows:minmax(0,1fr)!important;direction:ltr!important}
+/* Layout: navigation rail left, active chat centre, conversation list right. */
+.desktop-shell{display:grid!important;grid-template-columns:64px minmax(0,1fr) 258px 250px!important;grid-template-rows:minmax(0,1fr)!important;direction:ltr!important}
 .desktop-shell>.app-rail{grid-column:1!important;grid-row:1!important;order:0!important}
-.desktop-shell>.sidebar{grid-column:2!important;grid-row:1!important;order:0!important}
-.desktop-shell>.conversation-pane{grid-column:3!important;grid-row:1!important;order:0!important}
+.desktop-shell>.conversation-pane{grid-column:2!important;grid-row:1!important;order:0!important}
+.desktop-shell>.sidebar{grid-column:3!important;grid-row:1!important;order:0!important}
 .desktop-shell>.conversation-details{grid-column:4!important;grid-row:1!important;order:0!important}
 .desktop-shell>.app-rail,.desktop-shell>.sidebar,.desktop-shell>.conversation-pane,.desktop-shell>.conversation-details{position:relative!important;inset:auto!important;transform:none!important}
-@media(max-width:1100px){.desktop-shell{grid-template-columns:56px 220px minmax(0,1fr) 210px!important}.desktop-shell>.conversation-details{display:flex!important}}
-@media(max-width:820px){.desktop-shell{grid-template-columns:54px 210px minmax(0,1fr)!important}.desktop-shell>.conversation-details{display:none!important}}
-@media(max-width:560px){.desktop-shell{grid-template-columns:48px minmax(0,1fr)!important}.desktop-shell>.sidebar,.desktop-shell>.conversation-details{display:none!important}.desktop-shell.mobile-chat-open>.app-rail{display:none!important}.desktop-shell.mobile-chat-open>.conversation-pane{grid-column:1/-1!important}}
+@media(max-width:1100px){.desktop-shell{grid-template-columns:56px minmax(0,1fr) 230px!important}.desktop-shell>.conversation-details{display:none!important}}
+@media(max-width:760px){.desktop-shell{grid-template-columns:48px minmax(0,1fr) 210px!important}}
+@media(max-width:560px){.desktop-shell{grid-template-columns:minmax(0,1fr) 48px!important}.desktop-shell>.app-rail{grid-column:2!important;grid-row:1!important}.desktop-shell>.conversation-pane{grid-column:1!important;grid-row:1!important}.desktop-shell>.sidebar,.desktop-shell>.conversation-details{display:none!important}.desktop-shell.mobile-chat-open>.app-rail{display:none!important}.desktop-shell.mobile-chat-open>.conversation-pane{grid-column:1/-1!important}}
 .account-profile-link{border:0!important;background:transparent!important;color:inherit!important;text-align:left!important;cursor:pointer!important}
 .account-avatar{padding:0!important;overflow:hidden}.account-avatar img{width:100%;height:100%;object-fit:cover}
 .header-title-link{padding:0;border:0;background:transparent;color:inherit;font:inherit;text-align:left;cursor:pointer}

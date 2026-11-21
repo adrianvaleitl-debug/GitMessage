@@ -861,3 +861,26 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
 .desktop-shell.profile-ring-accent .public-profile-card .profile-photo{box-shadow:0 0 0 4px var(--accent)!important}
 .desktop-shell.profile-hide-bio .public-profile-card .profile-bio{display:none!important}
 .desktop-shell.profile-hide-username .public-profile-card .profile-photo-row>div:nth-child(2) .modal-description{display:none!important}
+
+
+/* Rebuilt public profile card: clear hierarchy, consistent spacing and no clipped inner border. */
+.modal-card:has(.public-profile-card){width:min(420px,calc(100vw - 36px))!important;max-height:85vh;padding:0!important;overflow:auto;border-radius:22px!important;background:transparent!important;border:1px solid #454b55!important;box-shadow:0 24px 80px #0009!important}
+.modal-card:has(.public-profile-card)>.modal-close{z-index:3;top:13px;right:13px;width:30px;height:30px;display:grid;place-items:center;border-radius:50%;background:#ffffff12;color:#e9edf4}
+.public-profile-card{box-sizing:border-box;width:100%;min-width:0;margin:0;padding:25px!important;border:0!important;border-radius:22px!important;background:radial-gradient(ellipse at 100% 0%,color-mix(in srgb,var(--profile-accent) 22%,transparent),transparent 48%),linear-gradient(155deg,var(--profile-panel),var(--profile-bg))!important;color:var(--profile-text)!important;overflow:hidden}
+.public-profile-heading{display:flex;align-items:flex-start;justify-content:space-between;min-height:64px;padding:2px 38px 15px 0;border-bottom:1px solid color-mix(in srgb,var(--profile-line) 75%,transparent)}
+.public-profile-heading .eyebrow{margin:0 0 7px;color:var(--profile-muted)!important;font-size:9px;font-weight:750;letter-spacing:1.15px}
+.public-profile-heading h2{margin:0!important;font-size:24px!important;line-height:1.2;letter-spacing:-.45px;color:var(--profile-text)!important;overflow-wrap:anywhere}
+.public-profile-identity{display:flex;align-items:center;gap:16px;margin:22px 0 17px;min-width:0}
+.public-profile-identity .profile-photo{width:76px;height:76px;flex:0 0 76px;border:3px solid var(--profile-accent)!important;border-radius:50%;box-shadow:0 0 0 5px color-mix(in srgb,var(--profile-accent) 18%,transparent)!important;background:var(--profile-bg)!important;overflow:hidden}
+.public-profile-identity .profile-photo img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.public-profile-names{display:flex;flex-direction:column;align-items:flex-start;gap:5px;min-width:0}
+.public-profile-names b{font-size:17px;line-height:1.25;color:var(--profile-text)!important;overflow-wrap:anywhere}
+.public-profile-names>span:not(.profile-special-tag){font-size:12px;color:var(--profile-muted)}
+.public-profile-names .profile-special-tag{margin-top:3px}
+.public-profile-card .profile-bio{margin:0 0 18px;padding:13px 14px;border:1px solid color-mix(in srgb,var(--profile-line) 80%,transparent);border-radius:13px;background:#00000018;color:var(--profile-text)!important;font-size:12px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
+.public-profile-empty-bio{margin:0 0 18px;color:var(--profile-muted);font-size:11px}
+.public-profile-card .public-profile-message{width:100%;min-height:45px;margin:0;padding:11px 15px;border:0!important;border-radius:12px!important;background:var(--profile-accent)!important;color:#111820!important;font-size:12px;font-weight:700;transition:filter .15s,transform .15s}
+.public-profile-card .public-profile-message:hover{filter:brightness(1.08);transform:translateY(-1px)}
+.public-profile-card .profile-safety-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
+.public-profile-card .profile-safety-actions button{min-height:39px;padding:9px 12px;border:1px solid var(--profile-line)!important;border-radius:11px!important;background:#00000012!important;color:var(--profile-muted)!important;font-size:11px;transition:background .15s,border-color .15s}
+.public-profile-card .profile-safety-actions button:hover{background:#ffffff0b!important;border-color:var(--profile-accent)!important;color:var(--profile-text)!important}

@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.0",
+    "electron-updater": "^6.6.2",
     "lucide-react": "^0.468.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
@@ -55,7 +56,15 @@
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true
-    }
+    },
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "adrianvaleitl-debug",
+        "repo": "GitMessage",
+        "releaseType": "prerelease"
+      }
+    ]
   },
   "main": "electron/main.cjs"
 }

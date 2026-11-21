@@ -33,6 +33,19 @@ with check (reporter_id=auth.uid() and (reported_user_id is null or reported_use
 alter table public.conversation_members
   add column if not exists member_role text not null default 'member',
   add column if not exists member_permissions jsonb not null default '{"manage_group":false,"manage_members":false,"manage_messages":false}'::jsonb;
+create or replace function public.gitmessage_assign_group_owner_role()
+returns trigger language plpgsql security definer set search_path=public,auth as $
+begin
+  if exists(select 1 from public.conversations c where c.id=new.conversation_id and c.created_by=new.user_id and c.kind='group') then
+    new.member_role := 'owner';
+    new.member_permissions := '{"manage_group":true,"manage_members":true,"manage_messages":true}'::jsonb;
+  end if;
+  return new;
+end $;
+drop trigger if exists gm_assign_group_owner_role on public.conversation_members;
+create trigger gm_assign_group_owner_role before insert on public.conversation_members
+for each row execute function public.gitmessage_assign_group_owner_role();
+
 update public.conversation_members cm
 set member_role='owner',
     member_permissions='{"manage_group":true,"manage_members":true,"manage_messages":true}'::jsonb
@@ -122,12 +135,14 @@ create table if not exists public.gitmessage_server_channels (
   server_id uuid not null references public.gitmessage_servers(id) on delete cascade,
   name text not null check (char_length(trim(name)) between 1 and 48),
   created_at timestamptz not null default now(),
-  unique(server_id,name)
+  unique(server_id,name),
+  unique(id,server_id)
 );
 create table if not exists public.gitmessage_server_messages (
   id uuid primary key default gen_random_uuid(),
-  channel_id uuid not null references public.gitmessage_server_channels(id) on delete cascade,
+  channel_id uuid not null,
   server_id uuid not null references public.gitmessage_servers(id) on delete cascade,
+  foreign key(channel_id,server_id) references public.gitmessage_server_channels(id,server_id) on delete cascade,
   sender_id uuid not null references auth.users(id) on delete cascade,
   body text not null check (char_length(trim(body)) between 1 and 5000),
   created_at timestamptz not null default now()
@@ -215,15 +230,23 @@ grant execute on function public.create_gitmessage_server(text,text) to authenti
 grant execute on function public.join_gitmessage_server(text) to authenticated;
 grant execute on function public.get_my_gitmessage_servers() to authenticated;
 
+-- SECURITY DEFINER helper lets the guard see blocks created by either participant.
+create or replace function public.gitmessage_is_blocked_between(user_a uuid,user_b uuid)
+returns boolean language sql security definer stable set search_path=public,auth as $
+ select exists(select 1 from public.gitmessage_blocks b
+   where (b.blocker_id=user_a and b.blocked_id=user_b)
+      or (b.blocker_id=user_b and b.blocked_id=user_a));
+$;
+revoke all on function public.gitmessage_is_blocked_between(uuid,uuid) from public,anon;
+grant execute on function public.gitmessage_is_blocked_between(uuid,uuid) to authenticated;
+
 -- Prevent direct-message inserts between users who have blocked one another.
 drop policy if exists gm_messages_block_guard on public.messages;
 create policy gm_messages_block_guard on public.messages as restrictive for insert to authenticated
 with check (
  not exists (
   select 1 from public.conversation_members other_member
-  join public.gitmessage_blocks b
-    on (b.blocker_id=other_member.user_id and b.blocked_id=auth.uid())
-    or (b.blocker_id=auth.uid() and b.blocked_id=other_member.user_id)
   where other_member.conversation_id=messages.conversation_id and other_member.user_id<>auth.uid()
+    and public.gitmessage_is_blocked_between(auth.uid(),other_member.user_id)
  )
 );

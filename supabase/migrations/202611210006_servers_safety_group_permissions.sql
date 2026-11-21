@@ -44,6 +44,21 @@ from public.profiles p
 where lower(p.username) in ('adrianvaleitl','tw23')
 on conflict(user_id) do update set staff_role=excluded.staff_role;
 
+create or replace function public.gitmessage_protect_reserved_profile_cosmetics()
+returns trigger language plpgsql security definer set search_path=public,auth as $
+begin
+  if auth.uid() is not null
+     and (new.profile_badge is distinct from old.profile_badge or new.profile_frame is distinct from old.profile_frame)
+     and not exists(select 1 from public.gitmessage_staff_roles where user_id=auth.uid()) then
+    new.profile_badge := old.profile_badge;
+    new.profile_frame := old.profile_frame;
+  end if;
+  return new;
+end $;
+drop trigger if exists gm_protect_reserved_profile_cosmetics on public.profiles;
+create trigger gm_protect_reserved_profile_cosmetics before update on public.profiles
+for each row execute function public.gitmessage_protect_reserved_profile_cosmetics();
+
 create or replace function public.gitmessage_is_staff()
 returns boolean language sql security definer stable set search_path=public,auth as $
  select exists(select 1 from public.gitmessage_staff_roles where user_id=auth.uid());

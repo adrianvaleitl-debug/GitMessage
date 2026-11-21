@@ -931,3 +931,13 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
 .message-line.grouped{padding-top:1px!important;padding-bottom:3px!important}
 .message-line.grouped .message-content{margin-left:46px!important}
 .message-line.grouped:hover{background:transparent}
+
+
+/* Mobile browser viewport: eliminate the phantom bottom area and size the app to the visible viewport. */
+@media(max-width:680px){
+  html,body,#root{position:fixed!important;inset:0!important;width:100%!important;height:100%!important;min-height:0!important;max-height:100%!important;margin:0!important;padding:0!important;overflow:hidden!important}
+  body{bottom:0!important;min-height:0!important}
+  .desktop-shell{inset:0 0 env(safe-area-inset-bottom,0px) 0!important;height:auto!important;min-height:0!important;max-height:none!important;padding-top:env(safe-area-inset-top,0px)!important;padding-bottom:0!important;overflow:hidden!important}
+  .desktop-shell>.conversation-pane,.desktop-shell>.sidebar{height:100%!important;min-height:0!important;max-height:100%!important;margin:0!important;padding-bottom:0!important}
+  .desktop-shell .composer-area{margin-bottom:0!important;padding-bottom:max(6px,env(safe-area-inset-bottom,0px))!important}
+}

@@ -60,9 +60,12 @@ create trigger gm_protect_reserved_profile_cosmetics before update on public.pro
 for each row execute function public.gitmessage_protect_reserved_profile_cosmetics();
 
 create or replace function public.gitmessage_is_staff()
-returns boolean language sql security definer stable set search_path=public,auth as $fn$
- select exists(select 1 from public.gitmessage_staff_roles where user_id=auth.uid());
-$fn$;
+returns boolean
+language sql
+stable
+security definer
+set search_path = public, auth
+as 'select exists (select 1 from public.gitmessage_staff_roles where user_id = auth.uid())';
 revoke all on function public.gitmessage_is_staff() from public,anon;
 grant execute on function public.gitmessage_is_staff() to authenticated;
 

@@ -386,7 +386,7 @@ export default function App() {
     const canvas = messageCanvasRef.current;
     if (!canvas) return;
     const frame = requestAnimationFrame(() => {
-      canvas.scrollTop = 0;
+      canvas.scrollTop = canvas.scrollHeight;
     });
     return () => cancelAnimationFrame(frame);
   }, [messages, active, attachmentPreviews]);
@@ -979,7 +979,7 @@ export default function App() {
       <section className="conversation-pane glass-panel">
         <header className="conversation-header"><button className="mobile-back glass-icon" title="Back to conversations" onClick={() => setActive("")}><ArrowLeft size={19}/></button><div className="header-person"><button type="button" className="header-avatar" title="View conversation profile" onClick={() => void openConversationProfile()}><MessageCircle size={18}/></button><div><h2><button type="button" className="header-title-link" onClick={() => void openConversationProfile()}>{current?.title || "Your messages"}</button></h2><p><span className="status-light"/> {someoneTyping ? "Someone is typing…" : current ? "Conversation space" : "A little room for good conversations"}</p></div></div><div className="header-tools call-header-tools"><button type="button" className="call-action-button voice-call-button" title={callState==="incoming" && callKind==="audio" ? "Join voice call" : "Start voice call"} aria-label={callState==="incoming" && callKind==="audio" ? "Join voice call" : "Start voice call"} disabled={!active || (callState!=="idle" && !(callState==="incoming" && callKind==="audio"))} onClick={() => callState==="incoming" && callKind==="audio" ? void acceptCall() : void startCall("audio")}><Phone size={17}/><span>{callState==="incoming" && callKind==="audio" ? "Join call" : "Call"}</span></button><button type="button" className="call-action-button video-call-button" title={callState==="incoming" && callKind==="video" ? "Join video call" : "Start video call"} aria-label={callState==="incoming" && callKind==="video" ? "Join video call" : "Start video call"} disabled={!active || (callState!=="idle" && !(callState==="incoming" && callKind==="video"))} onClick={() => callState==="incoming" && callKind==="video" ? void acceptCall() : void startCall("video")}><Video size={17}/><span>{callState==="incoming" && callKind==="video" ? "Join call" : "Video"}</span></button><span className="live-pill"><i/> LIVE SYNC</span><button className="glass-icon" title="Refresh conversations" onClick={() => void loadConversations()}><RefreshCw size={16}/></button><button className="glass-icon" title="Conversation details" aria-label="Toggle conversation details" aria-expanded={detailsOpen} onClick={() => setDetailsOpen(value => !value)}><MoreHorizontal size={18}/></button></div></header>
         <div className="message-canvas" ref={messageCanvasRef}>
-          {active ? messages.length ? [...messages].reverse().map((message, index, displayedMessages) => {
+          {active ? messages.length ? messages.map((message, index, displayedMessages) => {
             const mine = message.sender_id === session.user.id;
             const previous = displayedMessages[index - 1];
             const grouped = !!previous && previous.sender_id === message.sender_id && Math.abs(new Date(message.created_at).getTime() - new Date(previous.created_at).getTime()) <= 5 * 60 * 1000;

@@ -948,3 +948,11 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
 .message-line.grouped .message-content{margin-left:46px!important}
 .message-line.grouped .message-bubble{margin-top:0!important}
 .message-line.grouped .message-content p{margin-top:0!important;margin-bottom:0!important}
+
+
+/* Inline video and voice-message players */
+.media-attachment{display:flex;flex-direction:column;gap:7px;max-width:min(420px,100%);padding:8px;border:1px solid var(--line);border-radius:14px;background:var(--panel-2)}
+.media-attachment video{display:block;width:100%;max-height:300px;object-fit:contain;border-radius:10px;background:#090a0c}
+.media-attachment small{color:var(--muted);font-size:11px;overflow-wrap:anywhere}
+.audio-attachment>div{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+.audio-attachment audio{display:block;width:min(340px,100%);height:40px}

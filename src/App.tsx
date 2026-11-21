@@ -555,6 +555,31 @@ export default function App() {
         </div>
         <form className="composer-area" onSubmit={sendMessage}><input ref={fileInputRef} type="file" hidden onChange={event => { const file=event.target.files?.[0]; void uploadAttachment(file); event.target.value=""; }}/><div className="composer-glass"><button type="button" className="glass-icon" title={recording ? "Stop voice message" : "Record voice message"} disabled={!active || sending} onClick={() => void toggleVoiceRecording()}>{recording ? <MicOff size={17}/> : <Mic size={17}/>}</button><button type="button" className="glass-icon" title="Attach file" disabled={!active || sending} onClick={() => fileInputRef.current?.click()}><Paperclip size={17}/></button><textarea rows={1} value={draft} onChange={e => void updateDraft(e.target.value)} onKeyDown={event => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); void sendMessage(); } }} placeholder={active ? "Write a message…" : "Choose a conversation first"} disabled={!active || sending}/><button className="send-button" type="submit" disabled={!active || !draft.trim() || sending} title="Send message"><ArrowUp size={18}/></button></div><div className="composer-caption"><span>{recording ? "Recording voice message…" : "Messages are synced in real time"}</span><span><kbd>ENTER</kbd> TO SEND <i>·</i> <kbd>SHIFT + ENTER</kbd> NEW LINE</span></div>{notice && <p className="notice inline">{notice}</p>}</form>
       </section>
+      <aside className="conversation-details">
+        <div className="details-heading">CONVERSATION DETAILS</div>
+        <div className="details-profile">
+          <div className="details-avatar">{(current?.title || "G").slice(0,1).toUpperCase()}</div>
+          <h3>{current?.title || "No conversation selected"}</h3>
+          <p>{current ? (current.is_group ? "Group conversation" : "Direct message") : "Select a conversation to see its details."}</p>
+        </div>
+        {current && <>
+          <div className="details-section">
+            <div className="details-label">ABOUT</div>
+            <div className="details-row"><MessageCircle size={15}/><span>{current.is_group ? "Group chat" : "Private conversation"}</span></div>
+            <div className="details-row"><ShieldCheck size={15}/><span>Conversation members only</span></div>
+          </div>
+          <div className="details-section">
+            <div className="details-label">ACTIVITY</div>
+            <div className="details-row"><span className="status-light"/><span>Real-time sync enabled</span></div>
+            <div className="details-row"><RefreshCw size={15}/><span>Updated {current.updated_at ? new Date(current.updated_at).toLocaleString([], {dateStyle:"medium",timeStyle:"short"}) : "recently"}</span></div>
+          </div>
+          <div className="details-section">
+            <div className="details-label">MESSAGES</div>
+            <div className="details-count">{messages.length}</div>
+            <div className="details-muted">In this conversation</div>
+          </div>
+        </>}
+      </aside>
       {callState !== "idle" && <div className="call-banner">{callState === "incoming" ? "Incoming " + callKind + " call" : callState === "connected" ? "Call connected" : "Calling…"}{callState === "incoming" && <button onClick={() => void acceptCall()}>Answer</button>}{callState === "incoming" && <button onClick={() => { if (pendingCall?.sender_id) void sendCallSignal(pendingCall.sender_id,"reject",{}); void endCall(false); }}>Decline</button>}<button onClick={() => void endCall()}><PhoneOff size={14}/> End</button></div>}{modal && <div className="modal-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) setModal(null); }}><section className="modal-card glass-panel">
         <button className="modal-close glass-icon" onClick={() => setModal(null)} title="Close"><X size={17}/></button>
         {modal === "group" ? <><div className="modal-icon"><Users size={20}/></div><div className="eyebrow">BRING EVERYONE TOGETHER</div><h2>New group</h2><p className="modal-description">Name the group, then add people by username or email.</p><label htmlFor="group-title">Group name</label><input id="group-title" value={groupTitle} onChange={e => setGroupTitle(e.target.value)} placeholder="Weekend plans"/><form onSubmit={searchContacts}><label htmlFor="group-contact-email">Add a member</label><div className="contact-search-input"><Search size={16}/><input id="group-contact-email" value={contactEmail} onChange={e => setContactEmail(e.target.value)} placeholder="@username or friend@example.com"/></div><button className="primary-button" type="submit" disabled={contactLoading || !contactEmail.trim()}>{contactLoading ? "Searching…" : "Find account"}<Search size={17}/></button></form>{contactResults.map(user => <div className="contact-result" key={user.user_id}><div className="contact-result-avatar">{(user.username || user.email || "G").slice(0,1).toUpperCase()}</div><div className="contact-result-copy"><b>@{user.username || user.email?.split("@")[0] || "GitMessage user"}</b><small>{user.email || "Phone account"}</small></div><button className="contact-start-button" onClick={() => { setGroupMembers(rows => rows.some(x => x.user_id === user.user_id) ? rows : [...rows,user]); setContactResults([]); setContactEmail(""); }}>Add</button></div>)}{groupMembers.map(user => <div className="contact-result" key={user.user_id}><div className="contact-result-copy"><b>@{user.username || user.email || "GitMessage user"}</b><small>Added to group</small></div><button className="contact-start-button" onClick={() => setGroupMembers(rows => rows.filter(x => x.user_id !== user.user_id))}>Remove</button></div>)}<button className="primary-button" disabled={busy || !groupTitle.trim() || groupMembers.length===0} onClick={() => void createGroupConversation()}>{busy ? "Creating…" : "Create group"}<Users size={17}/></button>{notice && <p className="notice">{notice}</p>}</> : null}

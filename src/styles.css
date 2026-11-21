@@ -448,3 +448,19 @@ button:disabled{cursor:not-allowed;opacity:.45}
 .server-chat-composer{display:flex;gap:8px}
 .server-chat-composer input{flex:1;min-width:0}
 .server-chat-composer .send-button{width:auto;padding:0 14px}
+
+.desktop-shell:not(.light)[class*="palette-"] .sidebar{background:var(--panel)}
+.desktop-shell:not(.light)[class*="palette-"] .conversation-pane,
+.desktop-shell:not(.light)[class*="palette-"] .conversation-header,
+.desktop-shell:not(.light)[class*="palette-"] .message-canvas,
+.desktop-shell:not(.light)[class*="palette-"] .composer-area{background:var(--bg)}
+.desktop-shell:not(.light)[class*="palette-"] .app-rail{background:var(--panel-2)}
+.desktop-shell:not(.light)[class*="palette-"] .search-field,
+.desktop-shell:not(.light)[class*="palette-"] .composer-glass{background:var(--panel-2)!important}
+.desktop-shell:not(.light)[class*="palette-"] .conversation-item.active,
+.desktop-shell:not(.light)[class*="palette-"] .conversation-item:hover{background:var(--panel-3);color:var(--text)}
+.desktop-shell:not(.light)[class*="palette-"] .conversation-header,
+.desktop-shell:not(.light)[class*="palette-"] .sidebar,
+.desktop-shell:not(.light)[class*="palette-"] .conversation-details{border-color:var(--line)!important}
+.desktop-shell:not(.light)[class*="palette-"] .header-person h2,
+.desktop-shell:not(.light)[class*="palette-"] .message-author{color:var(--text)}

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { FormEvent, MouseEvent } from "react";
+import type { FormEvent, MouseEvent, ReactNode } from "react";
 import { supabase } from "./lib/supabase";
 import {
   MessageCircle, Search, Plus, ArrowUp, ArrowLeft, Settings, Users, UserRound, LogOut, Sparkles,
@@ -13,8 +13,8 @@ type AttachmentPreview = { file_name: string; mime_type: string; size_bytes: num
 type ContactMatch = { user_id: string; email: string; username?: string; display_name?: string; avatar_path?: string | null };
 
 function renderBioWithLinks(bio: string) {
-  const urlPattern = /(?:https?:\\/\\/|www\\.)[^\\s<]+/gi;
-  const parts: React.ReactNode[] = [];
+  const urlPattern = /(?:https?:\/\/|www\.)[^\s<]+/gi;
+  const parts: ReactNode[] = [];
   let lastIndex = 0;
   let match: RegExpExecArray | null;
   while ((match = urlPattern.exec(bio)) !== null) {
@@ -23,7 +23,7 @@ function renderBioWithLinks(bio: string) {
     while (/[.,!?;:)]$/.test(url)) url = url.slice(0, -1);
     if (!url) continue;
     if (match.index > lastIndex) parts.push(bio.slice(lastIndex, match.index));
-    const href = /^https?:\\/\\//i.test(url) ? url : `https://${url}`;
+    const href = /^https?:\/\//i.test(url) ? url : `https://${url}`;
     parts.push(<a key={match.index} href={href} target="_blank" rel="noopener noreferrer">{url}</a>);
     parts.push(rawUrl.slice(url.length));
     lastIndex = match.index + rawUrl.length;

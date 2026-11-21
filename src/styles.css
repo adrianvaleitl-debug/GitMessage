@@ -1158,3 +1158,16 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
   .header-tools .call-action-button,.header-tools .glass-icon{width:31px!important;height:31px!important;min-width:31px!important;flex-basis:31px!important}
   .conversation-item{min-height:54px!important}
 }
+
+
+/* Chat-style message flow: sender and first message share a line; grouped messages stack below. */
+.message-content{display:block!important;width:min(100%,1100px)!important}
+.message-author{display:inline-flex!important;vertical-align:baseline!important;margin-right:7px!important;gap:7px!important}
+.message-bubble{display:inline!important;width:auto!important;max-width:100%!important;vertical-align:baseline!important}
+.message-line.grouped .message-content{display:block!important}
+.message-line.grouped .message-bubble{display:inline!important}
+.message-line.grouped .message-content{margin-left:46px!important}
+@media(max-width:760px){
+ .message-line.grouped .message-content{margin-left:41px!important}
+ .message-author{margin-right:6px!important}
+}

@@ -30,6 +30,31 @@ create policy gm_reports_insert_own on public.gitmessage_reports for insert to a
 with check (reporter_id=auth.uid() and (reported_user_id is null or reported_user_id<>auth.uid()));
 -- Reports are intentionally not readable by ordinary users.
 
+-- Staff roles are assigned to immutable auth user IDs, not trusted client-side usernames.
+create table if not exists public.gitmessage_staff_roles (
+  user_id uuid primary key references auth.users(id) on delete cascade,
+  staff_role text not null check (staff_role in ('creator','admin')),
+  assigned_at timestamptz not null default now()
+);
+alter table public.gitmessage_staff_roles enable row level security;
+
+insert into public.gitmessage_staff_roles(user_id,staff_role)
+select p.id, case when lower(p.username)='adrianvaleitl' then 'creator' else 'admin' end
+from public.profiles p
+where lower(p.username) in ('adrianvaleitl','tw23')
+on conflict(user_id) do update set staff_role=excluded.staff_role;
+
+create or replace function public.gitmessage_is_staff()
+returns boolean language sql security definer stable set search_path=public,auth as $
+ select exists(select 1 from public.gitmessage_staff_roles where user_id=auth.uid());
+$;
+revoke all on function public.gitmessage_is_staff() from public,anon;
+grant execute on function public.gitmessage_is_staff() to authenticated;
+
+drop policy if exists gm_reports_read_staff on public.gitmessage_reports;
+create policy gm_reports_read_staff on public.gitmessage_reports for select to authenticated
+using (public.gitmessage_is_staff());
+
 alter table public.conversation_members
   add column if not exists member_role text not null default 'member',
   add column if not exists member_permissions jsonb not null default '{"manage_group":false,"manage_members":false,"manage_messages":false}'::jsonb;
@@ -54,7 +79,7 @@ where c.id=cm.conversation_id and c.created_by=cm.user_id;
 
 create or replace function public.gitmessage_can_manage_group(target_conversation_id uuid, permission_key text default 'manage_group')
 returns boolean language sql security definer stable set search_path=public,auth as $$
-  select exists(
+  select public.gitmessage_is_staff() or exists(
     select 1 from public.conversation_members cm
     where cm.conversation_id=target_conversation_id and cm.user_id=auth.uid()
       and (cm.member_role='owner' or coalesce((cm.member_permissions->>permission_key)::boolean,false))
@@ -154,11 +179,11 @@ alter table public.gitmessage_server_messages enable row level security;
 
 create or replace function public.gitmessage_is_server_member(target_server_id uuid)
 returns boolean language sql security definer stable set search_path=public,auth as $$
- select exists(select 1 from public.gitmessage_server_members where server_id=target_server_id and user_id=auth.uid());
+ select public.gitmessage_is_staff() or exists(select 1 from public.gitmessage_server_members where server_id=target_server_id and user_id=auth.uid());
 $$;
 create or replace function public.gitmessage_server_has_permission(target_server_id uuid, permission_key text)
 returns boolean language sql security definer stable set search_path=public,auth as $$
- select exists(select 1 from public.gitmessage_server_members m where m.server_id=target_server_id and m.user_id=auth.uid()
+ select public.gitmessage_is_staff() or exists(select 1 from public.gitmessage_server_members m where m.server_id=target_server_id and m.user_id=auth.uid()
    and (m.member_role='owner' or coalesce((m.permissions->>permission_key)::boolean,false)));
 $$;
 

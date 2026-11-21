@@ -785,3 +785,40 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
 .desktop-shell .account-avatar img,
 .desktop-shell .rail-user img,
 .desktop-shell .group-member-avatar img{width:100%;height:100%;object-fit:cover}
+
+
+/* Public profile popups use the profile owner's saved palette across the whole card. */
+.public-profile-card{--profile-bg:#17191d;--profile-panel:#22262c;--profile-line:#3b424b;--profile-text:#f2f3f5;--profile-muted:#aeb1b8;background:linear-gradient(145deg,var(--profile-panel),var(--profile-bg))!important;color:var(--profile-text)!important;border:1px solid var(--profile-line)!important;overflow:hidden;position:relative}
+.public-profile-card.palette-graphite{--profile-accent:#8b9aa8;--profile-bg:#17191d;--profile-panel:#252b32;--profile-line:#46515c;--profile-text:#f2f3f5;--profile-muted:#aeb8c2}
+.public-profile-card.palette-ocean{--profile-accent:#38c6c0;--profile-bg:#0d202b;--profile-panel:#173b4a;--profile-line:#286273;--profile-text:#e8fbff;--profile-muted:#a7d3df}
+.public-profile-card.palette-plum{--profile-accent:#d69be8;--profile-bg:#211429;--profile-panel:#3b2548;--profile-line:#674476;--profile-text:#fff0ff;--profile-muted:#d7b9e1}
+.public-profile-card.palette-ember{--profile-accent:#ff9a61;--profile-bg:#281710;--profile-panel:#493024;--profile-line:#805039;--profile-text:#fff3e9;--profile-muted:#e4bda3}
+.public-profile-card.palette-moss{--profile-accent:#a5d68d;--profile-bg:#142117;--profile-panel:#2a3d2d;--profile-line:#4e7052;--profile-text:#f0ffef;--profile-muted:#bcd6b8}
+.public-profile-card.palette-sand{--profile-accent:#e5c27d;--profile-bg:#272116;--profile-panel:#443a27;--profile-line:#756343;--profile-text:#fff8e8;--profile-muted:#ddcba4}
+.public-profile-card h2,.public-profile-card b{color:var(--profile-text)!important}
+.public-profile-card .eyebrow,.public-profile-card .modal-description,.public-profile-card .profile-bio{color:var(--profile-muted)!important}
+.public-profile-card .profile-photo{background:var(--profile-bg)!important;border-color:var(--profile-accent)!important;box-shadow:0 0 0 5px color-mix(in srgb,var(--profile-accent) 24%,transparent)!important}
+.public-profile-card .primary-button{background:var(--profile-accent)!important;color:#111820!important;border:0!important}
+.public-profile-card .profile-safety-actions button{color:var(--profile-muted)!important;border-color:var(--profile-line)!important}
+
+/* App-level personalisation controls. These settings are stored locally per device. */
+.settings-customize{margin:16px 0;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--panel-2);display:grid;gap:8px}
+.settings-customize h3{font-size:12px;margin:0 0 5px;color:var(--text)}
+.settings-customize>label{font-size:10px;color:var(--muted);margin-top:5px}
+.settings-customize select{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:9px;background:var(--panel);color:var(--text);font:inherit;font-size:11px}
+.settings-customize .settings-toggle{display:flex;align-items:center;gap:9px;cursor:pointer}
+.settings-customize input[type=checkbox]{accent-color:var(--accent);width:15px;height:15px}
+.desktop-shell.accent-purple{--accent:#a78bfa;--accent-hover:#8b6ce0}
+.desktop-shell.accent-teal{--accent:#2dd4bf;--accent-hover:#14b8a6}
+.desktop-shell.accent-orange{--accent:#fb923c;--accent-hover:#ea7b20}
+.desktop-shell.accent-pink{--accent:#f472b6;--accent-hover:#e4549b}
+.desktop-shell.accent-blue{--accent:#6875f5;--accent-hover:#5361df}
+.desktop-shell[class*="accent-"] .send-button,.desktop-shell[class*="accent-"] .rail-button.selected{background:var(--accent)!important}
+.desktop-shell[class*="accent-"] .send-button:hover:not(:disabled){background:var(--accent-hover)!important}
+.desktop-shell.density-compact .message-line{padding-top:4px!important;padding-bottom:4px!important}
+.desktop-shell.density-compact .conversation-item{padding-top:7px!important;padding-bottom:7px!important}
+.desktop-shell.density-compact .conversation-list{gap:3px!important}
+.desktop-shell.text-small .message-line,.desktop-shell.text-small .message-body{font-size:11px!important}
+.desktop-shell.text-medium .message-line,.desktop-shell.text-medium .message-body{font-size:13px!important}
+.desktop-shell.text-large .message-line,.desktop-shell.text-large .message-body{font-size:15px!important}
+.desktop-shell.no-animations *{animation:none!important;transition:none!important;scroll-behavior:auto!important}

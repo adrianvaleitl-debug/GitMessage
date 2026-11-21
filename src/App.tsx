@@ -69,6 +69,10 @@ export default function App() {
   const [someoneTyping, setSomeoneTyping] = useState(false);
 
   const [lightMode, setLightMode] = useState(() => { try { return localStorage.getItem("gitmessage-theme") !== "dark"; } catch { return true; } });
+  const mobileSwipeStart = useRef<{x:number;y:number}|null>(null);
+  useEffect(()=>{const forceMobileDark=()=>{if(window.matchMedia("(max-width: 760px)").matches)setLightMode(false)};forceMobileDark();window.addEventListener("resize",forceMobileDark);return()=>window.removeEventListener("resize",forceMobileDark)},[]);
+  const handleMobileSwipeEnd=(event:React.TouchEvent<HTMLElement>)=>{const start=mobileSwipeStart.current;mobileSwipeStart.current=null;if(!start)return;const dx=event.changedTouches[0].clientX-start.x;const dy=event.changedTouches[0].clientY-start.y;if(Math.abs(dx)<65||Math.abs(dx)<Math.abs(dy)*1.35||!window.matchMedia("(max-width: 760px)").matches)return;if(dx>0){setActive("");}else if(!active&&conversations.length){setActive(conversations[0].id);}};
+
   useEffect(() => { try { localStorage.setItem("gitmessage-theme", lightMode ? "light" : "dark"); } catch { /* Storage may be unavailable. */ } }, [lightMode]);
   const [accentChoice, setAccentChoice] = useState(() => { try { return localStorage.getItem("gitmessage-accent") || "blue"; } catch { return "blue"; } });
   const [density, setDensity] = useState(() => { try { return localStorage.getItem("gitmessage-density") || "comfortable"; } catch { return "comfortable"; } });
@@ -835,7 +839,7 @@ export default function App() {
   );
 
   return (
-    <main className={"desktop-shell accent-" + accentChoice + " density-" + density + " text-" + messageSize + " profile-card-" + profileCardStyle + " profile-ring-" + profileAvatarRing + (profileShowBio ? " profile-show-bio" : " profile-hide-bio") + (profileShowUsername ? " profile-show-username" : " profile-hide-username") + (!animations ? " no-animations" : "") + (lightMode ? " light" : "") + (active ? " mobile-chat-open" : "") + (navigator.userAgent.includes("Electron") ? " electron-shell" : "")}>
+    <main onTouchStart={e=>{const t=e.touches[0];mobileSwipeStart.current={x:t.clientX,y:t.clientY};}} onTouchEnd={handleMobileSwipeEnd} className={"desktop-shell accent-" + accentChoice + " density-" + density + " text-" + messageSize + " profile-card-" + profileCardStyle + " profile-ring-" + profileAvatarRing + (profileShowBio ? " profile-show-bio" : " profile-hide-bio") + (profileShowUsername ? " profile-show-username" : " profile-hide-username") + (!animations ? " no-animations" : "") + (lightMode ? " light" : "") + (active ? " mobile-chat-open" : "") + (navigator.userAgent.includes("Electron") ? " electron-shell" : "")}>
       <nav className="app-rail" aria-label="Main navigation">
 
         <button className="rail-button selected" title="Messages" onClick={() => { setQuery(""); setActive(conversations[0]?.id || ""); }}><MessageCircle size={20}/></button>

@@ -292,3 +292,12 @@ with check (
      and (cm.member_role='owner' or coalesce((cm.member_permissions->>'manage_group')::boolean,false))
  )
 );
+
+
+grant select,insert,delete on public.gitmessage_blocks to authenticated;
+grant insert,select on public.gitmessage_reports to authenticated;
+grant select,update on public.gitmessage_servers to authenticated;
+grant select,insert,update,delete on public.gitmessage_server_members to authenticated;
+grant select,insert,update,delete on public.gitmessage_server_channels to authenticated;
+grant select,insert on public.gitmessage_server_messages to authenticated;
+grant select on public.conversation_members to authenticated;

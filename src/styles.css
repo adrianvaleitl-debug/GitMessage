@@ -667,12 +667,12 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
 .contact-result-copy.profile-name-trigger b,.contact-result-copy.profile-name-trigger small{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 
-/* Layout: navigation rail left, active chat centre, conversation list right. */
-.desktop-shell{display:grid!important;grid-template-columns:64px minmax(0,1fr) 258px 250px!important;grid-template-rows:minmax(0,1fr)!important;direction:ltr!important}
+/* Layout: keep the active conversation on the left; put the conversation list at the far right. */
+.desktop-shell{display:grid!important;grid-template-columns:64px minmax(0,1fr) 250px 258px!important;grid-template-rows:minmax(0,1fr)!important;direction:ltr!important}
 .desktop-shell>.app-rail{grid-column:1!important;grid-row:1!important;order:0!important}
 .desktop-shell>.conversation-pane{grid-column:2!important;grid-row:1!important;order:0!important}
-.desktop-shell>.sidebar{grid-column:3!important;grid-row:1!important;order:0!important}
-.desktop-shell>.conversation-details{grid-column:4!important;grid-row:1!important;order:0!important}
+.desktop-shell>.conversation-details{grid-column:3!important;grid-row:1!important;order:0!important}
+.desktop-shell>.sidebar{grid-column:4!important;grid-row:1!important;order:0!important}
 .desktop-shell>.app-rail,.desktop-shell>.sidebar,.desktop-shell>.conversation-pane,.desktop-shell>.conversation-details{position:relative!important;inset:auto!important;transform:none!important}
 @media(max-width:1100px){.desktop-shell{grid-template-columns:56px minmax(0,1fr) 230px!important}.desktop-shell>.conversation-details{display:none!important}}
 @media(max-width:760px){.desktop-shell{grid-template-columns:48px minmax(0,1fr) 210px!important}}

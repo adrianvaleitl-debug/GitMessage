@@ -521,7 +521,7 @@ export default function App() {
   return (
     <main className={"desktop-shell" + (lightMode ? " light" : "")}>
       <nav className="app-rail" aria-label="Main navigation">
-        <button className="rail-brand active" title="GitMessage"><img src="/gitmessage-icon.svg" alt="GitMessage"/></button>
+        <button className="rail-brand active" title="GitMessage"><img src="./gitmessage-icon.svg" alt="GitMessage"/></button>
         <div className="rail-divider"/>
         <button className="rail-button selected" title="Messages" onClick={() => { setQuery(""); setActive(conversations[0]?.id || ""); }}><MessageCircle size={20}/></button>
         <button className="rail-button" title="Friends" onClick={() => void loadFriendRequests()}><Users size={20}/></button>

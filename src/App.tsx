@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { FormEvent } from "react";
+import type { FormEvent, MouseEvent } from "react";
 import { supabase } from "./lib/supabase";
 import {
   MessageCircle, Search, Plus, ArrowUp, ArrowLeft, Settings, Users, Server, LogOut, Sparkles,
@@ -395,7 +395,7 @@ export default function App() {
     setNotice(error ? error.message : "Report submitted.");
   }
 
-  function showProfileContextMenu(event: React.MouseEvent, userId: string, username: string) {
+  function showProfileContextMenu(event: MouseEvent, userId: string, username: string) {
     event.preventDefault();
     setProfileContextMenu({x:Math.min(event.clientX,window.innerWidth-220),y:Math.min(event.clientY,window.innerHeight-150),userId,username});
   }

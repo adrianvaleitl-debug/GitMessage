@@ -1035,3 +1035,24 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
 .profile-preview-card .public-profile-names b{font-size:17px;color:#f5f6fa}
 .profile-preview-card .public-profile-names span{font-size:12px;color:#aeb6c4}
 .profile-preview-card .profile-bio{margin:14px 0 0;color:#d1d6df;font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+
+/* Simplified call actions: plain, compact header icon buttons. */
+.call-header-tools{gap:6px!important}
+.call-action-button{
+  width:36px!important;height:36px!important;min-width:36px!important;
+  display:inline-flex!important;align-items:center!important;justify-content:center!important;
+  gap:0!important;padding:0!important;border:0!important;border-radius:10px!important;
+  background:transparent!important;color:var(--muted,#aeb6c2)!important;
+  box-shadow:none!important;font-size:0!important;transition:background .15s,color .15s!important
+}
+.call-action-button span{display:none!important}
+.call-action-button svg{width:18px!important;height:18px!important;stroke-width:1.8!important}
+.call-action-button:hover:not(:disabled){background:var(--panel-3,#303641)!important;color:var(--text,#f4f6fa)!important}
+.call-action-button:disabled{opacity:.35!important;box-shadow:none!important}
+.voice-call-button,.video-call-button{border:0!important;background:transparent!important;color:var(--muted,#aeb6c2)!important}
+.voice-call-button:hover:not(:disabled){background:rgba(42,160,105,.13)!important;color:#53c58b!important}
+.video-call-button:hover:not(:disabled){background:rgba(110,130,220,.14)!important;color:#9baeff!important}
+@media(max-width:760px){
+  .call-action-button{width:36px!important;height:36px!important;min-width:36px!important;padding:0!important;border:0!important;border-radius:10px!important;background:transparent!important;box-shadow:none!important}
+  .call-action-button span{display:none!important}
+}

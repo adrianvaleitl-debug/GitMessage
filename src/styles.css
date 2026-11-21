@@ -985,3 +985,35 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
 
 
 @media(max-width:680px){.conversation-item{touch-action:manipulation;-webkit-tap-highlight-color:transparent;cursor:pointer;user-select:none;-webkit-user-select:none}}
+
+
+/* Mobile navigation gestures, dark-first presentation, and polished calling controls. */
+@media(max-width:760px){
+  html,body,#root{background:#1d2026!important;color-scheme:dark!important;overscroll-behavior:none!important}
+  .desktop-shell{background:#1d2026!important;color-scheme:dark!important;touch-action:pan-y!important}
+  .desktop-shell.light{background:#1d2026!important;color-scheme:dark!important}
+  .desktop-shell>.sidebar,.desktop-shell>.conversation-pane{min-width:0!important;width:100%!important;max-width:100vw!important}
+  .desktop-shell>.sidebar{padding-bottom:env(safe-area-inset-bottom,0px)!important}
+  .desktop-shell>.conversation-pane{padding-bottom:0!important}
+  .conversation-header{padding-left:max(12px,env(safe-area-inset-left))!important;padding-right:max(10px,env(safe-area-inset-right))!important}
+  .composer-area{padding-left:max(10px,env(safe-area-inset-left))!important;padding-right:max(10px,env(safe-area-inset-right))!important}
+  .message-canvas{min-height:0!important;max-height:100%!important}
+  .call-header-tools{gap:7px!important}
+  .call-action-button{height:38px!important;min-width:40px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:6px!important;padding:0 11px!important;border:1px solid #515866!important;border-radius:12px!important;background:linear-gradient(180deg,#3a414d,#2b313b)!important;color:#f4f6fa!important;font-size:11px!important;font-weight:650!important;box-shadow:0 3px 10px #0003!important}
+  .call-action-button:disabled{opacity:.35!important}
+  .voice-call-button{border-color:#326c55!important;background:linear-gradient(180deg,#287b59,#1d6245)!important}
+  .video-call-button{border-color:#515e8e!important;background:linear-gradient(180deg,#5868a9,#414f89)!important}
+  .call-banner{left:10px!important;right:10px!important;bottom:calc(10px + env(safe-area-inset-bottom))!important;display:flex!important;align-items:center!important;justify-content:flex-start!important;flex-wrap:wrap!important;gap:8px!important;padding:12px!important;border:1px solid #4b5361!important;border-radius:18px!important;background:rgba(28,32,40,.97)!important;backdrop-filter:blur(18px)!important}
+  .call-banner-icon{width:36px;height:36px;flex:0 0 36px;display:grid;place-items:center;border-radius:12px;background:#287b59;color:white}
+  .call-banner-copy{display:flex;flex:1;min-width:90px;flex-direction:column;gap:3px}
+  .call-banner-copy b{font-size:12px;color:#fff}
+  .call-banner-copy small{font-size:10px;color:#aeb6c2}
+  .call-banner button{min-height:37px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:5px!important;padding:8px 11px!important;border-radius:11px!important;font-size:11px!important;font-weight:650!important}
+  .call-banner .call-answer-button{background:#238653!important;color:#fff!important}
+  .call-banner .call-decline-button,.call-banner .call-end-button{background:#424956!important;color:#f1f3f6!important}
+}
+@media(max-width:390px){
+  .call-action-button{width:36px!important;min-width:36px!important;padding:0!important}
+  .call-action-button span{display:none!important}
+  .conversation-header{gap:6px!important}
+}

@@ -1,44 +1,49 @@
-# GitMessage 4.0.0
+# GitMessage 4.0
 
-A Windows desktop messaging client built with Electron, React, Vite and Supabase. The 4.0 rebuild replaces the previous interface with an Apple-inspired Liquid Glass visual system.
+**GitMessage is a real-time messaging app for the web and Windows.** It brings direct conversations, profiles, media sharing, server-based communities and one-to-one calling into a single interface, with the same Supabase-backed account across platforms.
 
-## Included
+## Features
 
-- Supabase email/password sign-in and account creation.
-- Conversation list loaded from `public.conversations`.
-- Create a named conversation record from the app.
-- Load and send text messages through `public.messages`.
-- Realtime message inserts, message history and conversation search.
-- Multiline message composer, account preferences, sign-out and light/dark appearance switch.
-- Windows x64 NSIS installer built by GitHub Actions.
+- **Accounts:** create an account, sign in and manage your profile and display name.
+- **Direct messaging:** create and manage conversations, send messages in real time, search chats and view message history.
+- **Message experience:** messages stay in chronological order, consecutive messages from the same sender are grouped within five minutes when no one else has replied, and message context actions include copying and opening profiles.
+- **Profiles:** profile pictures, display names, bios and public profile previews. Website links in bios are clickable.
+- **Servers and channels:** create and access server spaces with text channels for organised community conversations.
+- **Media:** share supported image and video attachments, with inline playback where supported.
+- **Voice and video:** one-to-one calls using WebRTC. A call can still connect when local camera or microphone access is unavailable; local media is simply not transmitted until permission is granted.
+- **Web and Windows:** use the responsive web app or install the Windows desktop app.
+- **Automatic desktop updates:** the Windows app checks for stable releases, downloads updates in the background and offers to restart to install them.
+- **Appearance:** light and dark themes and a responsive layout for smaller screens.
 
-## Important limitations
+## Get GitMessage
 
-Creating a conversation currently creates a named conversation record for the signed-in user; it does not search for people, invite participants, or create a direct/group chat membership. That requires the actual participant table and Row Level Security rules for this Supabase project to be confirmed.
+- **Web app:** https://adrianvaleitl-debug.github.io/GitMessage/
+- **Windows installer and release notes:** https://github.com/adrianvaleitl-debug/GitMessage/releases/latest
+- **Source code:** https://github.com/adrianvaleitl-debug/GitMessage
 
-File attachments, voice/video calls, read receipts, push notifications, automatic updates and end-to-end encryption are not implemented. Those controls are intentionally not shown as working features.
+The Windows installer is published through GitHub Releases. The desktop updater follows stable releases.
 
-The UI assumes these columns:
-- `public.conversations(id,title,is_group,created_by,updated_at)`
-- `public.messages(id,conversation_id,sender_id,body,created_at)`
+## Important notes
 
-The database schema and RLS policies have not been introspected from this repository. If conversation creation or messaging returns a Supabase permission/schema error, the relevant table policies or column names must be corrected before the feature can work.
+- Calls are currently one-to-one; group voice/video calling is not available.
+- Calls use WebRTC and are not advertised as end-to-end encrypted.
+- Camera and microphone access are optional for joining a call, but the corresponding local media will not be sent without permission.
+- Supabase provides authentication, message storage and realtime updates. The app requires the configured Supabase project and its database/storage policies.
+- Attachment support depends on the configured Supabase storage bucket and its allowed MIME types and size limits.
 
-## Local setup
+## Local development
 
 1. Install Node.js 22 LTS.
 2. Create `.env.local` from `.env.example`.
 3. Set `VITE_SUPABASE_URL` to `https://pvoywcvyhfuszalczycm.supabase.co`.
-4. Set `VITE_SUPABASE_PUBLISHABLE_KEY` to your existing Supabase publishable key.
-5. In Command Prompt run:
+4. Set `VITE_SUPABASE_PUBLISHABLE_KEY` to your Supabase publishable key.
+5. Run:
 
 ```cmd
 npm install
 npm run dev
 ```
 
-## Windows installer
+To build the web app, run `npm run build`. The Windows installer is built by the GitHub Actions workflow and requires the repository Actions secret `VITE_SUPABASE_PUBLISHABLE_KEY`.
 
-The GitHub Actions workflow builds the installer on pushes to `main` and can also be run manually from Actions. It requires the repository Actions secret `VITE_SUPABASE_PUBLISHABLE_KEY` containing the Supabase publishable key.
-
-Only the publishable key belongs in the desktop client. Never put a Supabase service-role key in the repository or client.
+Only the Supabase publishable key belongs in the client. Never commit a service-role key.

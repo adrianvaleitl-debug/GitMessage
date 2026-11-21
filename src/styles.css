@@ -761,3 +761,27 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
  .desktop-shell .composer-area{padding-bottom:6px!important}
  .desktop-shell .message-canvas{padding-top:4px!important}
 }
+
+
+/* Keep every conversation and message avatar perfectly circular, including uploaded photos. */
+.desktop-shell .conversation-avatar,
+.desktop-shell .conversation-avatar img,
+.desktop-shell .message-avatar,
+.desktop-shell .message-avatar img,
+.desktop-shell .header-avatar,
+.desktop-shell .header-avatar img,
+.desktop-shell .details-avatar,
+.desktop-shell .details-avatar img,
+.desktop-shell .account-avatar,
+.desktop-shell .account-avatar img,
+.desktop-shell .rail-user,
+.desktop-shell .rail-user img,
+.desktop-shell .group-member-avatar,
+.desktop-shell .group-member-avatar img{border-radius:50%!important;overflow:hidden!important}
+.desktop-shell .conversation-avatar img,
+.desktop-shell .message-avatar img,
+.desktop-shell .header-avatar img,
+.desktop-shell .details-avatar img,
+.desktop-shell .account-avatar img,
+.desktop-shell .rail-user img,
+.desktop-shell .group-member-avatar img{width:100%;height:100%;object-fit:cover}

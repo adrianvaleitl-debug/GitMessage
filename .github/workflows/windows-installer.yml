@@ -23,7 +23,7 @@ jobs:
         run: |
           npm install --no-save sharp png-to-ico
           New-Item -ItemType Directory -Force -Path build, .icon-temp | Out-Null
-          node -e "const sharp=require('sharp'); const pngToIco=require('png-to-ico'); const fs=require('fs'); (async()=>{const files=[]; for(const size of [16,32,48,64,128,256]){const file='.icon-temp/'+size+'.png'; await sharp('public/gitmessage-icon.svg').resize(size,size).png().toFile(file); files.push(file);} fs.writeFileSync('build/gitmessage.ico',await pngToIco(files));})().catch(e=>{console.error(e);process.exit(1);});"
+          node -e "const sharp=require('sharp'); const pngToIcoModule=require('png-to-ico'); const pngToIco=pngToIcoModule.default || pngToIcoModule; const fs=require('fs'); (async()=>{const files=[]; for(const size of [16,32,48,64,128,256]){const file='.icon-temp/'+size+'.png'; await sharp('public/gitmessage-icon.svg').resize(size,size).png().toFile(file); files.push(file);} fs.writeFileSync('build/gitmessage.ico',await pngToIco(files));})().catch(e=>{console.error(e);process.exit(1);});"
       - name: Build renderer
         run: npm run build
         env:

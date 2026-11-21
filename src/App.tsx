@@ -780,6 +780,19 @@ export default function App() {
     return peer;
   }
 
+  async function getOptionalCallMedia(kind: "audio" | "video") {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio:true, video:kind==="video" });
+      localStreamRef.current = stream;
+      if (localVideoRef.current) localVideoRef.current.srcObject = stream;
+      return stream;
+    } catch {
+      localStreamRef.current = null;
+      setNotice("Joined without microphone or camera. You can still hear the call; enable device permissions to speak or show video.");
+      return null;
+    }
+  }
+
   async function startCall(kind: "audio" | "video") {
     if (!supabase || !active || !session || callState !== "idle") return;
     const { data: members, error } = await supabase.from("conversation_members").select("user_id").eq("conversation_id",active).neq("user_id",session.user.id).limit(1);
@@ -787,11 +800,17 @@ export default function App() {
     const recipient = members[0].user_id as string;
     callRecipientRef.current = recipient;
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio:true, video:kind==="video" });
-      localStreamRef.current = stream; setCallKind(kind); setCallState("calling");
-      if (localVideoRef.current) localVideoRef.current.srcObject = stream;
+      const stream = await getOptionalCallMedia(kind);
+      setCallKind(kind); setCallState("calling");
       const peer = await makePeer(recipient);
-      stream.getTracks().forEach(track => peer.addTrack(track,stream));
+      const audio = peer.addTransceiver("audio", { direction:"recvonly" });
+      const audioTrack = stream?.getAudioTracks()[0];
+      if (audioTrack) { await audio.sender.replaceTrack(audioTrack); audio.direction = "sendrecv"; }
+      if (kind === "video") {
+        const video = peer.addTransceiver("video", { direction:"recvonly" });
+        const videoTrack = stream?.getVideoTracks()[0];
+        if (videoTrack) { await video.sender.replaceTrack(videoTrack); video.direction = "sendrecv"; }
+      }
       const offer = await peer.createOffer();
       await peer.setLocalDescription(offer);
       const callerName = profileDisplayName || profileUsername || "Your contact";
@@ -803,20 +822,24 @@ export default function App() {
       });
       if (callMessageError) setNotice("Call started, but the chat notification could not be posted: " + callMessageError.message);
       await sendCallSignal(recipient,"offer",{description:offer,kind});
-    } catch (error) { setNotice(error instanceof Error ? error.message : "Could not start the call. Check microphone/camera permissions."); await endCall(); }
+    } catch (error) { setNotice(error instanceof Error ? error.message : "Could not start the call."); await endCall(); }
   }
 
   async function acceptCall() {
     if (!pendingCall || !supabase || !session) return;
     try {
       const kind = pendingCall.payload?.kind === "video" ? "video" : "audio";
-      const stream = await navigator.mediaDevices.getUserMedia({audio:true,video:kind==="video"});
-      localStreamRef.current = stream; setCallKind(kind);
+      const stream = await getOptionalCallMedia(kind);
+      setCallKind(kind);
       const peer = await makePeer(pendingCall.sender_id);
-      stream.getTracks().forEach(track => peer.addTrack(track,stream));
       await peer.setRemoteDescription(new RTCSessionDescription(pendingCall.payload.description));
+      for (const transceiver of peer.getTransceivers()) {
+        const track = transceiver.receiver.track.kind === "audio" ? stream?.getAudioTracks()[0] : stream?.getVideoTracks()[0];
+        if (track) { await transceiver.sender.replaceTrack(track); transceiver.direction = "sendrecv"; }
+      }
       const answer = await peer.createAnswer(); await peer.setLocalDescription(answer);
       await sendCallSignal(pendingCall.sender_id,"answer",{description:answer});
+      callRecipientRef.current = pendingCall.sender_id;
       setPendingCall(null); setCallState("calling");
     } catch (error) { setNotice(error instanceof Error ? error.message : "Could not accept call."); }
   }

@@ -16,14 +16,14 @@ jobs:
       - name: Set release version
         shell: pwsh
         run: npm version "4.0.${{ github.run_number }}" --no-git-tag-version
-      - name: Prepare GitMessage application icon
-        shell: pwsh
-        run: |
-          New-Item -ItemType Directory -Force -Path build | Out-Null
-          $icon = [Convert]::FromBase64String((Get-Content assets/gitmessage.ico.base64 -Raw).Trim())
-          [IO.File]::WriteAllBytes("build/gitmessage.ico", $icon)
       - name: Install dependencies
         run: npm install
+      - name: Generate real multi-resolution Windows icon
+        shell: pwsh
+        run: |
+          npm install --no-save sharp png-to-ico
+          New-Item -ItemType Directory -Force -Path build, .icon-temp | Out-Null
+          node -e "const sharp=require('sharp'); const pngToIco=require('png-to-ico'); const fs=require('fs'); (async()=>{const files=[]; for(const size of [16,32,48,64,128,256]){const file='.icon-temp/'+size+'.png'; await sharp('public/gitmessage-icon.svg').resize(size,size).png().toFile(file); files.push(file);} fs.writeFileSync('build/gitmessage.ico',await pngToIco(files));})().catch(e=>{console.error(e);process.exit(1);});"
       - name: Build renderer
         run: npm run build
         env:
@@ -41,7 +41,7 @@ jobs:
         with:
           tag_name: gitmessage-build-${{ github.run_number }}
           name: GitMessage build ${{ github.run_number }}
-          body: Automated Windows installer build from commit ${{ github.sha }}. Includes automatic update metadata.
+          body: Automated Windows installer build from commit ${{ github.sha }}. Includes automatic update metadata and refreshed application icon.
           prerelease: true
           files: |
             release/*.exe

@@ -54,7 +54,7 @@ begin
     new.profile_frame := old.profile_frame;
   end if;
   return new;
-end $;
+end $fn$;
 drop trigger if exists gm_protect_reserved_profile_cosmetics on public.profiles;
 create trigger gm_protect_reserved_profile_cosmetics before update on public.profiles
 for each row execute function public.gitmessage_protect_reserved_profile_cosmetics();
@@ -81,7 +81,7 @@ begin
     new.member_permissions := '{"manage_group":true,"manage_members":true,"manage_messages":true}'::jsonb;
   end if;
   return new;
-end $;
+end $fn$;
 drop trigger if exists gm_assign_group_owner_role on public.conversation_members;
 create trigger gm_assign_group_owner_role before insert on public.conversation_members
 for each row execute function public.gitmessage_assign_group_owner_role();
@@ -109,7 +109,7 @@ begin
   update public.conversations set title=trim(new_title), avatar_path=coalesce(new_avatar_path,avatar_path), updated_at=now()
   where id=target_conversation_id and kind='group';
   if not found then raise exception 'Group not found.'; end if;
-end $$;
+end $fn$;
 
 create or replace function public.set_gitmessage_group_member_permissions(
   target_conversation_id uuid, target_user_id uuid, new_permissions jsonb, new_role text default 'member'
@@ -131,7 +131,7 @@ begin
       )
   where conversation_id=target_conversation_id and user_id=target_user_id;
   if not found then raise exception 'Group member not found.'; end if;
-end $$;
+end $fn$;
 
 create or replace function public.kick_gitmessage_group_member(target_conversation_id uuid, target_user_id uuid)
 returns void language plpgsql security definer set search_path=public,auth as $fn$
@@ -142,7 +142,7 @@ begin
   delete from public.conversation_members
   where conversation_id=target_conversation_id and user_id=target_user_id and member_role<>'owner';
   if not found then raise exception 'Member not found or cannot be removed.'; end if;
-end $$;
+end $fn$;
 
 revoke all on function public.gitmessage_can_manage_group(uuid,text) from public,anon;
 revoke all on function public.update_gitmessage_group(uuid,text,text) from public,anon;
@@ -238,7 +238,7 @@ begin
  values(sid,auth.uid(),'owner','{"manage_server":true,"manage_channels":true,"manage_members":true,"send_messages":true}'::jsonb);
  insert into public.gitmessage_server_channels(server_id,name) values(sid,'general');
  return query select sid,code;
-end $$;
+end $fn$;
 
 create or replace function public.join_gitmessage_server(server_invite_code text)
 returns uuid language plpgsql security definer set search_path=public,auth as $fn$
@@ -249,7 +249,7 @@ begin
  if sid is null then raise exception 'Invite code not found.'; end if;
  insert into public.gitmessage_server_members(server_id,user_id) values(sid,auth.uid()) on conflict do nothing;
  return sid;
-end $$;
+end $fn$;
 
 create or replace function public.get_my_gitmessage_servers()
 returns table(server_id uuid,name text,description text,avatar_path text,invite_code text,member_role text)

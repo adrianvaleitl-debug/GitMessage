@@ -54,7 +54,7 @@ export default function App() {
 
   const [lightMode, setLightMode] = useState(() => { try { return localStorage.getItem("gitmessage-theme") !== "dark"; } catch { return true; } });
   useEffect(() => { try { localStorage.setItem("gitmessage-theme", lightMode ? "light" : "dark"); } catch { /* Storage may be unavailable. */ } }, [lightMode]);
-  const endRef = useRef<HTMLDivElement>(null);
+  const messageCanvasRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const peerRef = useRef<RTCPeerConnection | null>(null);
   const localStreamRef = useRef<MediaStream | null>(null);
@@ -162,8 +162,9 @@ export default function App() {
   }
 
   useEffect(() => {
-    endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-  }, [messages]);
+    const canvas = messageCanvasRef.current;
+    if (canvas) canvas.scrollTo({ top: canvas.scrollHeight, behavior: "smooth" });
+  }, [messages, active]);
 
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
@@ -599,7 +600,7 @@ export default function App() {
       
       <section className="conversation-pane glass-panel">
         <header className="conversation-header"><div className="header-person"><div className="header-avatar"><MessageCircle size={18}/></div><div><h2>{current?.title || "Your messages"}</h2><p><span className="status-light"/> {someoneTyping ? "Someone is typing…" : current ? "Conversation space" : "A little room for good conversations"}</p></div></div><div className="header-tools"><button className="glass-icon" title="Voice call" disabled={!active || callState!=="idle"} onClick={() => void startCall("audio")}><Phone size={16}/></button><button className="glass-icon" title="Video call" disabled={!active || callState!=="idle"} onClick={() => void startCall("video")}><Video size={16}/></button><span className="live-pill"><i/> LIVE SYNC</span><button className="glass-icon" title="Refresh conversations" onClick={() => void loadConversations()}><RefreshCw size={16}/></button><button className="glass-icon" title="Preferences" onClick={() => setModal("settings")}><Settings size={16}/></button></div></header>
-        <div className="message-canvas">
+        <div className="message-canvas" ref={messageCanvasRef}>
           {active ? messages.length ? messages.map(message => {
             const mine = message.sender_id === session.user.id;
             return <div key={message.id} className={"message-line" + (mine ? " mine" : "")}><div className="message-avatar">{mine ? (profileAvatar ? <img src={profileAvatar} alt="Your profile"/> : (profileDisplayName || session.user.email || session.user.phone || "Y").slice(0,1).toUpperCase()) : (current?.avatar_path && supabase ? <img src={supabase.storage.from("gitmessage-avatars").getPublicUrl(current.avatar_path).data.publicUrl} alt=""/> : (current?.title || "G").slice(0,1).toUpperCase())}</div><div className="message-content"><div className="message-author"><button type="button" className="profile-name-trigger" onClick={() => mine ? void loadProfile() : void openConversationProfile()}>{mine ? (profileDisplayName || "You") : (current?.title || "Contact")}</button> <time>{new Date(message.created_at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</time></div>{message.body.startsWith("📎 ") && attachmentPreviews[message.id] ? <div className={attachmentPreviews[message.id].mime_type.startsWith("image/") ? "image-attachment-wrap" : "message-attachment-card"}>

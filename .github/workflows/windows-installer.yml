@@ -13,6 +13,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Prepare GitMessage application icon
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path build | Out-Null
+          $icon = [Convert]::FromBase64String((Get-Content assets/gitmessage.ico.base64 -Raw).Trim())
+          [IO.File]::WriteAllBytes("build/gitmessage.ico", $icon)
       - name: Install dependencies
         run: npm install
       - name: Build renderer

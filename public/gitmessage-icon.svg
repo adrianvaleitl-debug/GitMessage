@@ -1,9 +1,16 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
 <defs>
- <linearGradient id="base" x1="22" y1="18" x2="234" y2="238" gradientUnits="userSpaceOnUse"><stop stop-color="#252b48"/><stop offset="1" stop-color="#111522"/></linearGradient>
- <linearGradient id="accent" x1="65" y1="48" x2="198" y2="205" gradientUnits="userSpaceOnUse"><stop stop-color="#9aa8ff"/><stop offset="1" stop-color="#5865f2"/></linearGradient>
+  <linearGradient id="bg" x1="18" y1="12" x2="238" y2="246" gradientUnits="userSpaceOnUse"><stop stop-color="#071b50"/><stop offset=".55" stop-color="#080b25"/><stop offset="1" stop-color="#350078"/></linearGradient>
+  <radialGradient id="glow" cx="0" cy="0" r="1" gradientTransform="matrix(170 150 -150 170 48 38)" gradientUnits="userSpaceOnUse"><stop stop-color="#075dff"/><stop offset="1" stop-color="#075dff" stop-opacity="0"/></radialGradient>
+  <linearGradient id="bubble" x1="65" y1="48" x2="190" y2="203" gradientUnits="userSpaceOnUse"><stop stop-color="#fff"/><stop offset="1" stop-color="#e9eaff"/></linearGradient>
+  <linearGradient id="lines" x1="74" y1="92" x2="184" y2="161" gradientUnits="userSpaceOnUse"><stop stop-color="#00a5ff"/><stop offset="1" stop-color="#303cff"/></linearGradient>
+  <filter id="shadow" x="28" y="34" width="205" height="198" color-interpolation-filters="sRGB" filterUnits="userSpaceOnUse"><feGaussianBlur stdDeviation="8"/></filter>
 </defs>
-<rect x="8" y="8" width="240" height="240" rx="66" fill="url(#base)"/>
-<path d="M128 43c-43.6 0-79 29.7-79 66.3 0 19.4 10.1 36.8 26.2 48.9l-5.8 31.2 35.1-17.1c7.3 2.2 15.2 3.3 23.5 3.3 43.6 0 79-29.7 79-66.3S171.6 43 128 43Z" fill="url(#accent)"/>
-<path d="M155.5 96.5c-7.1-8.4-17.2-13.2-28.7-13.2-20.5 0-36.1 15.9-36.1 36.7s15.6 36.7 36.1 36.7c18.4 0 31.7-11.6 33.8-29.2h-31.2" fill="none" stroke="#fff" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+<rect width="256" height="256" rx="58" fill="url(#bg)"/>
+<rect width="256" height="256" rx="58" fill="url(#glow)"/>
+<path d="M128 45c-43.6 0-79 29.7-79 66.3 0 19.4 10.1 36.8 26.2 48.9l-11.5 30.1c-2.4 6.3 4.2 12.2 10.2 9.1l31.3-16.1c7.2 2.1 14.8 3.2 22.8 3.2 43.6 0 79-29.7 79-66.3S171.6 45 128 45Z" fill="#05091d" opacity=".48" filter="url(#shadow)"/>
+<path d="M128 40c-43.6 0-79 29.7-79 66.3 0 19.4 10.1 36.8 26.2 48.9l-11.5 30.1c-2.4 6.3 4.2 12.2 10.2 9.1l31.3-16.1c7.2 2.1 14.8 3.2 22.8 3.2 43.6 0 79-29.7 79-66.3S171.6 40 128 40Z" fill="url(#bubble)"/>
+<rect x="78" y="91" width="112" height="22" rx="11" fill="url(#lines)"/>
+<rect x="78" y="127" width="77" height="22" rx="11" fill="url(#lines)"/>
+<circle cx="174" cy="138" r="11" fill="#8b16f5"/>
 </svg>

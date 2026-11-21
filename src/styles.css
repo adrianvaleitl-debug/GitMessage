@@ -1200,3 +1200,16 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
  .message-bubble,.message-line.mine .message-bubble,.message-line:not(.mine) .message-bubble{font-size:14px}
  .message-canvas{padding-top:18px!important}
 }
+
+
+/* User profile cover banners */
+.profile-banner-editor{display:grid;gap:8px;margin:8px 0 12px;padding:13px;border:1px solid var(--line);border-radius:15px;background:var(--panel-2)}
+.profile-banner-editor-preview{height:112px;display:grid;place-items:center;overflow:hidden;border:1px dashed var(--line);border-radius:11px;background:linear-gradient(135deg,#303846,#20252e);color:var(--muted);font-size:10px;font-weight:750;letter-spacing:2px}
+.profile-banner-editor-preview img,.profile-banner img{width:100%;height:100%;display:block;object-fit:cover}
+.profile-banner-editor .avatar-upload-label{width:100%;box-sizing:border-box;justify-content:center}
+.profile-banner-editor small{color:var(--muted);font-size:10px}
+.profile-banner-remove{justify-self:start;padding:4px 0;border:0;background:transparent;color:#e18b91;font-size:10px;cursor:pointer}
+.profile-banner{width:100%;height:126px;overflow:hidden;background:linear-gradient(135deg,#303846,#20252e)}
+.public-profile-banner{height:132px;margin:-25px -25px 18px;width:calc(100% + 50px);border-radius:22px 22px 0 0}
+.profile-banner-preview{height:86px;margin:0 0 12px;border-radius:11px}
+.public-profile-card .public-profile-heading{min-height:56px}

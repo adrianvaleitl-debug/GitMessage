@@ -925,3 +925,9 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
 .public-profile-card.profile-ring-none .profile-photo{box-shadow:none!important;border-color:transparent!important}
 .public-profile-card.profile-ring-subtle .profile-photo{box-shadow:0 0 0 2px #858b96!important}
 .public-profile-card.profile-ring-accent .profile-photo{box-shadow:0 0 0 4px var(--profile-accent)!important}
+
+
+/* Consecutive messages by one sender form a compact visual group. */
+.message-line.grouped{padding-top:1px!important;padding-bottom:3px!important}
+.message-line.grouped .message-content{margin-left:46px!important}
+.message-line.grouped:hover{background:transparent}

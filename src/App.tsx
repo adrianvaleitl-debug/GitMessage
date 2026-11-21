@@ -805,7 +805,7 @@ export default function App() {
   if (!session) return (
     <main className={"auth-shell" + (lightMode ? " light" : "")}>
 
-      <div className="auth-top"><div className="brand-lockup"><span>GitMessage</span></div><div className="auth-download"><a href="https://github.com/adrianvaleitl-debug/GitMessage/releases/latest" target="_blank" rel="noreferrer">Download GitMessage for Windows</a></div><span className="top-caption">A little more connected.</span></div>
+      <div className="auth-top"><div className="brand-lockup"><span>Messages</span></div><div className="auth-download"><a href="https://github.com/adrianvaleitl-debug/GitMessage/releases/latest" target="_blank" rel="noreferrer">Download GitMessage for Windows</a></div><span className="top-caption">A little more connected.</span></div>
       <section className="auth-layout">
         <div className="auth-copy"><div className="eyebrow">MESSAGES, MADE SIMPLE</div><h1>Stay close.<br/><span>Say more.</span></h1><p>Simple, private conversations with the people who matter.</p></div>
         <form className="auth-card glass-panel" onSubmit={authenticate}>

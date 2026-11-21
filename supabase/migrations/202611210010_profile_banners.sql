@@ -1,5 +1,6 @@
 -- Add public profile cover/banner image support.
 -- Reuses the existing gitmessage-avatars storage bucket and its per-user folder policy.
+update storage.buckets set file_size_limit=8388608 where id='gitmessage-avatars';
 
 alter table public.profiles
   add column if not exists banner_path text;

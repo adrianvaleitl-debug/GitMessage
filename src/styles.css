@@ -423,3 +423,8 @@ button:disabled{cursor:not-allowed;opacity:.45}
 .auth-download{margin-left:auto}
 .auth-download a{font-size:11px;color:var(--muted);text-decoration:none;border:1px solid var(--line);border-radius:8px;padding:8px 11px}
 .auth-download a:hover{color:var(--text);border-color:var(--accent)}
+
+.profile-frame-gold{outline:3px solid #c99b35;box-shadow:0 0 0 5px rgba(201,155,53,.18),0 0 24px rgba(201,155,53,.22)}
+.profile-frame-silver{outline:3px solid #aeb7c4;box-shadow:0 0 0 5px rgba(174,183,196,.18),0 0 22px rgba(174,183,196,.2)}
+.profile-photo.profile-frame-gold,.profile-photo.profile-frame-silver{border-radius:50%;padding:3px}
+.profile-photo.profile-frame-gold img,.profile-photo.profile-frame-silver img{border-radius:50%}

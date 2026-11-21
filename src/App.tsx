@@ -110,7 +110,7 @@ export default function App() {
     event?.preventDefault();
     if (!supabase || !serverName.trim()) return;
     setBusy(true); setNotice("");
-    const { data, error } = await supabase.rpc("create_gitmessage_server",{server_name:serverName.trim(),server_description:serverDescription.trim()});
+    const { error } = await supabase.rpc("create_gitmessage_server",{server_name:serverName.trim(),server_description:serverDescription.trim()});
     setBusy(false);
     if (error) { setNotice(error.message); return; }
     setServerName(""); setServerDescription("");

@@ -464,3 +464,5 @@ button:disabled{cursor:not-allowed;opacity:.45}
 .desktop-shell:not(.light)[class*="palette-"] .conversation-details{border-color:var(--line)!important}
 .desktop-shell:not(.light)[class*="palette-"] .header-person h2,
 .desktop-shell:not(.light)[class*="palette-"] .message-author{color:var(--text)}
+
+.download-preference{text-decoration:none}

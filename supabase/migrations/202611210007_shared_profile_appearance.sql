@@ -77,7 +77,9 @@ $fn$;
 revoke all on function public.get_gitmessage_conversation_profile(uuid) from public,anon;
 grant execute on function public.get_gitmessage_conversation_profile(uuid) to authenticated;
 
-create or replace function public.update_gitmessage_profile(
+drop function if exists public.update_gitmessage_profile(text,text,text,text);
+
+create function public.update_gitmessage_profile(
   new_username text,
   new_display_name text,
   new_bio text default '',

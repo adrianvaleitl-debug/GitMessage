@@ -67,7 +67,7 @@ create or replace function public.update_gitmessage_group(
 begin
   if not public.gitmessage_can_manage_group(target_conversation_id,'manage_group') then raise exception 'You do not have permission to manage this group.'; end if;
   if nullif(trim(new_title),'') is null or char_length(trim(new_title))>80 then raise exception 'Group name must be 1–80 characters.'; end if;
-  update public.conversations set title=trim(new_title), avatar_path=new_avatar_path, updated_at=now()
+  update public.conversations set title=trim(new_title), avatar_path=coalesce(new_avatar_path,avatar_path), updated_at=now()
   where id=target_conversation_id and kind='group';
   if not found then raise exception 'Group not found.'; end if;
 end $$;
@@ -119,7 +119,7 @@ create table if not exists public.gitmessage_servers (
   description text not null default '' check (char_length(description)<=500),
   avatar_path text,
   owner_id uuid not null references auth.users(id) on delete cascade,
-  invite_code text not null unique default encode(gen_random_bytes(8),'hex'),
+  invite_code text not null unique default replace(gen_random_uuid()::text,'-',''),
   created_at timestamptz not null default now()
 );
 create table if not exists public.gitmessage_server_members (

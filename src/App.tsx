@@ -55,6 +55,8 @@ export default function App() {
   const [serverDescription, setServerDescription] = useState("");
   const [serverJoinCode, setServerJoinCode] = useState("");
   const [activeServer, setActiveServer] = useState<any>(null);
+  const [serverChannels, setServerChannels] = useState<any[]>([]);
+  const [serverChannelName, setServerChannelName] = useState("");
   const [activeServerChannel, setActiveServerChannel] = useState("");
   const [serverMessages, setServerMessages] = useState<any[]>([]);
   const [serverDraft, setServerDraft] = useState("");
@@ -155,10 +157,31 @@ export default function App() {
     if (error) { setNotice(error.message); return; }
     if (!channels?.length) { setNotice("This server has no channels yet."); return; }
     setActiveServer(server);
+    setServerChannels(channels);
     setActiveServerChannel(channels[0].id);
-    setServerMessages([]);
+    const { data: messages, error: messageError } = await supabase.from("gitmessage_server_messages").select("id,body,sender_id,created_at").eq("server_id",server.server_id).eq("channel_id",channels[0].id).order("created_at",{ascending:true}).limit(300);
+    if (messageError) { setNotice(messageError.message); return; }
+    setServerMessages(messages || []);
     setServerDraft("");
     setModal("server-chat");
+  }
+  async function selectServerChannel(channel:any) {
+    if (!supabase || !activeServer) return;
+    setActiveServerChannel(channel.id);
+    const { data, error } = await supabase.from("gitmessage_server_messages").select("id,body,sender_id,created_at").eq("server_id",activeServer.server_id).eq("channel_id",channel.id).order("created_at",{ascending:true}).limit(300);
+    if (error) { setNotice(error.message); return; }
+    setServerMessages(data || []);
+  }
+  async function createServerChannel(event?:FormEvent) {
+    event?.preventDefault();
+    if (!supabase || !activeServer || !serverChannelName.trim()) return;
+    const name=serverChannelName.trim().toLowerCase().replace(/[^a-z0-9-]/g,"-").replace(/-+/g,"-").slice(0,48);
+    if (!name) { setNotice("Enter a valid channel name."); return; }
+    const { data, error } = await supabase.from("gitmessage_server_channels").insert({server_id:activeServer.server_id,name}).select("id,name").single();
+    if (error) { setNotice(error.message); return; }
+    setServerChannels(rows=>[...rows,data]);
+    setServerChannelName("");
+    await selectServerChannel(data);
   }
   async function sendServerMessage(event?:FormEvent) {
     event?.preventDefault();
@@ -866,7 +889,8 @@ export default function App() {
 
         <button className="rail-button selected" title="Messages" onClick={() => { setQuery(""); setActive(conversations[0]?.id || ""); }}><MessageCircle size={20}/></button>
         <button className="rail-button" title="Friends" onClick={() => void loadFriendRequests()}><Users size={20}/></button>
-        <button className="rail-button rail-add" title="Servers" aria-label="Servers" onClick={() => void openServers()}><Server size={20}/></button>
+        <button className="rail-button rail-add" title="Create or join server" aria-label="Create or join server" onClick={() => void openServers()}><Plus size={21}/></button>
+        <div className="rail-server-list">{serverRows.map((server:any)=><button key={server.server_id} type="button" className={"rail-server-button"+(activeServer?.server_id===server.server_id?" selected":"")} title={server.name} aria-label={server.name} onClick={()=>void openServerChat(server)}>{server.avatar_path && supabase ? <img src={supabase.storage.from("gitmessage-avatars").getPublicUrl(server.avatar_path).data.publicUrl} alt=""/> : server.name.slice(0,2).toUpperCase()}</button>)}</div>
         <div className="rail-spacer"/>
         <button className="rail-button" title="Appearance and preferences" onClick={() => setModal("settings")}><Settings size={19}/></button>
         <button className="rail-user" title="Edit profile" onClick={() => void loadProfile()}>{profileAvatar ? <img src={profileAvatar} alt="Your profile"/> : <UserRound size={22} strokeWidth={1.8}/>}</button>

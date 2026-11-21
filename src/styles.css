@@ -300,3 +300,104 @@ button:disabled{cursor:not-allowed;opacity:.45}
   .auth-layout{width:calc(100vw - 32px);padding:20px 0}
   .auth-card{width:100%;max-width:420px}
 }
+
+
+/* Reversed desktop layout: conversation information on the left, inbox and app rail on the right. */
+@media(min-width:1121px){
+  .desktop-shell{grid-template-columns:250px minmax(0,1fr) 258px 64px}
+  .conversation-details{grid-column:1;grid-row:1;border-left:0;border-right:1px solid #202126}
+  .conversation-pane{grid-column:2;grid-row:1}
+  .sidebar{grid-column:3;grid-row:1;border-right:0;border-left:1px solid #1b1c20}
+  .app-rail{grid-column:4;grid-row:1;border-right:0;border-left:1px solid #17181b}
+}
+@media(min-width:761px) and (max-width:1120px){
+  .desktop-shell{grid-template-columns:minmax(0,1fr) 220px 58px}
+  .conversation-pane{grid-column:1;grid-row:1}
+  .conversation-details{display:none}
+  .sidebar{grid-column:2;grid-row:1;border-right:0;border-left:1px solid #1b1c20}
+  .app-rail{grid-column:3;grid-row:1;border-right:0;border-left:1px solid #17181b}
+}
+@media(min-width:681px) and (max-width:760px){
+  .desktop-shell{grid-template-columns:minmax(0,1fr) 205px 54px}
+  .conversation-pane{grid-column:1;grid-row:1}
+  .sidebar{grid-column:2;grid-row:1}
+  .app-rail{grid-column:3;grid-row:1}
+}
+
+/* Complete light appearance, applied to the same theme toggle in web and Electron. */
+.desktop-shell.light{
+  color-scheme:light;
+  --bg:#f4f5f8;--panel:#ffffff;--panel-2:#f0f1f5;--panel-3:#e7e9ef;
+  --line:#d9dce4;--text:#20232b;--muted:#626875;--subtle:#858b98;
+  background:var(--bg);color:var(--text);
+}
+.desktop-shell.light .app-rail{background:#eceef3;border-color:#d9dce4}
+.desktop-shell.light .rail-button{background:#dfe2e9;color:#555d6c}
+.desktop-shell.light .rail-button:hover,.desktop-shell.light .rail-button.selected{background:var(--blue);color:#fff}
+.desktop-shell.light .rail-add{color:#16834a}
+.desktop-shell.light .rail-add:hover{background:#16834a;color:#fff}
+.desktop-shell.light .rail-user{background:#d5d9e2;color:#303644}
+.desktop-shell.light .sidebar{background:#fff;border-color:#d9dce4}
+.desktop-shell.light .sidebar-brand{border-color:#e2e4ea}
+.desktop-shell.light .brand-lockup,.desktop-shell.light .account-copy b{color:#20232b}
+.desktop-shell.light .account-copy small,.desktop-shell.light .list-heading,
+.desktop-shell.light .conversation-meta small,.desktop-shell.light .settings-row,
+.desktop-shell.light .conversation-item{color:#626875}
+.desktop-shell.light .search-field,.desktop-shell.light .modal-card input:not([type=file]),
+.desktop-shell.light .auth-card input{background:#f0f1f5;color:#20232b}
+.desktop-shell.light .search-field input{color:#20232b}
+.desktop-shell.light .conversation-item:hover,.desktop-shell.light .settings-row:hover{background:#f0f1f5;color:#20232b}
+.desktop-shell.light .conversation-item.active{background:#e5e8f1;color:#20232b}
+.desktop-shell.light .conversation-avatar,.desktop-shell.light .header-avatar,
+.desktop-shell.light .account-avatar,.desktop-shell.light .contact-result-avatar{color:#fff}
+.desktop-shell.light .conversation-pane,.desktop-shell.light .conversation-header,
+.desktop-shell.light .message-canvas,.desktop-shell.light .composer-area{background:#f7f8fa}
+.desktop-shell.light .conversation-header{border-color:#e2e4ea!important}
+.desktop-shell.light .header-person h2,.desktop-shell.light .message-author,
+.desktop-shell.light .message-author button,.desktop-shell.light .empty-conversation h3{color:#20232b}
+.desktop-shell.light .header-person p,.desktop-shell.light .message-author time,
+.desktop-shell.light .message-meta,.desktop-shell.light .composer-caption,
+.desktop-shell.light .empty-conversation p{color:#737987}
+.desktop-shell.light .message-line:hover{background:#eef0f4}
+.desktop-shell.light .message-bubble,.desktop-shell.light .message-line:not(.mine) .message-bubble,
+.desktop-shell.light .message-line.mine .message-bubble,.desktop-shell.light .message-line.mine .message-bubble{color:#303541}
+.desktop-shell.light .composer-glass{background:#e9ebf1!important}
+.desktop-shell.light .composer-glass textarea{color:#20232b}
+.desktop-shell.light .composer-glass textarea::placeholder{color:#858b98}
+.desktop-shell.light .composer-glass .glass-icon{color:#626875}
+.desktop-shell.light .conversation-details{background:#fff;border-color:#d9dce4}
+.desktop-shell.light .details-heading,.desktop-shell.light .details-profile,
+.desktop-shell.light .details-section{border-color:#e2e4ea;color:#626875}
+.desktop-shell.light .details-profile h3,.desktop-shell.light .details-count{color:#20232b}
+.desktop-shell.light .details-profile p,.desktop-shell.light .details-muted,
+.desktop-shell.light .details-row{color:#626875}
+.desktop-shell.light .details-row svg{color:#858b98}
+.desktop-shell.light .modal-card{background:#fff!important;border-color:#d9dce4!important;color:#20232b}
+.desktop-shell.light .modal-card .eyebrow,.desktop-shell.light .modal-description,
+.desktop-shell.light .modal-card label,.desktop-shell.light .contact-result-copy small,
+.desktop-shell.light .preference-row small,.desktop-shell.light .settings-account small{color:#626875}
+.desktop-shell.light .modal-icon,.desktop-shell.light .preference-icon{background:#eef0f4;color:#555d6c}
+.desktop-shell.light .contact-result,.desktop-shell.light .settings-account{background:#f0f1f5}
+.desktop-shell.light .contact-start-button,.desktop-shell.light .call-banner button{background:#e0e3ea;color:#303541}
+.desktop-shell.light .preference-row{border-color:#e2e4ea}
+.desktop-shell.light .preference-row:hover{background:#f7f8fa}
+.desktop-shell.light .glass-icon{color:#626875}
+.desktop-shell.light .glass-icon:hover{background:#e5e8ef;color:#20232b}
+.desktop-shell.light .call-banner{background:#fff;border-color:#d9dce4;color:#20232b}
+.desktop-shell.light .reaction-strip button{background:#fff;border-color:#d9dce4;color:#303541}
+.desktop-shell.light .message-attachment-card{background:#fff;border-color:#d9dce4}
+.desktop-shell.light .attachment-file-row{color:#303541}
+.desktop-shell.light .attachment-file-row small{color:#737987}
+.desktop-shell.light .attachment-file-row button{background:#e0e3ea;color:#303541}
+.desktop-shell.light .account-chip{border-color:#e2e4ea!important}
+.desktop-shell.light .list-empty,.desktop-shell.light .list-empty p{color:#737987}
+.desktop-shell.light .conversation-delete{color:#737987}
+.desktop-shell.light .auth-shell{background:#f4f5f8;color:#20232b}
+.desktop-shell.light .auth-card{background:#fff;border-color:#d9dce4;color:#20232b}
+.desktop-shell.light .auth-copy p,.desktop-shell.light .auth-card-heading p,
+.desktop-shell.light .auth-card label,.desktop-shell.light .top-caption{color:#626875}
+.desktop-shell.light .auth-method-switch{background:#f0f1f5}
+.desktop-shell.light .auth-method-switch button{color:#626875}
+.desktop-shell.light .auth-method-switch button.selected{background:#dfe2e9;color:#20232b}
+.desktop-shell.light .auth-foot{border-color:#e2e4ea;color:#626875}
+.desktop-shell.light .boot-screen{background:#f4f5f8;color:#626875}

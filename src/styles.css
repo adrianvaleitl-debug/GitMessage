@@ -651,3 +651,17 @@ button:disabled{cursor:not-allowed;opacity:.45}
  .desktop-shell.mobile-chat-open>.app-rail{display:none}
  .desktop-shell.mobile-chat-open>.conversation-pane{grid-column:1/-1}
 }
+
+
+/* Clickable identity and message references. */
+.message-inline-link{color:#a9c5ff;text-decoration:underline;text-decoration-color:#718bbd;text-underline-offset:3px;overflow-wrap:anywhere;cursor:pointer}
+.message-inline-link:hover{color:#d4e2ff;text-decoration-color:currentColor}
+.message-mention-link{display:inline;padding:0 3px;border:0;border-radius:5px;background:rgba(105,139,204,.18);color:#b7ceff;font:inherit;font-weight:650;cursor:pointer}
+.message-mention-link:hover{background:rgba(105,139,204,.32);color:#e0eaff}
+.profile-trigger,.profile-name-trigger{cursor:pointer}
+.profile-trigger:focus-visible,.profile-name-trigger:focus-visible,.message-mention-link:focus-visible,.message-inline-link:focus-visible{outline:2px solid #91a9d1;outline-offset:3px}
+button.profile-name-trigger{display:flex;flex-direction:column;align-items:flex-start;min-width:0;padding:0;border:0;background:transparent;color:inherit;text-align:left;font:inherit}
+button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8ceff}
+.group-member-avatar{border:0;cursor:pointer}
+.contact-result-copy.profile-name-trigger{flex:1;min-width:0}
+.contact-result-copy.profile-name-trigger b,.contact-result-copy.profile-name-trigger small{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}

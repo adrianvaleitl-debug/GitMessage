@@ -499,7 +499,7 @@ export default function App() {
   if (!session) return (
     <main className={"auth-shell" + (lightMode ? " light" : "")}>
 
-      <div className="auth-top"><div className="brand-lockup"><span className="brand-icon"><img src="./gitmessage-icon.svg" alt=""/></span><span>GitMessage</span></div><span className="top-caption">A little more connected.</span></div>
+      <div className="auth-top"><div className="brand-lockup"><span>GitMessage</span></div><span className="top-caption">A little more connected.</span></div>
       <section className="auth-layout">
         <div className="auth-copy"><div className="eyebrow">MESSAGES, MADE SIMPLE</div><h1>Stay close.<br/><span>Say more.</span></h1><p>Simple, private conversations with the people who matter.</p></div>
         <form className="auth-card glass-panel" onSubmit={authenticate}>
@@ -521,8 +521,7 @@ export default function App() {
   return (
     <main className={"desktop-shell" + (lightMode ? " light" : "")}>
       <nav className="app-rail" aria-label="Main navigation">
-        <button className="rail-brand active" title="GitMessage"><img src="./gitmessage-icon.svg" alt="GitMessage"/></button>
-        <div className="rail-divider"/>
+
         <button className="rail-button selected" title="Messages" onClick={() => { setQuery(""); setActive(conversations[0]?.id || ""); }}><MessageCircle size={20}/></button>
         <button className="rail-button" title="Friends" onClick={() => void loadFriendRequests()}><Users size={20}/></button>
         <button className="rail-button rail-add" title="New message" onClick={() => setModal("new")}><Plus size={21}/></button>
@@ -531,7 +530,7 @@ export default function App() {
         <button className="rail-user" title="Edit profile" onClick={() => void loadProfile()}>{(session.user.email || session.user.phone || "G").slice(0,1).toUpperCase()}</button>
       </nav>
       <aside className="sidebar glass-panel">
-        <div className="sidebar-brand"><div className="brand-lockup"><span className="brand-icon"><img src="/gitmessage-icon.svg" alt=""/></span><span>GitMessage</span></div></div>
+        <div className="sidebar-brand"><div className="brand-lockup"><span>GitMessage</span></div></div>
         <div className="account-chip"><div className="account-avatar">{(session.user.email || session.user.phone || "G").slice(0,1).toUpperCase()}</div><div className="account-copy"><b>{session.user.email?.split("@")[0] || session.user.phone || "Your account"}</b><small><i/> Online</small></div><button className="glass-icon tiny" title="Account settings" onClick={() => setModal("settings")}><MoreHorizontal size={18}/></button></div>
         <div className="search-field"><Search size={16}/><input ref={inputRef} value={query} onChange={e => setQuery(e.target.value)} placeholder="Find a conversation"/><kbd>⌘ K</kbd></div>
         <div className="list-heading"><span>DIRECT MESSAGES</span><button className="glass-icon tiny" title="New conversation" onClick={() => setModal("new")}><Plus size={17}/></button></div>

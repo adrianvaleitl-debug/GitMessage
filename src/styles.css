@@ -466,3 +466,38 @@ button:disabled{cursor:not-allowed;opacity:.45}
 .desktop-shell:not(.light)[class*="palette-"] .message-author{color:var(--text)}
 
 .download-preference{text-decoration:none}
+
+
+/* Server hub occupies the rail action; compose remains available beside the inbox title. */
+.sidebar-brand{display:flex;align-items:center;justify-content:space-between}
+.sidebar-new-message{display:grid;place-items:center;width:29px;height:29px;border:0;border-radius:8px;background:var(--panel-3);color:var(--text);cursor:pointer}
+.sidebar-new-message:hover{background:var(--accent,#8b9aa8);color:#101418}
+.rail-add{background:#30343b!important;color:#35b978!important}
+.rail-add:hover{background:#35b978!important;color:#fff!important}
+.message-avatar.profile-trigger{border:0;padding:0;cursor:pointer;flex-shrink:0}
+.message-avatar.profile-trigger:focus-visible,.profile-name-trigger:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+
+/* Profile palettes decorate profile identity only, never the application shell. */
+.public-profile-card{--profile-accent:#8b9aa8}
+.public-profile-card.palette-ocean{--profile-accent:#38a6a0}
+.public-profile-card.palette-plum{--profile-accent:#c18acb}
+.public-profile-card.palette-ember{--profile-accent:#df9564}
+.public-profile-card.palette-moss{--profile-accent:#8fb58a}
+.public-profile-card.palette-sand{--profile-accent:#d1b47a}
+.public-profile-card .profile-photo{border:3px solid var(--profile-accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--profile-accent) 20%,transparent)}
+.profile-photo.profile-accent-graphite{border:3px solid #8b9aa8}
+.profile-photo.profile-accent-ocean{border:3px solid #38a6a0}
+.profile-photo.profile-accent-plum{border:3px solid #c18acb}
+.profile-photo.profile-accent-ember{border:3px solid #df9564}
+.profile-photo.profile-accent-moss{border:3px solid #8fb58a}
+.profile-photo.profile-accent-sand{border:3px solid #d1b47a}
+
+/* Uniform dark surfaces prevent partial recolouring from profile palette classes. */
+.desktop-shell:not(.light){--bg:#17191d;--panel:#22262c;--panel-2:#1c2025;--panel-3:#303740;--line:#3b424b;--accent:#8b9aa8;--accent-hover:#718293;--text:#f2f3f5;--muted:#aeb1b8}
+.desktop-shell:not(.light) .sidebar,.desktop-shell:not(.light) .conversation-details{background:#22262c}
+.desktop-shell:not(.light) .app-rail{background:#1c2025}
+.desktop-shell:not(.light) .conversation-pane,.desktop-shell:not(.light) .conversation-header,.desktop-shell:not(.light) .message-canvas,.desktop-shell:not(.light) .composer-area{background:#17191d}
+.desktop-shell:not(.light) .search-field,.desktop-shell:not(.light) .composer-glass{background:#1c2025!important}
+.desktop-shell:not(.light) .conversation-item.active,.desktop-shell:not(.light) .conversation-item:hover{background:#303740;color:#f2f3f5}
+.desktop-shell:not(.light) .conversation-header,.desktop-shell:not(.light) .sidebar,.desktop-shell:not(.light) .conversation-details{border-color:#3b424b!important}
+.desktop-shell.electron-shell::before{content:"";position:fixed;z-index:9999;top:0;left:0;right:138px;height:36px;-webkit-app-region:drag;pointer-events:none}

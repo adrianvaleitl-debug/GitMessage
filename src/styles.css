@@ -697,3 +697,67 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
 @media(max-width:1100px){.desktop-shell{grid-template-columns:56px minmax(0,1fr) 230px!important}.desktop-shell>.conversation-details{right:242px!important}}
 @media(max-width:760px){.desktop-shell{grid-template-columns:48px minmax(0,1fr) 210px!important}.desktop-shell>.conversation-details{right:222px!important}}
 @media(max-width:560px){.desktop-shell{grid-template-columns:minmax(0,1fr) 48px!important}.desktop-shell>.app-rail{grid-column:2!important}.desktop-shell>.conversation-pane{grid-column:1!important}.desktop-shell>.sidebar{display:none!important}.desktop-shell>.conversation-details{right:8px!important;left:8px!important;top:8px!important;bottom:8px!important;width:auto!important;max-width:none!important}}
+
+
+/* Device-specific layouts: desktop, tablet and phone. */
+/* Desktop / laptop: chat in the centre, conversation list on the right. */
+@media(min-width:1101px){
+ .desktop-shell{grid-template-columns:64px minmax(0,1fr) 258px!important;gap:12px!important;padding:12px!important}
+ .desktop-shell>.app-rail{grid-column:1!important;grid-row:1!important}
+ .desktop-shell>.conversation-pane{grid-column:2!important;grid-row:1!important}
+ .desktop-shell>.sidebar{grid-column:3!important;grid-row:1!important}
+ .desktop-shell>.conversation-details{right:270px!important;width:258px!important}
+ .desktop-shell .mobile-back{display:none!important}
+}
+/* Tablet: compact navigation and conversation list, with the chat taking remaining space. */
+@media(min-width:761px) and (max-width:1100px){
+ .desktop-shell{grid-template-columns:56px minmax(0,1fr) 230px!important;gap:9px!important;padding:9px!important}
+ .desktop-shell>.app-rail{grid-column:1!important;grid-row:1!important}
+ .desktop-shell>.conversation-pane{grid-column:2!important;grid-row:1!important}
+ .desktop-shell>.sidebar{grid-column:3!important;grid-row:1!important}
+ .desktop-shell>.conversation-details{right:242px!important;width:230px!important}
+ .desktop-shell .conversation-header{gap:8px!important;padding:10px 12px!important}
+ .desktop-shell .header-tools{gap:2px!important}
+ .desktop-shell .composer-area{padding-left:12px!important;padding-right:12px!important}
+ .desktop-shell .mobile-back{display:none!important}
+}
+/* Phone: show either the conversation list or the open chat, never squeeze both together. */
+@media(max-width:760px){
+ .desktop-shell{display:grid!important;grid-template-columns:minmax(0,1fr)!important;grid-template-rows:minmax(0,1fr)!important;gap:0!important;padding:0!important}
+ .desktop-shell>.app-rail{display:none!important}
+ .desktop-shell>.sidebar{grid-column:1!important;grid-row:1!important;display:flex!important;width:100%!important;min-width:0!important;border:0!important;border-radius:0!important}
+ .desktop-shell>.conversation-pane{grid-column:1!important;grid-row:1!important;display:none!important;width:100%!important;min-width:0!important;border:0!important;border-radius:0!important}
+ .desktop-shell.mobile-chat-open>.sidebar{display:none!important}
+ .desktop-shell.mobile-chat-open>.conversation-pane{display:flex!important}
+ .desktop-shell .mobile-back{display:grid!important;flex:0 0 34px!important;width:34px!important;height:34px!important}
+ .desktop-shell .conversation-header{gap:7px!important;padding:9px 10px!important}
+ .desktop-shell .header-person{gap:7px!important;flex:1!important}
+ .desktop-shell .header-avatar{width:29px!important;height:29px!important;flex:0 0 29px!important}
+ .desktop-shell .header-person h2{font-size:12px!important}
+ .desktop-shell .header-tools{gap:0!important;flex:0 0 auto!important}
+ .desktop-shell .header-tools .glass-icon{width:29px!important;height:29px!important}
+ .desktop-shell .message-canvas{padding:8px 5px 14px!important}
+ .desktop-shell .message-line{gap:8px!important;padding:7px 9px!important}
+ .desktop-shell .message-avatar{width:30px!important;height:30px!important;flex-basis:30px!important}
+ .desktop-shell .composer-area{padding:0 9px 10px!important}
+ .desktop-shell .composer-glass{min-height:44px!important}
+ .desktop-shell .composer-caption{font-size:8px!important}
+ .desktop-shell>.conversation-details{position:fixed!important;z-index:100!important;display:none!important;inset:8px!important;width:auto!important;max-width:none!important;bottom:8px!important;border-radius:18px!important}
+ .desktop-shell>.conversation-details.details-open{display:block!important}
+ .desktop-shell>.conversation-details .details-close{display:grid!important}
+}
+/* Very small phones: keep controls tappable and prevent the header/composer overflowing. */
+@media(max-width:420px){
+ .desktop-shell .header-tools .glass-icon{width:27px!important;height:29px!important}
+ .desktop-shell .header-tools{gap:0!important}
+ .desktop-shell .conversation-header{padding:8px!important}
+ .desktop-shell .header-person p{font-size:9px!important}
+ .desktop-shell .composer-caption kbd{display:none!important}
+ .desktop-shell .message-line{padding-left:7px!important;padding-right:7px!important}
+}
+/* Landscape phones: use the full width for the active conversation. */
+@media(max-width:760px) and (orientation:landscape){
+ .desktop-shell .conversation-header{height:48px!important;min-height:48px!important}
+ .desktop-shell .composer-area{padding-bottom:6px!important}
+ .desktop-shell .message-canvas{padding-top:4px!important}
+}

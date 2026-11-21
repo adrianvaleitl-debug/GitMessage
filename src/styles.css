@@ -531,3 +531,49 @@ button:disabled{cursor:not-allowed;opacity:.45}
 @media(max-width:560px){.group-control-actions{grid-template-columns:1fr}.group-permission-grid{grid-template-columns:1fr}.group-members-heading>span{display:none}.group-admin-list{max-height:38vh}}
 
 .group-role-select{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 10px;border-radius:9px;background:var(--panel)}.group-role-select>span{font-size:10px;font-weight:700;color:var(--muted)}.group-role-select select{min-width:0;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:#292e37;color:#f2f3f5;font-size:10px}
+
+
+/* Rounded floating islands across the whole application. */
+.desktop-shell{gap:10px!important;padding:10px!important;background:#111318!important;grid-template-columns:60px 258px minmax(0,1fr) 250px!important}
+.desktop-shell .app-rail{grid-column:1;grid-row:1;border:1px solid #30343d!important;border-radius:20px!important;padding:13px 0!important;background:#1d2128!important;box-shadow:0 8px 26px #0003;overflow:hidden}
+.desktop-shell .sidebar{grid-column:2;grid-row:1;margin:0!important;min-height:0;border:1px solid #30343d!important;border-radius:20px!important;padding:0 0 12px!important;background:#20242b!important;box-shadow:0 8px 26px #0003!important;overflow:hidden}
+.desktop-shell .conversation-pane{grid-column:3;grid-row:1;min-height:0;border:1px solid #30343d!important;border-radius:20px!important;background:#1d2128!important;box-shadow:0 8px 26px #0003!important;overflow:hidden}
+.desktop-shell .conversation-details{grid-column:4;grid-row:1;min-width:0;min-height:0;margin:0!important;border:1px solid #30343d!important;border-radius:20px!important;background:#20242b!important;box-shadow:0 8px 26px #0003!important;overflow:auto}
+.desktop-shell .sidebar-brand,.desktop-shell .conversation-header{border-radius:19px 19px 0 0!important;background:transparent!important}
+.desktop-shell .account-chip{margin:10px 9px 0!important;padding:10px!important;border:1px solid #363c46!important;border-radius:14px!important;background:#292e37!important}
+.desktop-shell .search-field{margin:12px 10px 17px!important;border:1px solid #383e48!important;border-radius:12px!important;background:#171b21!important}
+.desktop-shell .conversation-list{padding:0 9px 12px!important}
+.desktop-shell .conversation-item{border-radius:11px!important;padding:10px!important;margin:3px 0!important}
+.desktop-shell .conversation-item.active{background:#343b47!important}
+.desktop-shell .conversation-item:hover{background:#2d333d!important}
+.desktop-shell .message-canvas{background:transparent!important;padding:12px 7px 20px!important}
+.desktop-shell .message-line{margin:2px 9px;padding:9px 12px;border-radius:13px!important}
+.desktop-shell .message-line:hover{background:#282e37!important}
+.desktop-shell .message-actions{right:10px;top:3px;border-radius:10px!important}
+.desktop-shell .composer-area{padding:0 16px 16px!important;background:transparent!important}
+.desktop-shell .composer-glass{border:1px solid #3b424d!important;border-radius:15px!important;background:#292e37!important}
+.desktop-shell .rail-button,.desktop-shell .rail-brand,.desktop-shell .rail-user{border-radius:15px!important}
+.desktop-shell .rail-button:not(.selected){background:#2a3039!important}
+.desktop-shell .settings-row{border-radius:11px!important;padding:10px!important}
+.desktop-shell .modal-card{border-radius:20px!important;padding:25px!important}
+.desktop-shell .modal-icon{border-radius:12px!important}
+.desktop-shell .contact-result{border:1px solid #343a44;border-radius:13px!important;padding:11px}
+.desktop-shell .contact-start-button,.desktop-shell .primary-button,.desktop-shell .send-button,.desktop-shell .empty-create{border-radius:11px!important}
+.desktop-shell input:not([type=checkbox]):not([type=file]),.desktop-shell textarea,.desktop-shell select{border-radius:11px!important}
+.desktop-shell .call-banner{border-radius:14px!important}
+.desktop-shell .server-chat-messages{border-radius:15px!important}
+.desktop-shell .reaction-strip button{border-radius:12px!important}
+@media(max-width:900px){.desktop-shell{gap:7px!important;padding:7px!important}.desktop-shell .app-rail,.desktop-shell .sidebar,.desktop-shell .conversation-pane,.desktop-shell .conversation-details{border-radius:17px!important}}
+@media(max-width:640px){.desktop-shell{gap:5px!important;padding:5px!important}.desktop-shell .app-rail,.desktop-shell .sidebar,.desktop-shell .conversation-pane,.desktop-shell .conversation-details{border-radius:15px!important}}
+.desktop-shell.light{background:#e8ebf0!important}
+.desktop-shell.light .app-rail{background:#f8f9fb!important;border-color:#d7dce4!important;box-shadow:0 7px 22px #28344712}
+.desktop-shell.light .sidebar,.desktop-shell.light .conversation-details{background:#f7f8fa!important;border-color:#d7dce4!important;box-shadow:0 7px 22px #28344712!important}
+.desktop-shell.light .conversation-pane{background:#fff!important;border-color:#d7dce4!important;box-shadow:0 7px 22px #28344712!important}
+.desktop-shell.light .conversation-header,.desktop-shell.light .message-canvas,.desktop-shell.light .composer-area{background:transparent!important}
+.desktop-shell.light .search-field{background:#edf0f4!important;border-color:#dce1e8!important}
+.desktop-shell.light .account-chip{background:#edf0f4!important;border-color:#dce1e8!important}
+.desktop-shell.light .conversation-item:hover{background:#e9edf3!important}
+.desktop-shell.light .conversation-item.active{background:#e2e8f2!important;color:#263143!important}
+.desktop-shell.light .message-line:hover{background:#f1f3f7!important}
+.desktop-shell.light .composer-glass{background:#f1f3f7!important;border-color:#dce1e8!important}
+.desktop-shell.light .settings-row:hover{background:#e9edf3!important}

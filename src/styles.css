@@ -1056,3 +1056,12 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
   .call-action-button{width:36px!important;height:36px!important;min-width:36px!important;padding:0!important;border:0!important;border-radius:10px!important;background:transparent!important;box-shadow:none!important}
   .call-action-button span{display:none!important}
 }
+
+.call-message-card{display:flex;align-items:center;gap:12px;max-width:430px;padding:14px 16px;border:1px solid var(--border,rgba(255,255,255,.1));border-radius:16px;background:var(--panel-2,rgba(255,255,255,.045))}
+.call-message-icon{width:38px;height:38px;flex:0 0 38px;display:grid;place-items:center;border-radius:12px;background:rgba(72,145,235,.13);color:var(--accent,#75aaff)}
+.call-message-copy{display:flex;flex:1;min-width:0;flex-direction:column;gap:3px}
+.call-message-copy b{font-size:13px;color:var(--text)}
+.call-message-copy span{font-size:12px;color:var(--muted);line-height:1.4}
+.call-message-accept{border:0;border-radius:10px;padding:9px 13px;background:#238b5a;color:#fff;font-weight:650;font-size:12px;cursor:pointer;white-space:nowrap}
+.call-message-accept:hover{background:#1c754b}
+@media(max-width:760px){.call-message-card{max-width:100%;gap:9px;padding:11px}.call-message-accept{padding:9px 11px}}

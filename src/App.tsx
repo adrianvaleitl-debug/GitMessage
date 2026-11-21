@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { FormEvent, MouseEvent } from "react";
 import { supabase } from "./lib/supabase";
 import {
-  MessageCircle, Search, Plus, ArrowUp, ArrowLeft, Settings, Users, UserRound, Server, LogOut, Sparkles,
+  MessageCircle, Search, Plus, ArrowUp, ArrowLeft, Settings, Users, UserRound, LogOut, Sparkles,
   ShieldCheck, X, Moon, Sun, MoreHorizontal, ArrowUpRight, Check,
   RefreshCw, UserRoundPlus, Paperclip, Pencil, Trash2, Mic, MicOff, Phone, Video, PhoneOff
 } from "lucide-react";

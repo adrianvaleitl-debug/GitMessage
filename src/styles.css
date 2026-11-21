@@ -428,3 +428,7 @@ button:disabled{cursor:not-allowed;opacity:.45}
 .profile-frame-silver{outline:3px solid #aeb7c4;box-shadow:0 0 0 5px rgba(174,183,196,.18),0 0 22px rgba(174,183,196,.2)}
 .profile-photo.profile-frame-gold,.profile-photo.profile-frame-silver{border-radius:50%;padding:3px}
 .profile-photo.profile-frame-gold img,.profile-photo.profile-frame-silver img{border-radius:50%}
+
+.profile-safety-actions{display:flex;gap:8px;margin-top:9px}
+.profile-safety-actions button{flex:1;padding:9px;border:1px solid var(--line);border-radius:8px;background:var(--panel-2);color:var(--muted);font-size:11px}
+.profile-safety-actions button:hover{border-color:#c66b74;color:#eaa0a7}

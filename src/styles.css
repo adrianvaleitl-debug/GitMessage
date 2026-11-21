@@ -401,3 +401,25 @@ button:disabled{cursor:not-allowed;opacity:.45}
 .desktop-shell.light .auth-method-switch button.selected{background:#dfe2e9;color:#20232b}
 .desktop-shell.light .auth-foot{border-color:#e2e4ea;color:#626875}
 .desktop-shell.light .boot-screen{background:#f4f5f8;color:#626875}
+
+
+/* GitMessage profile palettes: intentionally distinct from Discord's signature blurple. */
+.palette-graphite{--bg:#17191d;--panel:#22262c;--panel-2:#1c2025;--panel-3:#303740;--line:#3b424b;--accent:#8b9aa8;--accent-hover:#718293}
+.palette-ocean{--bg:#101f29;--panel:#192e3b;--panel-2:#142632;--panel-3:#294454;--line:#345364;--accent:#38a6a0;--accent-hover:#258780}
+.palette-plum{--bg:#211725;--panel:#302238;--panel-2:#281c30;--panel-3:#44304d;--line:#574260;--accent:#c18acb;--accent-hover:#a66cb1}
+.palette-ember{--bg:#241a17;--panel:#34241e;--panel-2:#2a1e19;--panel-3:#4b3328;--line:#604336;--accent:#df9564;--accent-hover:#c87949}
+.palette-moss{--bg:#182019;--panel:#242f25;--panel-2:#1d281f;--panel-3:#344638;--line:#465b49;--accent:#8fb58a;--accent-hover:#70996b}
+.palette-sand{--bg:#25221c;--panel:#353027;--panel-2:#2b281f;--panel-3:#4b4435;--line:#625944;--accent:#d1b47a;--accent-hover:#b99a5c}
+.desktop-shell[class*="palette-"] .send-button,.desktop-shell[class*="palette-"] .rail-button.selected{background:var(--accent)!important;color:#101418}
+.desktop-shell[class*="palette-"] .send-button:hover:not(:disabled){background:var(--accent-hover)!important}
+.palette-picker{display:flex;flex-wrap:wrap;gap:7px;margin:8px 0 14px}
+.palette-option{padding:8px 11px;border:1px solid var(--line);border-radius:9px;background:var(--panel-2);color:var(--text);font-size:11px}
+.palette-option.selected{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.profile-bio-input{width:100%;min-height:78px;resize:vertical;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--panel-2);color:var(--text);font:inherit;font-size:12px}
+.profile-bio{color:var(--muted);font-size:12px;line-height:1.6;white-space:pre-wrap;margin:10px 0 16px}
+.profile-special-tag{display:inline-flex;margin-top:5px;padding:4px 8px;border-radius:6px;font-size:9px;font-weight:800;letter-spacing:.7px;text-transform:uppercase}
+.profile-special-tag.creator{background:linear-gradient(110deg,#7a5718,#d9b45a,#8b641d);color:#fff5d6}
+.profile-special-tag.admin{background:linear-gradient(110deg,#646b75,#d4d8df,#737b87);color:#171a20}
+.auth-download{margin-left:auto}
+.auth-download a{font-size:11px;color:var(--muted);text-decoration:none;border:1px solid var(--line);border-radius:8px;padding:8px 11px}
+.auth-download a:hover{color:var(--text);border-color:var(--accent)}

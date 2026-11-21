@@ -705,12 +705,15 @@ export default function App() {
     if (!supabase || !active || !session || !file) return;
     if (file.size > 25 * 1024 * 1024) { setNotice("Files must be 25 MB or smaller."); return; }
     setSending(true); setNotice("");
+    const ext = file.name.split(".").pop()?.toLowerCase() || "";
+    const inferredMime: Record<string,string> = { mp4:"video/mp4", m4v:"video/mp4", mov:"video/quicktime", webm:file.type.startsWith("audio/")?"audio/webm":"video/webm", mp3:"audio/mpeg", m4a:"audio/mp4", wav:"audio/wav", ogg:"audio/ogg", oga:"audio/ogg", jpg:"image/jpeg", jpeg:"image/jpeg", png:"image/png", gif:"image/gif", webp:"image/webp", pdf:"application/pdf", txt:"text/plain" };
+    const contentType = inferredMime[ext] || file.type || "application/octet-stream";
     const path = active + "/" + session.user.id + "/" + crypto.randomUUID() + "-" + file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-    const uploaded = await supabase.storage.from("gitmessage-attachments").upload(path, file, { contentType: file.type || "application/octet-stream", upsert: false });
+    const uploaded = await supabase.storage.from("gitmessage-attachments").upload(path, file, { contentType, upsert: false });
     if (uploaded.error) { setSending(false); setNotice(uploaded.error.message); return; }
     const { data: message, error } = await supabase.from("messages").insert({ conversation_id: active, sender_id: session.user.id, body: "📎 " + file.name }).select("id,body,sender_id,created_at,edited_at,deleted_at").single();
     if (error || !message) { setSending(false); setNotice(error?.message || "Could not create attachment message."); return; }
-    const { error: metadataError } = await supabase.from("gitmessage_attachments").insert({ message_id: message.id, conversation_id: active, user_id: session.user.id, file_name: file.name, storage_path: path, mime_type: file.type || "application/octet-stream", size_bytes: file.size });
+    const { error: metadataError } = await supabase.from("gitmessage_attachments").insert({ message_id: message.id, conversation_id: active, user_id: session.user.id, file_name: file.name, storage_path: path, mime_type: contentType, size_bytes: file.size });
     setSending(false);
     if (metadataError) { setNotice(metadataError.message); return; }
     setMessages(rows => rows.some(row => row.id === message.id) ? rows : [...rows, message as Message]);

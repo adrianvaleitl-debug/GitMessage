@@ -68,7 +68,7 @@ button:disabled{cursor:not-allowed;opacity:.45}
 .header-tools .glass-icon{width:32px;height:32px;color:#b5bac1}
 .header-tools .glass-icon:hover{background:#41434a;color:#fff}
 .header-tools .live-pill{display:none}
-.message-canvas{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column-reverse;gap:0;padding:8px 0 20px!important;background:#313338;scrollbar-width:thin;scrollbar-color:#4a4c53 transparent;overscroll-behavior-y:contain;}
+.message-canvas{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:0;padding:8px 0 20px!important;background:#313338;scrollbar-width:thin;scrollbar-color:#4a4c53 transparent;overscroll-behavior-y:contain;}
 .message-canvas::before{content:none}
 .message-line{position:relative;flex:0 0 auto;display:flex;align-items:flex-start;gap:12px;padding:7px 22px 8px;animation:message-in .16s ease-out both}.message-avatar{width:34px;height:34px;flex:0 0 34px;display:grid;place-items:center;margin-top:1px;border-radius:50%;background:#5865f2;color:#fff;font-size:12px;font-weight:700}.message-line.mine .message-avatar{background:#3c657e}
 .message-line:hover{background:#2e3035}

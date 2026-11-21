@@ -261,3 +261,12 @@ button:disabled{cursor:not-allowed;opacity:.45}
 .conversation-item:hover .conversation-delete,
 .conversation-item:focus-within .conversation-delete{opacity:1}
 .conversation-delete:hover{background:#5a3035;color:#ffb8be}
+
+
+/* Clickable profile names and avatars */
+.profile-trigger{cursor:pointer}
+.contact-result-avatar{overflow:hidden;display:grid;place-items:center;border:0;padding:0}
+.contact-result-avatar img{width:100%;height:100%;object-fit:cover;border-radius:inherit}
+.profile-name-trigger{padding:0;border:0;background:transparent;color:inherit;font:inherit;font-weight:inherit;cursor:pointer}
+.profile-name-trigger:hover{color:var(--blue)}
+.details-avatar{padding:0}

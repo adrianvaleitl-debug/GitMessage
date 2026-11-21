@@ -25,6 +25,7 @@ export default function App() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [active, setActive] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
+  const [messageProfiles, setMessageProfiles] = useState<Record<string, {display_name?:string;username?:string;avatar_path?:string|null}>>({});
   const [attachmentPreviews, setAttachmentPreviews] = useState<Record<string, AttachmentPreview>>({});
   const [imageViewerUrl, setImageViewerUrl] = useState("");
   const [draft, setDraft] = useState("");
@@ -119,6 +120,21 @@ export default function App() {
     }
     void loadConversations();
   }, [session]);
+
+  useEffect(() => {
+    if (!supabase || !active || !session) { setMessageProfiles({}); return; }
+    let alive = true;
+    void supabase.from("conversation_members").select("user_id").eq("conversation_id",active).then(async ({data,error}) => {
+      if (!alive || error || !data?.length) return;
+      const ids = data.map(row => row.user_id);
+      const { data: profiles } = await supabase!.from("profiles").select("id,display_name,username,avatar_path").in("id",ids);
+      if (!alive) return;
+      const next: Record<string,{display_name?:string;username?:string;avatar_path?:string|null}> = {};
+      (profiles || []).forEach((profile:any) => { next[profile.id] = profile; });
+      setMessageProfiles(next);
+    });
+    return () => { alive = false; };
+  }, [active, session]);
 
   useEffect(() => {
     if (!active || !supabase || !session?.user?.id) { setMessages([]); return; }
@@ -660,7 +676,7 @@ export default function App() {
         <div className="message-canvas" ref={messageCanvasRef}>
           {active ? messages.length ? [...messages].reverse().map(message => {
             const mine = message.sender_id === session.user.id;
-            return <div key={message.id} className={"message-line" + (mine ? " mine" : "")}><div className="message-avatar">{mine ? (profileAvatar ? <img src={profileAvatar} alt="Your profile"/> : (profileDisplayName || session.user.email || session.user.phone || "Y").slice(0,1).toUpperCase()) : (current?.avatar_path && supabase ? <img src={supabase.storage.from("gitmessage-avatars").getPublicUrl(current.avatar_path).data.publicUrl} alt=""/> : (current?.title || "G").slice(0,1).toUpperCase())}</div><div className="message-content"><div className="message-author"><button type="button" className="profile-name-trigger" onClick={() => mine ? void loadProfile() : void openConversationProfile()}>{mine ? (profileDisplayName || "You") : (current?.title || "Contact")}</button> <time>{new Date(message.created_at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</time></div>{message.body.startsWith("📎 ") && attachmentPreviews[message.id] ? <div className={attachmentPreviews[message.id].mime_type.startsWith("image/") ? "image-attachment-wrap" : "message-attachment-card"}>
+            return <div key={message.id} className={"message-line" + (mine ? " mine" : "")}><div className="message-avatar">{mine ? (profileAvatar ? <img src={profileAvatar} alt="Your profile"/> : (profileDisplayName || session.user.email || session.user.phone || "Y").slice(0,1).toUpperCase()) : (messageProfiles[message.sender_id]?.avatar_path && supabase ? <img src={supabase.storage.from("gitmessage-avatars").getPublicUrl(messageProfiles[message.sender_id].avatar_path!).data.publicUrl} alt=""/> : (messageProfiles[message.sender_id]?.display_name || messageProfiles[message.sender_id]?.username || "M").slice(0,1).toUpperCase())}</div><div className="message-content"><div className="message-author"><button type="button" className="profile-name-trigger" onClick={() => mine ? void loadProfile() : void openConversationProfile()}>{mine ? (profileDisplayName || "You") : (messageProfiles[message.sender_id]?.display_name || messageProfiles[message.sender_id]?.username || "Member")}</button> <time>{new Date(message.created_at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</time></div>{message.body.startsWith("📎 ") && attachmentPreviews[message.id] ? <div className={attachmentPreviews[message.id].mime_type.startsWith("image/") ? "image-attachment-wrap" : "message-attachment-card"}>
                 {attachmentPreviews[message.id].mime_type.startsWith("image/") ? <button type="button" className="image-attachment" onClick={() => setImageViewerUrl(attachmentPreviews[message.id].url)} title="Maximise image"><img src={attachmentPreviews[message.id].url} alt={attachmentPreviews[message.id].file_name}/></button> : <div className="attachment-file-row"><Paperclip size={15}/><span><b>{attachmentPreviews[message.id].file_name}</b><small>{(attachmentPreviews[message.id].size_bytes / 1024 / 1024).toFixed(2)} MB</small></span><button type="button" onClick={() => void openAttachment(message.id)}>Open</button></div>}
               </div> : <div className="message-bubble">{message.body}</div>}<div className="message-actions"><button title="Like" onClick={() => void toggleReaction(message.id, "❤️")}>❤️</button><button title="Laugh" onClick={() => void toggleReaction(message.id, "😂")}>😂</button><button title="Surprised" onClick={() => void toggleReaction(message.id, "😮")}>😮</button>{mine && !message.deleted_at && <><button title="Edit message" onClick={() => void editMessage(message)}><Pencil size={12}/></button><button title="Delete message" onClick={() => void deleteMessage(message)}><Trash2 size={12}/></button></>}</div>{(reactions[message.id] || []).length > 0 && <div className="reaction-strip">{Array.from(new Set((reactions[message.id] || []).map(r => r.emoji))).map(emoji => <button key={emoji} onClick={() => void toggleReaction(message.id, emoji)}>{emoji} {(reactions[message.id] || []).filter(r => r.emoji === emoji).length}</button>)}</div>}<div className="message-meta">{message.edited_at && <span>Edited</span>}</div></div></div>;
           }) : <div className="empty-conversation"><div className="empty-art"><div className="art-ring ring-one"/><div className="art-ring ring-two"/><div className="art-core"><MessageCircle size={27}/></div><span className="art-spark spark-one"/><span className="art-spark spark-two"/></div><div className="eyebrow">A SPACE OF YOUR OWN</div><h3>Every good conversation<br/><span>starts somewhere.</span></h3><p>Send the first message and let it unfold.</p></div> : <div className="empty-conversation"><div className="empty-art"><div className="art-ring ring-one"/><div className="art-ring ring-two"/><div className="art-core"><Sparkles size={27}/></div><span className="art-spark spark-one"/><span className="art-spark spark-two"/></div><div className="eyebrow">YOUR PEOPLE, YOUR PLACE</div><h3>Make room for<br/><span>the good stuff.</span></h3><p>Choose a conversation or create a new one.</p><button className="empty-create" onClick={() => setModal("new")}><Plus size={15}/> New conversation</button></div>}

@@ -1,0 +1,16 @@
+{
+  "id": "./",
+  "name": "GitMessage",
+  "short_name": "Messages",
+  "description": "Simple, real-time messaging.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "any",
+  "background_color": "#090b12",
+  "theme_color": "#090b12",
+  "icons": [
+    { "src": "./gitmessage-icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

@@ -45,7 +45,7 @@ where lower(p.username) in ('adrianvaleitl','tw23')
 on conflict(user_id) do update set staff_role=excluded.staff_role;
 
 create or replace function public.gitmessage_protect_reserved_profile_cosmetics()
-returns trigger language plpgsql security definer set search_path=public,auth as $
+returns trigger language plpgsql security definer set search_path=public,auth as $fn$
 begin
   if auth.uid() is not null
      and (new.profile_badge is distinct from old.profile_badge or new.profile_frame is distinct from old.profile_frame)
@@ -60,9 +60,9 @@ create trigger gm_protect_reserved_profile_cosmetics before update on public.pro
 for each row execute function public.gitmessage_protect_reserved_profile_cosmetics();
 
 create or replace function public.gitmessage_is_staff()
-returns boolean language sql security definer stable set search_path=public,auth as $
+returns boolean language sql security definer stable set search_path=public,auth as $fn$
  select exists(select 1 from public.gitmessage_staff_roles where user_id=auth.uid());
-$;
+$fn$;
 revoke all on function public.gitmessage_is_staff() from public,anon;
 grant execute on function public.gitmessage_is_staff() to authenticated;
 
@@ -74,7 +74,7 @@ alter table public.conversation_members
   add column if not exists member_role text not null default 'member',
   add column if not exists member_permissions jsonb not null default '{"manage_group":false,"manage_members":false,"manage_messages":false}'::jsonb;
 create or replace function public.gitmessage_assign_group_owner_role()
-returns trigger language plpgsql security definer set search_path=public,auth as $
+returns trigger language plpgsql security definer set search_path=public,auth as $fn$
 begin
   if exists(select 1 from public.conversations c where c.id=new.conversation_id and c.created_by=new.user_id and c.kind='group') then
     new.member_role := 'owner';
@@ -93,17 +93,16 @@ from public.conversations c
 where c.id=cm.conversation_id and c.created_by=cm.user_id;
 
 create or replace function public.gitmessage_can_manage_group(target_conversation_id uuid, permission_key text default 'manage_group')
-returns boolean language sql security definer stable set search_path=public,auth as $$
+returns boolean language sql security definer stable set search_path=public,auth as $fn$
   select public.gitmessage_is_staff() or exists(
     select 1 from public.conversation_members cm
     where cm.conversation_id=target_conversation_id and cm.user_id=auth.uid()
       and (cm.member_role='owner' or coalesce((cm.member_permissions->>permission_key)::boolean,false))
   );
-$$;
-
+$fn$;
 create or replace function public.update_gitmessage_group(
   target_conversation_id uuid, new_title text, new_avatar_path text default null
-) returns void language plpgsql security definer set search_path=public,auth as $$
+) returns void language plpgsql security definer set search_path=public,auth as $fn$
 begin
   if not public.gitmessage_can_manage_group(target_conversation_id,'manage_group') then raise exception 'You do not have permission to manage this group.'; end if;
   if nullif(trim(new_title),'') is null or char_length(trim(new_title))>80 then raise exception 'Group name must be 1–80 characters.'; end if;
@@ -114,7 +113,7 @@ end $$;
 
 create or replace function public.set_gitmessage_group_member_permissions(
   target_conversation_id uuid, target_user_id uuid, new_permissions jsonb, new_role text default 'member'
-) returns void language plpgsql security definer set search_path=public,auth as $$
+) returns void language plpgsql security definer set search_path=public,auth as $fn$
 begin
   if not exists(select 1 from public.conversations c where c.id=target_conversation_id and c.kind='group') then raise exception 'Group not found.'; end if;
   if not public.gitmessage_can_manage_group(target_conversation_id,'manage_members') then raise exception 'You do not have permission to manage members.'; end if;
@@ -135,7 +134,7 @@ begin
 end $$;
 
 create or replace function public.kick_gitmessage_group_member(target_conversation_id uuid, target_user_id uuid)
-returns void language plpgsql security definer set search_path=public,auth as $$
+returns void language plpgsql security definer set search_path=public,auth as $fn$
 begin
   if not exists(select 1 from public.conversations c where c.id=target_conversation_id and c.kind='group') then raise exception 'Group not found.'; end if;
   if not public.gitmessage_can_manage_group(target_conversation_id,'manage_members') then raise exception 'You do not have permission to remove members.'; end if;
@@ -195,15 +194,14 @@ alter table public.gitmessage_server_channels enable row level security;
 alter table public.gitmessage_server_messages enable row level security;
 
 create or replace function public.gitmessage_is_server_member(target_server_id uuid)
-returns boolean language sql security definer stable set search_path=public,auth as $$
+returns boolean language sql security definer stable set search_path=public,auth as $fn$
  select public.gitmessage_is_staff() or exists(select 1 from public.gitmessage_server_members where server_id=target_server_id and user_id=auth.uid());
-$$;
+$fn$;
 create or replace function public.gitmessage_server_has_permission(target_server_id uuid, permission_key text)
-returns boolean language sql security definer stable set search_path=public,auth as $$
+returns boolean language sql security definer stable set search_path=public,auth as $fn$
  select public.gitmessage_is_staff() or exists(select 1 from public.gitmessage_server_members m where m.server_id=target_server_id and m.user_id=auth.uid()
    and (m.member_role='owner' or coalesce((m.permissions->>permission_key)::boolean,false)));
-$$;
-
+$fn$;
 drop policy if exists gm_servers_read_member on public.gitmessage_servers;
 create policy gm_servers_read_member on public.gitmessage_servers for select to authenticated using (public.gitmessage_is_server_member(id));
 drop policy if exists gm_servers_update_manager on public.gitmessage_servers;
@@ -229,7 +227,7 @@ with check (sender_id=auth.uid() and public.gitmessage_is_server_member(server_i
     and coalesce((m.permissions->>'send_messages')::boolean,true)));
 
 create or replace function public.create_gitmessage_server(server_name text, server_description text default '')
-returns table(server_id uuid, invite_code text) language plpgsql security definer set search_path=public,auth as $$
+returns table(server_id uuid, invite_code text) language plpgsql security definer set search_path=public,auth as $fn$
 declare sid uuid; code text;
 begin
  if auth.uid() is null then raise exception 'Sign in required.'; end if;
@@ -243,7 +241,7 @@ begin
 end $$;
 
 create or replace function public.join_gitmessage_server(server_invite_code text)
-returns uuid language plpgsql security definer set search_path=public,auth as $$
+returns uuid language plpgsql security definer set search_path=public,auth as $fn$
 declare sid uuid;
 begin
  if auth.uid() is null then raise exception 'Sign in required.'; end if;
@@ -255,12 +253,11 @@ end $$;
 
 create or replace function public.get_my_gitmessage_servers()
 returns table(server_id uuid,name text,description text,avatar_path text,invite_code text,member_role text)
-language sql security definer stable set search_path=public,auth as $$
+language sql security definer stable set search_path=public,auth as $fn$
  select s.id,s.name,s.description,s.avatar_path,s.invite_code,m.member_role
  from public.gitmessage_server_members m join public.gitmessage_servers s on s.id=m.server_id
  where m.user_id=auth.uid() order by s.created_at desc;
-$$;
-
+$fn$;
 revoke all on function public.gitmessage_is_server_member(uuid) from public,anon;
 revoke all on function public.gitmessage_server_has_permission(uuid,text) from public,anon;
 revoke all on function public.create_gitmessage_server(text,text) from public,anon;
@@ -274,11 +271,11 @@ grant execute on function public.get_my_gitmessage_servers() to authenticated;
 
 -- SECURITY DEFINER helper lets the guard see blocks created by either participant.
 create or replace function public.gitmessage_is_blocked_between(user_a uuid,user_b uuid)
-returns boolean language sql security definer stable set search_path=public,auth as $
+returns boolean language sql security definer stable set search_path=public,auth as $fn$
  select exists(select 1 from public.gitmessage_blocks b
    where (b.blocker_id=user_a and b.blocked_id=user_b)
       or (b.blocker_id=user_b and b.blocked_id=user_a));
-$;
+$fn$;
 revoke all on function public.gitmessage_is_blocked_between(uuid,uuid) from public,anon;
 grant execute on function public.gitmessage_is_blocked_between(uuid,uuid) to authenticated;
 

@@ -519,6 +519,7 @@ export default function App() {
     if (!profile) { setNotice("Profile unavailable."); return; }
     setPublicProfile(profile);
     setPublicProfileAvatar(profile.avatar_path ? supabase.storage.from("gitmessage-avatars").getPublicUrl(profile.avatar_path).data.publicUrl : "");
+    setPublicProfileBanner(profile.banner_path ? supabase.storage.from("gitmessage-avatars").getPublicUrl(profile.banner_path).data.publicUrl : "");
     setModal("public-profile");
   }
 

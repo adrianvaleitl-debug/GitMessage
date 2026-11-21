@@ -1017,3 +1017,21 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
   .call-action-button span{display:none!important}
   .conversation-header{gap:6px!important}
 }
+
+
+/* Profile editor live preview */
+.profile-preview-toggle{width:100%;min-height:42px;margin:12px 0 4px;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--line,rgba(255,255,255,.14));border-radius:13px;background:rgba(255,255,255,.055);color:var(--text,#f4f5f7);font:600 13px inherit;cursor:pointer;transition:background .18s,border-color .18s}
+.profile-preview-toggle:hover{background:rgba(255,255,255,.1);border-color:rgba(150,170,220,.45)}
+.profile-preview-card{margin:8px 0 16px;padding:17px;border:1px solid rgba(255,255,255,.14);border-radius:19px;background:rgba(30,34,43,.82);box-shadow:0 12px 30px rgba(0,0,0,.18);overflow:hidden}
+.profile-preview-card.profile-card-solid{background:#292e39;border-color:rgba(255,255,255,.2)}
+.profile-preview-card.profile-card-minimal{background:transparent;border-color:rgba(255,255,255,.09);box-shadow:none}
+.profile-preview-topline{margin-bottom:14px;color:#9ca6b6;font-size:9px;font-weight:750;letter-spacing:.15em}
+.profile-preview-card .public-profile-identity{display:flex;align-items:center;gap:13px}
+.profile-preview-card .profile-photo{width:58px;height:58px;flex:0 0 58px;border-radius:50%;overflow:hidden;display:grid;place-items:center}
+.profile-preview-card .profile-photo img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.profile-preview-card .profile-ring-subtle{border:1px solid rgba(255,255,255,.24);padding:3px}
+.profile-preview-card .profile-ring-accent{border:2px solid #8199ef;padding:3px}
+.profile-preview-card .public-profile-names{display:flex;flex-direction:column;gap:4px;min-width:0}
+.profile-preview-card .public-profile-names b{font-size:17px;color:#f5f6fa}
+.profile-preview-card .public-profile-names span{font-size:12px;color:#aeb6c4}
+.profile-preview-card .profile-bio{margin:14px 0 0;color:#d1d6df;font-size:13px;line-height:1.5;overflow-wrap:anywhere}

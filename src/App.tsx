@@ -16,10 +16,6 @@ export default function App() {
   const [session, setSession] = useState<any>(null);
   const [authReady, setAuthReady] = useState(false);
   const [email, setEmail] = useState("");
-  const [phone, setPhone] = useState("");
-  const [phoneOtp, setPhoneOtp] = useState("");
-  const [pendingPhoneVerification, setPendingPhoneVerification] = useState(false);
-  const [authMethod, setAuthMethod] = useState<"email" | "phone">("email");
   const [password, setPassword] = useState("");
   const [signupUsername, setSignupUsername] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -30,6 +26,7 @@ export default function App() {
   const [active, setActive] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [attachmentPreviews, setAttachmentPreviews] = useState<Record<string, AttachmentPreview>>({});
+  const [imageViewerUrl, setImageViewerUrl] = useState("");
   const [draft, setDraft] = useState("");
   const [query, setQuery] = useState("");
   const [modal, setModal] = useState<"new" | "group" | "profile" | "friends" | "settings" | null>(null);
@@ -200,28 +197,17 @@ export default function App() {
   async function authenticate(event?: FormEvent) {
     event?.preventDefault();
     if (!supabase) { setNotice("GitMessage is missing its Supabase configuration. Rebuild the installer with the repository secret set."); return; }
-    if (!(authMethod === "email" ? email.trim() : phone.trim()) || !password) { setNotice(authMethod === "email" ? "Enter your email address and password." : "Enter your phone number and password."); return; }
+    if (!email.trim() || !password) { setNotice("Enter your email address and password."); return; }
     if (authMode === "signup" && password.length < 8) { setNotice("Use at least 8 characters for a stronger password."); return; }
     const cleanUsername = signupUsername.trim().toLowerCase();
     if (authMode === "signup" && !/^[a-z0-9_]{3,24}$/.test(cleanUsername)) { setNotice("Username must be 3–24 characters using lowercase letters, numbers or underscores."); return; }
     setBusy(true); setNotice("");
-    if (authMethod === "phone" && authMode === "signup" && pendingPhoneVerification) {
-      const verified = await supabase.auth.verifyOtp({ phone: phone.trim(), token: phoneOtp.trim(), type: "sms" });
-      setBusy(false);
-      if (verified.error) setNotice(verified.error.message);
-      else { setPendingPhoneVerification(false); setPhoneOtp(""); setNotice(""); }
-      return;
-    }
-    const credentials = authMethod === "email" ? { email: email.trim() } : { phone: phone.trim() };
     const result = authMode === "signin"
-      ? await supabase.auth.signInWithPassword({ ...credentials, password })
-      : await supabase.auth.signUp({ ...credentials, password, options: { data: { username: cleanUsername, display_name: cleanUsername } } });
+      ? await supabase.auth.signInWithPassword({ email: email.trim(), password })
+      : await supabase.auth.signUp({ email: email.trim(), password, options: { data: { username: cleanUsername, display_name: cleanUsername } } });
     setBusy(false);
     if (result.error) setNotice(result.error.message);
-    else if (authMode === "signup" && !result.data.session) {
-      if (authMethod === "phone") { setPendingPhoneVerification(true); setNotice("Enter the SMS verification code sent to your phone."); }
-      else setNotice("Account created. Check your email to confirm it, then sign in.");
-    }
+    else if (authMode === "signup" && !result.data.session) setNotice("Account created. Check your email to confirm it, then sign in.");
   }
 
   async function searchContacts(event: FormEvent) {
@@ -377,14 +363,15 @@ export default function App() {
     return () => { alive = false; };
   }, [messages, active]);
 
-  async function openAttachment(messageId: string) {
+  async function openAttachment(messageId: string, previewImage = false) {
     if (!supabase) return;
     setNotice("");
     const { data, error } = await supabase.from("gitmessage_attachments").select("storage_path,file_name").eq("message_id", messageId).maybeSingle();
     if (error || !data) { setNotice(error?.message || "Attachment not found."); return; }
     const { data: signed, error: signedError } = await supabase.storage.from("gitmessage-attachments").createSignedUrl(data.storage_path, 3600);
     if (signedError || !signed) { setNotice(signedError?.message || "Could not open attachment."); return; }
-    window.open(signed.signedUrl, "_blank");
+    if (previewImage) setImageViewerUrl(signed.signedUrl);
+    else window.open(signed.signedUrl, "_blank");
   }
 
   async function toggleVoiceRecording() {
@@ -537,10 +524,10 @@ export default function App() {
         <form className="auth-card glass-panel" onSubmit={authenticate}>
           <div className="card-glint"/>
           <div className="auth-card-heading"><div className="auth-symbol"><MessageCircle size={22}/></div><div><h2>{authMode === "signin" ? "Sign in" : "Create account"}</h2><p>{authMode === "signin" ? "Your conversations are waiting." : "A few details and you are in."}</p></div></div>
-          <div className="auth-method-switch"><button type="button" className={authMethod === "email" ? "selected" : ""} onClick={() => setAuthMethod("email")}>Email</button><button type="button" className={authMethod === "phone" ? "selected" : ""} onClick={() => setAuthMethod("phone")}>Phone number</button></div>{authMethod === "email" ? <><label htmlFor="email">Email address</label><input id="email" autoComplete="email" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com"/></> : <><label htmlFor="phone">Phone number</label><input id="phone" autoComplete="tel" type="tel" value={phone} onChange={e => setPhone(e.target.value)} placeholder="+1 555 123 4567"/>{pendingPhoneVerification && <><label htmlFor="phone-otp">SMS verification code</label><input id="phone-otp" inputMode="numeric" autoComplete="one-time-code" value={phoneOtp} onChange={e => setPhoneOtp(e.target.value)} placeholder="Enter code"/></>}</>}
+          <label htmlFor="email">Email address</label><input id="email" autoComplete="email" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com"/>
           {authMode === "signup" && <><label htmlFor="signup-username">Username</label><input id="signup-username" autoComplete="username" value={signupUsername} onChange={e => setSignupUsername(e.target.value.toLowerCase().replace(/[^a-z0-9_]/g, "").slice(0, 24))} placeholder="your_username" maxLength={24}/></>}
           <label htmlFor="password">Password</label><div className="password-wrap"><input id="password" autoComplete={authMode === "signin" ? "current-password" : "new-password"} type={showPassword ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)} placeholder={authMode === "signup" ? "At least 8 characters" : "Your password"}/><button type="button" onClick={() => setShowPassword(value => !value)}>{showPassword ? "Hide" : "Show"}</button></div>
-          <button className="primary-button" type="submit" disabled={busy || (authMethod === "phone" && pendingPhoneVerification && !phoneOtp.trim())}>{busy ? "One moment…" : authMethod === "phone" && pendingPhoneVerification ? "Verify phone" : authMode === "signin" ? "Sign in" : "Create account"}<ArrowUpRight size={17}/></button>
+          <button className="primary-button" type="submit" disabled={busy}>{busy ? "One moment…" : authMode === "signin" ? "Sign in" : "Create account"}<ArrowUpRight size={17}/></button>
           <button type="button" className="switch-auth" onClick={() => { setAuthMode(authMode === "signin" ? "signup" : "signin"); setNotice(""); }}>{authMode === "signin" ? "New here? Create an account" : "Already have an account? Sign in"}</button>
           {notice && <p className="notice">{notice}</p>}
           <div className="auth-foot"><ShieldCheck size={14}/> Encrypted connection to your account</div>
@@ -581,7 +568,7 @@ export default function App() {
           {active ? messages.length ? messages.map(message => {
             const mine = message.sender_id === session.user.id;
             return <div key={message.id} className={"message-line" + (mine ? " mine" : "")}><div className="message-avatar">{mine ? (profileAvatar ? <img src={profileAvatar} alt="Your profile"/> : (profileDisplayName || session.user.email || session.user.phone || "Y").slice(0,1).toUpperCase()) : (current?.avatar_path && supabase ? <img src={supabase.storage.from("gitmessage-avatars").getPublicUrl(current.avatar_path).data.publicUrl} alt=""/> : (current?.title || "G").slice(0,1).toUpperCase())}</div><div className="message-content"><div className="message-author">{mine ? "You" : (current?.title || "Contact")} <time>{new Date(message.created_at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</time></div>{message.body.startsWith("📎 ") && attachmentPreviews[message.id] ? <div className="message-attachment-card">
-                {attachmentPreviews[message.id].mime_type.startsWith("image/") ? <button type="button" className="image-attachment" onClick={() => void openAttachment(message.id)} title="Open full-size image"><img src={attachmentPreviews[message.id].url} alt={attachmentPreviews[message.id].file_name}/></button> : null}
+                {attachmentPreviews[message.id].mime_type.startsWith("image/") ? <button type="button" className="image-attachment" onClick={() => void openAttachment(message.id, true)} title="View full-size image"><img src={attachmentPreviews[message.id].url} alt={attachmentPreviews[message.id].file_name}/></button> : null}
                 <div className="attachment-file-row"><Paperclip size={15}/><span><b>{attachmentPreviews[message.id].file_name}</b><small>{(attachmentPreviews[message.id].size_bytes / 1024 / 1024).toFixed(2)} MB</small></span><button type="button" onClick={() => void openAttachment(message.id)}>Open</button></div>
               </div> : <div className="message-bubble">{message.body}</div>}<div className="message-actions"><button title="Like" onClick={() => void toggleReaction(message.id, "❤️")}>❤️</button><button title="Laugh" onClick={() => void toggleReaction(message.id, "😂")}>😂</button><button title="Surprised" onClick={() => void toggleReaction(message.id, "😮")}>😮</button>{message.body.startsWith("📎 ") && <button title="Open attachment" onClick={() => void openAttachment(message.id)}><Paperclip size={12}/></button>}{mine && !message.deleted_at && <><button title="Edit message" onClick={() => void editMessage(message)}><Pencil size={12}/></button><button title="Delete message" onClick={() => void deleteMessage(message)}><Trash2 size={12}/></button></>}</div>{(reactions[message.id] || []).length > 0 && <div className="reaction-strip">{Array.from(new Set((reactions[message.id] || []).map(r => r.emoji))).map(emoji => <button key={emoji} onClick={() => void toggleReaction(message.id, emoji)}>{emoji} {(reactions[message.id] || []).filter(r => r.emoji === emoji).length}</button>)}</div>}<div className="message-meta">{message.edited_at && <span>Edited</span>}{mine && <>{readMessageIds.includes(message.id) && <span>Read</span>}<Check size={12}/></>}</div></div></div>;
           }) : <div className="empty-conversation"><div className="empty-art"><div className="art-ring ring-one"/><div className="art-ring ring-two"/><div className="art-core"><MessageCircle size={27}/></div><span className="art-spark spark-one"/><span className="art-spark spark-two"/></div><div className="eyebrow">A SPACE OF YOUR OWN</div><h3>Every good conversation<br/><span>starts somewhere.</span></h3><p>Send the first message and let it unfold.</p></div> : <div className="empty-conversation"><div className="empty-art"><div className="art-ring ring-one"/><div className="art-ring ring-two"/><div className="art-core"><Sparkles size={27}/></div><span className="art-spark spark-one"/><span className="art-spark spark-two"/></div><div className="eyebrow">YOUR PEOPLE, YOUR PLACE</div><h3>Make room for<br/><span>the good stuff.</span></h3><p>Choose a conversation or create a new one.</p><button className="empty-create" onClick={() => setModal("new")}><Plus size={15}/> New conversation</button></div>}
@@ -614,7 +601,7 @@ export default function App() {
           </div>
         </>}
       </aside>
-      {callState !== "idle" && <div className="call-banner">{callState === "incoming" ? "Incoming " + callKind + " call" : callState === "connected" ? "Call connected" : "Calling…"}{callState === "incoming" && <button onClick={() => void acceptCall()}>Answer</button>}{callState === "incoming" && <button onClick={() => { if (pendingCall?.sender_id) void sendCallSignal(pendingCall.sender_id,"reject",{}); void endCall(false); }}>Decline</button>}<button onClick={() => void endCall()}><PhoneOff size={14}/> End</button></div>}{modal && <div className="modal-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) setModal(null); }}><section className="modal-card glass-panel">
+      {imageViewerUrl && <div className="image-viewer-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) setImageViewerUrl(""); }}><button className="image-viewer-close" onClick={() => setImageViewerUrl("")} title="Close image">×</button><img src={imageViewerUrl} alt="Full-size attachment" onClick={event => event.stopPropagation()}/></div>}\n      {callState !== "idle" && <div className="call-banner">{callState === "incoming" ? "Incoming " + callKind + " call" : callState === "connected" ? "Call connected" : "Calling…"}{callState === "incoming" && <button onClick={() => void acceptCall()}>Answer</button>}{callState === "incoming" && <button onClick={() => { if (pendingCall?.sender_id) void sendCallSignal(pendingCall.sender_id,"reject",{}); void endCall(false); }}>Decline</button>}<button onClick={() => void endCall()}><PhoneOff size={14}/> End</button></div>}{modal && <div className="modal-backdrop" onMouseDown={event => { if (event.target === event.currentTarget) setModal(null); }}><section className="modal-card glass-panel">
         <button className="modal-close glass-icon" onClick={() => setModal(null)} title="Close"><X size={17}/></button>
         {modal === "group" ? <><div className="modal-icon"><Users size={20}/></div><div className="eyebrow">BRING EVERYONE TOGETHER</div><h2>New group</h2><p className="modal-description">Name the group, then add people by username or email.</p><label htmlFor="group-title">Group name</label><input id="group-title" value={groupTitle} onChange={e => setGroupTitle(e.target.value)} placeholder="Weekend plans"/><form onSubmit={searchContacts}><label htmlFor="group-contact-email">Add a member</label><div className="contact-search-input"><Search size={16}/><input id="group-contact-email" value={contactEmail} onChange={e => setContactEmail(e.target.value)} placeholder="@username or friend@example.com"/></div><button className="primary-button" type="submit" disabled={contactLoading || !contactEmail.trim()}>{contactLoading ? "Searching…" : "Find account"}<Search size={17}/></button></form>{contactResults.map(user => <div className="contact-result" key={user.user_id}><div className="contact-result-avatar">{(user.username || user.email || "G").slice(0,1).toUpperCase()}</div><div className="contact-result-copy"><b>@{user.username || user.email?.split("@")[0] || "GitMessage user"}</b><small>{user.email || "Phone account"}</small></div><button className="contact-start-button" onClick={() => { setGroupMembers(rows => rows.some(x => x.user_id === user.user_id) ? rows : [...rows,user]); setContactResults([]); setContactEmail(""); }}>Add</button></div>)}{groupMembers.map(user => <div className="contact-result" key={user.user_id}><div className="contact-result-copy"><b>@{user.username || user.email || "GitMessage user"}</b><small>Added to group</small></div><button className="contact-start-button" onClick={() => setGroupMembers(rows => rows.filter(x => x.user_id !== user.user_id))}>Remove</button></div>)}<button className="primary-button" disabled={busy || !groupTitle.trim() || groupMembers.length===0} onClick={() => void createGroupConversation()}>{busy ? "Creating…" : "Create group"}<Users size={17}/></button>{notice && <p className="notice">{notice}</p>}</> : null}
         {modal === "friends" ? <><div className="modal-icon"><Users size={20}/></div><div className="eyebrow">YOUR PEOPLE</div><h2>Friend requests</h2><p className="modal-description">Accept requests to add people to your contacts.</p>{friendRequests.length ? friendRequests.map(request => <div className="contact-result" key={request.id}><div className="contact-result-avatar">G</div><div className="contact-result-copy"><b>GitMessage user</b><small>Wants to connect</small></div><button className="contact-start-button" onClick={() => void respondFriendRequest(request.id,true)}>Accept</button><button className="contact-start-button" onClick={() => void respondFriendRequest(request.id,false)}>Decline</button></div>) : <p className="modal-description">No pending friend requests.</p>}{notice && <p className="notice">{notice}</p>}</> : null}

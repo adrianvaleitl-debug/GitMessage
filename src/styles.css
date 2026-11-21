@@ -884,3 +884,12 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
 .public-profile-card .profile-safety-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:10px}
 .public-profile-card .profile-safety-actions button{min-height:39px;padding:9px 12px;border:1px solid var(--profile-line)!important;border-radius:11px!important;background:#00000012!important;color:var(--profile-muted)!important;font-size:11px;transition:background .15s,border-color .15s}
 .public-profile-card .profile-safety-actions button:hover{background:#ffffff0b!important;border-color:var(--profile-accent)!important;color:var(--profile-text)!important}
+
+
+/* Public profile popup: remove reserved scrollbar gutter that exposed a black strip on the right. */
+.modal-card:has(.public-profile-card){scrollbar-gutter:auto!important;padding-right:0!important;overflow-x:hidden!important;scrollbar-width:thin;scrollbar-color:transparent transparent}
+.modal-card:has(.public-profile-card)::-webkit-scrollbar{width:5px}
+.modal-card:has(.public-profile-card)::-webkit-scrollbar-track{margin:18px 0;border-radius:999px;background:transparent}
+.modal-card:has(.public-profile-card)::-webkit-scrollbar-thumb{border:1px solid transparent;border-radius:999px;background:transparent;background-clip:padding-box}
+.modal-card:has(.public-profile-card):hover::-webkit-scrollbar-thumb{background:#68717e;background-clip:padding-box}
+.modal-card:has(.public-profile-card)>.public-profile-card{width:100%!important;max-width:100%!important;min-height:100%;box-sizing:border-box}

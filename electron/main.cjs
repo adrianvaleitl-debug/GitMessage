@@ -24,7 +24,7 @@ function startUpdateChecks() {
 
   autoUpdater.autoDownload = true;
   autoUpdater.autoInstallOnAppQuit = true;
-  autoUpdater.allowPrerelease = true;
+  autoUpdater.allowPrerelease = false;
 
   autoUpdater.on("error", (error) => {
     console.error("GitMessage update check failed:", error);

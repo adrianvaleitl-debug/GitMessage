@@ -1160,48 +1160,6 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
 }
 
 
-/* Chat-style message flow: sender and first message share a line; grouped messages stack below. */
-.message-content{display:block!important;width:min(100%,1100px)!important}
-.message-author{display:inline-flex!important;vertical-align:baseline!important;margin-right:7px!important;gap:7px!important}
-.message-bubble{display:inline!important;width:auto!important;max-width:100%!important;vertical-align:baseline!important}
-.message-line.grouped .message-content{display:block!important}
-.message-line.grouped .message-bubble{display:inline!important}
-.message-line.grouped .message-content{margin-left:46px!important}
-@media(max-width:760px){
- .message-line.grouped .message-content{margin-left:41px!important}
- .message-author{margin-right:6px!important}
-}
-
-
-/* Discord-like message presentation only; preserve the existing app/sidebar layout. */
-.message-canvas{padding:28px 0 22px!important;gap:0!important}
-.message-line{gap:14px;padding:9px 28px 9px;min-height:0}
-.message-avatar{width:42px;height:42px;flex-basis:42px;margin-top:0}
-.message-content{display:block!important;flex:1;min-width:0;width:100%;line-height:1.5}
-.message-author{display:inline-flex!important;vertical-align:baseline;gap:9px;margin:0 9px 0 0;font-size:14px;line-height:1.45}
-.message-author time{font-size:11px;color:#949ba7}
-.message-bubble,.message-line.mine .message-bubble,.message-line:not(.mine) .message-bubble{display:inline!important;width:auto!important;max-width:100%;padding:0!important;margin:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;font-size:15px;line-height:1.55;color:#dbdee3;vertical-align:baseline;white-space:pre-wrap;overflow-wrap:anywhere}
-.message-line.grouped{padding-top:1px;padding-bottom:1px}
-.message-line.grouped .message-content{margin-left:56px!important}
-.message-line.grouped .message-bubble{display:inline!important}
-.message-line.grouped .message-actions{top:-3px}
-.message-line:not(.grouped){margin-top:9px}
-.message-line.grouped + .message-line.grouped{margin-top:0}
-.message-actions{right:24px;top:0}
-@media(max-width:980px) and (min-width:681px){
- .message-line{padding-left:18px;padding-right:18px}
- .message-line.grouped .message-content{margin-left:48px!important}
-}
-@media(max-width:680px){
- .message-line{padding:8px 12px;gap:10px}
- .message-avatar{width:36px;height:36px;flex-basis:36px}
- .message-line.grouped .message-content{margin-left:46px!important}
- .message-author{font-size:13px}
- .message-bubble,.message-line.mine .message-bubble,.message-line:not(.mine) .message-bubble{font-size:14px}
- .message-canvas{padding-top:18px!important}
-}
-
-
 /* User profile cover banners */
 .profile-banner-editor{display:grid;gap:8px;margin:8px 0 12px;padding:13px;border:1px solid var(--line);border-radius:15px;background:var(--panel-2)}
 .profile-banner-editor-preview{height:112px;display:grid;place-items:center;overflow:hidden;border:1px dashed var(--line);border-radius:11px;background:linear-gradient(135deg,#303846,#20252e);color:var(--muted);font-size:10px;font-weight:750;letter-spacing:2px}

@@ -113,6 +113,7 @@ export default function App() {
 
   const messageCanvasRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const composerInputRef = useRef<HTMLTextAreaElement>(null);
   const peerRef = useRef<RTCPeerConnection | null>(null);
   const localStreamRef = useRef<MediaStream | null>(null);
   const remoteAudioRef = useRef<HTMLAudioElement>(null);
@@ -329,7 +330,7 @@ export default function App() {
         }
       });
 
-    const poll = window.setInterval(() => void refreshMessages(), 4000);
+    const poll = window.setInterval(() => void refreshMessages(), 1500);
     const onVisible = () => { if (!document.hidden) void refreshMessages(); };
     document.addEventListener("visibilitychange", onVisible);
     return () => {
@@ -351,7 +352,7 @@ export default function App() {
       setServerMessages(data || []);
     };
     void refresh();
-    const poll=window.setInterval(()=>void refresh(),4000);
+    const poll=window.setInterval(()=>void refresh(),2000);
     const channel=supabase.channel("gitmessage-server-"+activeServerChannel)
       .on("postgres_changes",{event:"INSERT",schema:"public",table:"gitmessage_server_messages",filter:"channel_id=eq."+activeServerChannel},()=>void refresh())
       .subscribe();
@@ -694,6 +695,7 @@ export default function App() {
     if (data) setMessages(rows => rows.some(m => m.id === data.id) ? rows : [...rows, data as Message]);
     setDraft("");
     setNotice("");
+    requestAnimationFrame(() => composerInputRef.current?.focus());
   }
 
   async function toggleReaction(messageId: string, emoji: string) {
@@ -989,7 +991,7 @@ export default function App() {
           }) : <div className="empty-conversation"><div className="empty-art"><div className="art-ring ring-one"/><div className="art-ring ring-two"/><div className="art-core"><MessageCircle size={27}/></div><span className="art-spark spark-one"/><span className="art-spark spark-two"/></div><div className="eyebrow">A SPACE OF YOUR OWN</div><h3>Every good conversation<br/><span>starts somewhere.</span></h3><p>Send the first message and let it unfold.</p></div> : <div className="empty-conversation"><div className="empty-art"><div className="art-ring ring-one"/><div className="art-ring ring-two"/><div className="art-core"><Sparkles size={27}/></div><span className="art-spark spark-one"/><span className="art-spark spark-two"/></div><div className="eyebrow">YOUR PEOPLE, YOUR PLACE</div><h3>Make room for<br/><span>the good stuff.</span></h3><p>Choose a conversation or create a new one.</p><button className="empty-create" onClick={() => setModal("new")}><Plus size={15}/> New conversation</button></div>}
           <audio ref={remoteAudioRef} autoPlay/><video ref={remoteVideoRef} autoPlay playsInline className={"remote-call-video" + (callState !== "idle" && callKind === "video" ? " visible" : "")}/><video ref={localVideoRef} autoPlay muted playsInline className={"local-call-video" + (callState !== "idle" && callKind === "video" ? " visible" : "")}/>
         </div>
-        <form className="composer-area" onSubmit={sendMessage}><input ref={fileInputRef} type="file" accept="image/*,video/mp4,audio/*,.mp4,.m4a,.mp3,.wav,.webm,.ogg" hidden onChange={event => { const file=event.target.files?.[0]; void uploadAttachment(file); event.target.value=""; }}/><div className="composer-glass"><button type="button" className="glass-icon" title={recording ? "Stop voice message" : "Record voice message"} disabled={!active || sending} onClick={() => void toggleVoiceRecording()}>{recording ? <MicOff size={17}/> : <Mic size={17}/>}</button><button type="button" className="glass-icon" title="Attach file" disabled={!active || sending} onClick={() => fileInputRef.current?.click()}><Paperclip size={17}/></button><textarea rows={1} value={draft} onChange={e => void updateDraft(e.target.value)} onKeyDown={event => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); void sendMessage(); } }} placeholder={active ? "Write a message…" : "Choose a conversation first"} disabled={!active || sending}/><button className="send-button" type="submit" disabled={!active || !draft.trim() || sending} title="Send message"><ArrowUp size={18}/></button></div><div className="composer-caption"><span>{recording ? "Recording voice message…" : "Messages are synced in real time"}</span><span><kbd>ENTER</kbd> TO SEND <i>·</i> <kbd>SHIFT + ENTER</kbd> NEW LINE</span></div>{notice && <p className="notice inline">{notice}</p>}</form>
+        <form className="composer-area" onSubmit={sendMessage}><input ref={fileInputRef} type="file" accept="image/*,video/mp4,audio/*,.mp4,.m4a,.mp3,.wav,.webm,.ogg" hidden onChange={event => { const file=event.target.files?.[0]; void uploadAttachment(file); event.target.value=""; }}/><div className="composer-glass"><button type="button" className="glass-icon" title={recording ? "Stop voice message" : "Record voice message"} disabled={!active || sending} onClick={() => void toggleVoiceRecording()}>{recording ? <MicOff size={17}/> : <Mic size={17}/>}</button><button type="button" className="glass-icon" title="Attach file" disabled={!active || sending} onClick={() => fileInputRef.current?.click()}><Paperclip size={17}/></button><textarea ref={composerInputRef} rows={1} value={draft} onChange={e => void updateDraft(e.target.value)} onKeyDown={event => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); void sendMessage(); } }} placeholder={active ? "Write a message…" : "Choose a conversation first"} disabled={!active}/><button className="send-button" type="submit" disabled={!active || !draft.trim() || sending} title="Send message"><ArrowUp size={18}/></button></div><div className="composer-caption"><span>{recording ? "Recording voice message…" : "Messages are synced in real time"}</span><span><kbd>ENTER</kbd> TO SEND <i>·</i> <kbd>SHIFT + ENTER</kbd> NEW LINE</span></div>{notice && <p className="notice inline">{notice}</p>}</form>
       </section>
       <aside className={"conversation-details" + (detailsOpen ? " details-open" : "")}><button type="button" className="details-close glass-icon" title="Close conversation details" onClick={() => setDetailsOpen(false)}><X size={16}/></button>
         <div className="details-heading">CONVERSATION DETAILS</div>

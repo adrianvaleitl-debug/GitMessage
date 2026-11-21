@@ -836,3 +836,28 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
 .profile-editor form textarea{min-height:92px;resize:vertical}
 .profile-editor-note{display:flex;align-items:flex-start;gap:8px;margin-top:8px;padding:10px 11px;border:1px solid var(--line);border-radius:11px;color:var(--muted);font-size:10px;line-height:1.5;background:var(--panel-2)}
 .profile-editor-note svg{flex:0 0 auto;margin-top:1px}
+
+
+/* Rounded, inset scrollbars: avoid the square scrollbar edge visible in the profile editor. */
+.modal-card{border-radius:20px!important;scrollbar-width:thin;scrollbar-color:#555b66 transparent;scrollbar-gutter:stable}
+.modal-card::-webkit-scrollbar{width:9px}
+.modal-card::-webkit-scrollbar-track{margin:12px 3px;border-radius:999px;background:transparent}
+.modal-card::-webkit-scrollbar-thumb{min-height:44px;border:2px solid transparent;border-radius:999px;background:#555b66;background-clip:padding-box}
+.modal-card::-webkit-scrollbar-thumb:hover{background:#737b89;background-clip:padding-box}
+.modal-card::-webkit-scrollbar-corner{background:transparent;border-radius:999px}
+.modal-backdrop{padding:14px}
+.profile-customize{display:grid;gap:8px;margin:10px 0 4px;padding:14px;border:1px solid #3d424b;border-radius:15px;background:#22252b}
+.profile-customize h3{margin:0;font-size:13px;color:#f2f3f5}
+.profile-customize p{margin:0 0 3px;font-size:10px;line-height:1.5;color:#aeb1b8}
+.profile-customize>label{margin:6px 0 0!important;font-size:10px!important;color:#c8cbd1!important}
+.profile-customize select{width:100%;min-height:37px;padding:8px 10px;border:1px solid #414752;border-radius:10px;background:#1d2025;color:#f2f3f5;font-size:11px}
+.profile-customize .profile-customize-toggle{display:flex;align-items:center;gap:9px;margin-top:7px!important;cursor:pointer}
+.profile-customize input[type=checkbox]{width:15px;height:15px;accent-color:var(--blue)}
+.desktop-shell.profile-card-solid .public-profile-card{background:#252a32!important}
+.desktop-shell.profile-card-minimal .public-profile-card{background:transparent!important;border-color:transparent!important;box-shadow:none!important}
+.desktop-shell.profile-card-glass .public-profile-card{backdrop-filter:blur(18px)}
+.desktop-shell.profile-ring-none .public-profile-card .profile-photo{box-shadow:none!important;border-color:transparent!important}
+.desktop-shell.profile-ring-subtle .public-profile-card .profile-photo{box-shadow:0 0 0 2px #858b96!important}
+.desktop-shell.profile-ring-accent .public-profile-card .profile-photo{box-shadow:0 0 0 4px var(--accent)!important}
+.desktop-shell.profile-hide-bio .public-profile-card .profile-bio{display:none!important}
+.desktop-shell.profile-hide-username .public-profile-card .profile-username{display:none!important}

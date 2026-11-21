@@ -271,6 +271,24 @@ export default function App() {
   }, [active, session?.user?.id]);
 
   useEffect(() => {
+    if (!supabase || !session || !activeServerChannel) { setServerMessages([]); return; }
+    let alive=true;
+    const refresh=async()=>{
+      const {data,error}=await supabase!.from("gitmessage_server_messages")
+        .select("id,body,sender_id,created_at").eq("channel_id",activeServerChannel)
+        .order("created_at",{ascending:true}).limit(300);
+      if (!alive || error) return;
+      setServerMessages(data || []);
+    };
+    void refresh();
+    const poll=window.setInterval(()=>void refresh(),4000);
+    const channel=supabase.channel("gitmessage-server-"+activeServerChannel)
+      .on("postgres_changes",{event:"INSERT",schema:"public",table:"gitmessage_server_messages",filter:"channel_id=eq."+activeServerChannel},()=>void refresh())
+      .subscribe();
+    return()=>{alive=false;window.clearInterval(poll);void supabase!.removeChannel(channel);};
+  },[activeServerChannel,session]);
+
+  useEffect(() => {
     if (!supabase || !active || !session) { setSomeoneTyping(false); return; }
     const refreshTyping = async () => {
       const { data } = await supabase!.from("gitmessage_typing").select("user_id,updated_at").eq("conversation_id", active).neq("user_id", session.user.id);

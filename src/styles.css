@@ -199,3 +199,7 @@ button:disabled{cursor:not-allowed;opacity:.45}
 .details-muted{margin-top:5px;color:#969aa3;font-size:10px}
 @media(max-width:1120px){.desktop-shell{grid-template-columns:58px 220px minmax(0,1fr)}.conversation-details{display:none}.conversation-pane{grid-column:3}.message-content{width:100%}}
 @media(max-width:760px){.desktop-shell{grid-template-columns:54px 205px minmax(0,1fr)}}
+
+/* Brand marks removed; keep the plain application name. */
+.rail-brand,.brand-icon,.rail-divider{display:none!important}
+.sidebar-brand .brand-lockup{gap:0}

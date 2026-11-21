@@ -116,6 +116,7 @@ create or replace function public.set_gitmessage_group_member_permissions(
   target_conversation_id uuid, target_user_id uuid, new_permissions jsonb, new_role text default 'member'
 ) returns void language plpgsql security definer set search_path=public,auth as $$
 begin
+  if not exists(select 1 from public.conversations c where c.id=target_conversation_id and c.kind='group') then raise exception 'Group not found.'; end if;
   if not public.gitmessage_can_manage_group(target_conversation_id,'manage_members') then raise exception 'You do not have permission to manage members.'; end if;
   if new_role not in ('member','moderator','admin') then raise exception 'Invalid group role.'; end if;
   if target_user_id=auth.uid() then raise exception 'You cannot change your own permissions.'; end if;
@@ -136,6 +137,7 @@ end $$;
 create or replace function public.kick_gitmessage_group_member(target_conversation_id uuid, target_user_id uuid)
 returns void language plpgsql security definer set search_path=public,auth as $$
 begin
+  if not exists(select 1 from public.conversations c where c.id=target_conversation_id and c.kind='group') then raise exception 'Group not found.'; end if;
   if not public.gitmessage_can_manage_group(target_conversation_id,'manage_members') then raise exception 'You do not have permission to remove members.'; end if;
   if target_user_id=auth.uid() then raise exception 'Use Leave group to remove yourself.'; end if;
   delete from public.conversation_members

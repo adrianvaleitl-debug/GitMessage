@@ -822,3 +822,17 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
 .desktop-shell.text-medium .message-line,.desktop-shell.text-medium .message-body{font-size:13px!important}
 .desktop-shell.text-large .message-line,.desktop-shell.text-large .message-body{font-size:15px!important}
 .desktop-shell.no-animations *{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+
+
+/* Profile editor: make the profile itself the place for identity customisation. */
+.profile-editor{display:flex;flex-direction:column;gap:9px}
+.profile-editor .profile-photo-row{padding:15px;border:1px solid var(--line);border-radius:15px;background:var(--panel-2);margin:8px 0 12px}
+.profile-editor .profile-photo{width:72px;height:72px;flex:0 0 72px;box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 18%,transparent)}
+.profile-editor .profile-photo img{border-radius:50%;object-fit:cover}
+.profile-editor form{display:grid;gap:8px}
+.profile-editor form>label{margin-top:7px;font-size:11px;color:var(--muted);font-weight:600}
+.profile-editor form input:not([type=file]),.profile-editor form textarea{width:100%;box-sizing:border-box;padding:11px 12px;border:1px solid var(--line);border-radius:11px;background:var(--panel-2);color:var(--text);font:inherit;font-size:12px;outline:none}
+.profile-editor form input:focus,.profile-editor form textarea:focus{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 15%,transparent)}
+.profile-editor form textarea{min-height:92px;resize:vertical}
+.profile-editor-note{display:flex;align-items:flex-start;gap:8px;margin-top:8px;padding:10px 11px;border:1px solid var(--line);border-radius:11px;color:var(--muted);font-size:10px;line-height:1.5;background:var(--panel-2)}
+.profile-editor-note svg{flex:0 0 auto;margin-top:1px}

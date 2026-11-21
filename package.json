@@ -37,6 +37,7 @@
     "files": [
       "dist/**/*",
       "electron/**/*",
+      "build/**/*",
       "package.json"
     ],
     "win": {
@@ -47,7 +48,8 @@
             "x64"
           ]
         }
-      ]
+      ],
+      "icon": "build/gitmessage.ico"
     },
     "nsis": {
       "oneClick": false,

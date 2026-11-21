@@ -272,6 +272,7 @@ with check (
  not exists (
   select 1 from public.conversation_members other_member
   where other_member.conversation_id=messages.conversation_id and other_member.user_id<>auth.uid()
+    and exists(select 1 from public.conversations c where c.id=messages.conversation_id and c.kind='direct')
     and public.gitmessage_is_blocked_between(auth.uid(),other_member.user_id)
  )
 );

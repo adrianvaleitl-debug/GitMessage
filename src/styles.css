@@ -475,3 +475,86 @@ body{--gm-titlebar-clear:transparent}
 .auth-method-switch button{flex:1;border:0;border-radius:9px;padding:9px 12px;background:transparent;color:inherit;font:inherit;cursor:pointer;opacity:.68}
 .auth-method-switch button.selected{background:rgba(128,128,128,.2);opacity:1;box-shadow:0 1px 5px rgba(0,0,0,.08)}
 .brand-icon img{width:27px;height:27px;display:block;object-fit:contain;border-radius:8px}
+
+
+/* GitMessage desktop — clean native messaging layout */
+:root{--gm-blue:#1688f8;--gm-ease:cubic-bezier(.2,.75,.25,1)}
+html,body,#root{min-width:720px;background:#252629}
+.desktop-shell{grid-template-columns:286px minmax(0,1fr)!important;gap:10px!important;padding:44px 10px 10px!important;background:#252629!important}
+.sidebar,.conversation-pane{border-radius:18px!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;box-shadow:none!important}
+.sidebar{padding:16px 12px 12px!important;background:#303135!important;border:1px solid #414247!important}
+.conversation-pane{background:#292a2e!important;border:1px solid #414247!important}
+.sidebar-brand{height:46px!important;border-bottom:1px solid rgba(255,255,255,.09);padding:0 6px 12px!important}
+.brand-lockup{gap:9px!important;font-size:15px!important;letter-spacing:-.35px}
+.brand-icon{width:28px!important;height:28px!important;border-radius:8px!important;overflow:hidden}
+.brand-icon img{width:26px!important;height:26px!important;object-fit:contain}
+.account-chip{margin:5px 0 13px!important;padding:12px 6px!important;border-top:0!important;border-bottom:1px solid rgba(255,255,255,.09)!important}
+.account-avatar{width:36px!important;height:36px!important;border-radius:50%!important;background:#484a50!important;color:#f5f5f6!important;box-shadow:none!important}
+.search-field{height:40px!important;border-radius:10px!important;background:#3b3c41!important;border:1px solid #505158!important}
+.search-field input{font-size:12px!important}
+.search-field kbd{display:none}
+.list-heading{margin:18px 4px 8px!important;font-size:10px!important;letter-spacing:.8px!important;color:#aeb0b7!important}
+.conversation-item{padding:10px 9px!important;border-radius:11px!important;gap:10px!important}
+.conversation-item.active{background:#45474d!important;border:1px solid #5b5e66!important;box-shadow:none!important}
+.conversation-item:hover{background:#3b3d42!important}
+.conversation-avatar,.header-avatar{width:40px!important;height:40px!important;border-radius:50%!important;background:#4a4c52!important;border:1px solid #62646a!important;color:#f1f2f4!important}
+.conversation-meta b{font-size:12px!important;font-weight:600!important}
+.conversation-meta small{font-size:10px!important;margin-top:4px!important}
+.sidebar-bottom{padding-top:10px}
+.sync-card,.sidebar-footer{display:none!important}
+.settings-row{padding:11px 8px!important;font-size:11px!important;border-radius:9px}
+.settings-row:hover{background:#3c3e43!important}
+.conversation-header{height:74px!important;margin:0!important;padding:0 22px!important;border:0!important;border-bottom:1px solid #414247!important;border-radius:0!important;background:#303135!important}
+.conversation-header:after{display:none!important}
+.header-person{gap:12px!important}
+.header-avatar{width:40px!important;height:40px!important}
+.header-person h2{font-size:14px!important;letter-spacing:0!important;margin-bottom:4px!important}
+.header-person p{font-size:10px!important;color:#a8aab1!important}
+.header-tools{gap:5px!important}
+.header-tools .live-pill{display:none!important}
+.header-tools .glass-icon{width:34px!important;height:34px!important;border-radius:50%!important;color:#bfc1c7!important}
+.header-tools .glass-icon:hover{background:#44464c!important;color:#fff!important}
+.message-canvas{padding:28px clamp(24px,9vw,150px)!important;gap:15px!important;background:#292a2e!important;scrollbar-color:#55575d transparent!important}
+.message-content{max-width:min(68%,620px)!important}
+.message-bubble{padding:10px 15px!important;border-radius:18px 18px 18px 6px!important;background:#414247!important;border:1px solid #505158!important;color:#f5f5f6!important;box-shadow:none!important;font-size:13px!important;line-height:1.5!important;backdrop-filter:none!important}
+.message-line.mine .message-bubble{background:#087cf0!important;border:1px solid #2992ff!important;border-radius:18px 18px 6px 18px!important;color:white!important;box-shadow:none!important}
+.message-meta{font-size:9px!important;color:#a5a7af!important;margin:6px 5px 0!important}
+.mine .message-meta{color:#aebdd1!important}
+.message-actions{opacity:0;transition:opacity .15s ease}
+.message-line:hover .message-actions{opacity:1}
+.composer-area{padding:12px clamp(20px,6vw,92px) 18px!important;margin:0!important}
+.composer-glass{min-height:56px!important;height:auto!important;border-radius:22px!important;padding:7px 9px 7px 15px!important;gap:9px!important;background:#3a3b40!important;border:1px solid #55575e!important;box-shadow:none!important;backdrop-filter:none!important}
+.composer-glass:focus-within{border-color:#1688f8!important;box-shadow:0 0 0 2px #1688f833!important;transform:none!important}
+.composer-glass textarea{font-size:13px!important;color:#f4f4f5!important}
+.composer-glass textarea::placeholder{color:#a5a7ae!important}
+.composer-glass .glass-icon{width:32px!important;height:32px!important;color:#1688f8!important}
+.send-button{width:36px!important;height:36px!important;background:#1688f8!important;border:0!important;border-radius:50%!important;color:#fff!important;box-shadow:none!important}
+.composer-caption{padding:8px 6px 0!important;color:#85878f!important}
+.notice.inline{color:#ff9aab!important}
+.empty-conversation{max-width:460px}
+.empty-art{display:none!important}
+.empty-conversation .eyebrow{margin-bottom:12px}
+.empty-conversation h3{font-size:23px!important;color:#f2f2f4!important}
+.empty-conversation h3 span{color:#f2f2f4!important}
+.empty-conversation p{font-size:12px!important;color:#a7a9b0!important}
+.empty-create{background:#3d3f45!important;border:1px solid #55575e!important;color:#f4f4f5!important;font-size:11px!important}
+.modal-card{background:#34353a!important;border:1px solid #505158!important;box-shadow:0 20px 70px #0008!important;backdrop-filter:blur(20px)!important}
+.modal-card input{background:#292a2e!important;border:1px solid #55575e!important;color:#f4f4f5!important}
+.primary-button{background:#1688f8!important;color:#fff!important;border:0!important;border-radius:11px!important;box-shadow:none!important}
+.primary-button:hover:not(:disabled){background:#087cf0!important}
+.glass-icon:hover,.settings-row:hover,.preference-row:hover{color:#fff!important}
+.light.desktop-shell{background:#e9eaed!important}
+.light .sidebar{background:#f7f7f8!important;border-color:#dedfe3!important}
+.light .conversation-pane{background:#fff!important;border-color:#dedfe3!important}
+.light .conversation-header{background:#f7f7f8!important;border-bottom-color:#e2e3e6!important}
+.light .message-canvas{background:#fff!important}
+.light .conversation-item.active{background:#e8edf5!important;border-color:#d4dce8!important}
+.light .search-field,.light .composer-glass{background:#fff!important;border-color:#d8d9de!important}
+.light .search-field input,.light .composer-glass textarea{color:#202124!important}
+.light .message-bubble{background:#ececef!important;border-color:transparent!important;color:#202124!important}
+.light .message-line.mine .message-bubble{background:#1688f8!important;color:#fff!important}
+.light .conversation-header h2,.light .conversation-meta b,.light .account-copy b,.light .brand-lockup{color:#202124!important}
+.light .header-person p,.light .conversation-meta small,.light .account-copy small{color:#70737a!important}
+.light .settings-row{color:#55575e!important}
+@media(max-width:950px){.desktop-shell{grid-template-columns:245px minmax(0,1fr)!important}.message-canvas{padding-left:22px!important;padding-right:22px!important}.composer-area{padding-left:18px!important;padding-right:18px!important}}
+@media(prefers-reduced-motion:reduce){.message-line,.sidebar,.conversation-pane{animation:none!important}}

@@ -41,8 +41,29 @@ jobs:
         with:
           tag_name: gitmessage-build-${{ github.run_number }}
           name: GitMessage build ${{ github.run_number }}
-          body: Automated Windows installer build from commit ${{ github.sha }}. Includes automatic update metadata and refreshed application icon.
-          prerelease: true
+          body: |
+            # GitMessage 4.0 — Stable Release
+
+            GitMessage is now officially released for web and Windows.
+
+            ## Features
+            - Real-time direct messaging, conversation search and message history
+            - Message grouping and context actions
+            - Public profiles with profile photos, bios and clickable links
+            - Server spaces with text channels
+            - Supported image and video sharing
+            - One-to-one voice and video calls, with optional local camera/microphone permissions
+            - Responsive web app and Windows desktop app
+            - Light and dark appearance options
+            - Automatic stable desktop updates
+
+            ## Get started
+            - Web app: https://adrianvaleitl-debug.github.io/GitMessage/
+            - Source code: https://github.com/adrianvaleitl-debug/GitMessage
+
+            Calls are currently one-to-one; group calling is not included.
+            Built from commit ${{ github.sha }}. Windows installer, update metadata and refreshed application icon are attached below.
+          prerelease: false
           files: |
             release/*.exe
             release/*.blockmap

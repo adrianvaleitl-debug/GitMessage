@@ -115,27 +115,71 @@ export default function App() {
   }, [session]);
 
   useEffect(() => {
-    if (!active || !supabase) { setMessages([]); return; }
+    if (!active || !supabase || !session?.user?.id) { setMessages([]); return; }
     let alive = true;
-    const load = async () => {
+    const refreshMessages = async () => {
       const { data, error } = await supabase!.from("messages")
-        .select("id,body,sender_id,created_at,edited_at,deleted_at").eq("conversation_id", active)
-        .order("created_at", { ascending: true }).limit(300);
+        .select("id,body,sender_id,created_at,edited_at,deleted_at")
+        .eq("conversation_id", active)
+        .order("created_at", { ascending: true })
+        .limit(300);
       if (!alive) return;
-      if (error) setNotice(error.message);
-      else setMessages((data || []) as Message[]);
+      if (error) {
+        console.error("GitMessage message refresh failed:", error.message);
+        return;
+      }
+      const next = (data || []) as Message[];
+      setMessages(current => {
+        if (current.length === next.length && current.every((message, index) =>
+          message.id === next[index].id &&
+          message.body === next[index].body &&
+          message.edited_at === next[index].edited_at &&
+          message.deleted_at === next[index].deleted_at
+        )) return current;
+        return next;
+      });
     };
-    void load();
+
+    void refreshMessages();
+    // Realtime is the fast path; periodic reconciliation also covers projects
+    // where the messages table has not been added to Supabase's realtime publication.
     const channel = supabase.channel("gitmessage-messages-" + active)
-      .on("postgres_changes", { event: "INSERT", schema: "public", table: "messages", filter: "conversation_id=eq." + active },
-        payload => setMessages(current => {
-          const incoming = payload.new as Message;
-          if (incoming.sender_id !== session?.user?.id && document.hidden && typeof Notification !== "undefined" && Notification.permission === "granted") new Notification("New GitMessage", { body: incoming.body });
-          return current.some(message => message.id === incoming.id) ? current : [...current, incoming];
-        }))
-      .subscribe();
-    return () => { alive = false; void supabase!.removeChannel(channel); };
-  }, [active]);
+      .on("postgres_changes", { event: "*", schema: "public", table: "messages", filter: "conversation_id=eq." + active },
+        payload => {
+          if (!alive) return;
+          if (payload.eventType === "INSERT") {
+            const incoming = payload.new as Message;
+            if (incoming.sender_id !== session.user.id && document.hidden && typeof Notification !== "undefined" && Notification.permission === "granted") {
+              new Notification("New GitMessage", { body: incoming.body });
+            }
+            setMessages(current => current.some(message => message.id === incoming.id) ? current : [...current, incoming].sort((a, b) => a.created_at.localeCompare(b.created_at)));
+          } else if (payload.eventType === "UPDATE") {
+            const updated = payload.new as Message;
+            setMessages(current => current.map(message => message.id === updated.id ? { ...message, ...updated } : message));
+          } else if (payload.eventType === "DELETE") {
+            const removed = payload.old as Partial<Message>;
+            if (removed.id) setMessages(current => current.filter(message => message.id !== removed.id));
+          }
+          // Reconcile against the database shortly after every realtime event.
+          void refreshMessages();
+        })
+      .subscribe(status => {
+        if (status === "SUBSCRIBED") void refreshMessages();
+        if (status === "CHANNEL_ERROR" || status === "TIMED_OUT" || status === "CLOSED") {
+          console.warn("GitMessage realtime channel status:", status);
+        }
+      });
+
+    const poll = window.setInterval(() => void refreshMessages(), 4000);
+    const onVisible = () => { if (!document.hidden) void refreshMessages(); };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      alive = false;
+      window.clearInterval(poll);
+      document.removeEventListener("visibilitychange", onVisible);
+      void supabase!.removeChannel(channel);
+    };
+  }, [active, session?.user?.id]);
 
   useEffect(() => {
     if (!supabase || !active || !session) { setSomeoneTyping(false); return; }

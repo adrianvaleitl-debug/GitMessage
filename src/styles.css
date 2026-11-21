@@ -860,4 +860,4 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
 .desktop-shell.profile-ring-subtle .public-profile-card .profile-photo{box-shadow:0 0 0 2px #858b96!important}
 .desktop-shell.profile-ring-accent .public-profile-card .profile-photo{box-shadow:0 0 0 4px var(--accent)!important}
 .desktop-shell.profile-hide-bio .public-profile-card .profile-bio{display:none!important}
-.desktop-shell.profile-hide-username .public-profile-card .profile-username{display:none!important}
+.desktop-shell.profile-hide-username .public-profile-card .profile-photo-row>div:nth-child(2) .modal-description{display:none!important}

@@ -9,6 +9,7 @@ import {
 
 type Conversation = { id: string; title: string | null; updated_at?: string; is_group?: boolean; avatar_path?: string | null };
 type Message = { id: string; body: string; sender_id: string; created_at: string; edited_at?: string | null; deleted_at?: string | null };
+type AttachmentPreview = { file_name: string; mime_type: string; size_bytes: number; url: string };
 type ContactMatch = { user_id: string; email: string; username?: string };
 
 export default function App() {
@@ -28,6 +29,7 @@ export default function App() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [active, setActive] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
+  const [attachmentPreviews, setAttachmentPreviews] = useState<Record<string, AttachmentPreview>>({});
   const [draft, setDraft] = useState("");
   const [query, setQuery] = useState("");
   const [modal, setModal] = useState<"new" | "group" | "profile" | "friends" | "settings" | null>(null);
@@ -357,6 +359,24 @@ export default function App() {
     setMessages(rows => rows.map(row => row.id === message.id ? { ...row, body: "This message was deleted.", deleted_at: new Date().toISOString() } : row));
   }
 
+  useEffect(() => {
+    if (!supabase || messages.length === 0) { setAttachmentPreviews({}); return; }
+    let alive = true;
+    const ids = messages.map(message => message.id);
+    void supabase.from("gitmessage_attachments").select("message_id,file_name,mime_type,size_bytes,storage_path").in("message_id", ids).then(async ({data,error}) => {
+      if (!alive || error || !data) return;
+      const entries = await Promise.all(data.map(async (item: any) => {
+        const { data: signed } = await supabase!.storage.from("gitmessage-attachments").createSignedUrl(item.storage_path, 3600);
+        return signed?.signedUrl ? [item.message_id, { file_name:item.file_name, mime_type:item.mime_type, size_bytes:Number(item.size_bytes), url:signed.signedUrl }] as const : null;
+      }));
+      if (!alive) return;
+      const next: Record<string, AttachmentPreview> = {};
+      entries.forEach(entry => { if (entry) next[entry[0]] = entry[1]; });
+      setAttachmentPreviews(next);
+    });
+    return () => { alive = false; };
+  }, [messages, active]);
+
   async function openAttachment(messageId: string) {
     if (!supabase) return;
     setNotice("");
@@ -560,7 +580,10 @@ export default function App() {
         <div className="message-canvas">
           {active ? messages.length ? messages.map(message => {
             const mine = message.sender_id === session.user.id;
-            return <div key={message.id} className={"message-line" + (mine ? " mine" : "")}><div className="message-avatar">{mine ? (profileAvatar ? <img src={profileAvatar} alt="Your profile"/> : (profileDisplayName || session.user.email || session.user.phone || "Y").slice(0,1).toUpperCase()) : (current?.avatar_path && supabase ? <img src={supabase.storage.from("gitmessage-avatars").getPublicUrl(current.avatar_path).data.publicUrl} alt=""/> : (current?.title || "G").slice(0,1).toUpperCase())}</div><div className="message-content"><div className="message-author">{mine ? "You" : (current?.title || "Contact")} <time>{new Date(message.created_at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</time></div><div className="message-bubble">{message.body}</div><div className="message-actions"><button title="Like" onClick={() => void toggleReaction(message.id, "❤️")}>❤️</button><button title="Laugh" onClick={() => void toggleReaction(message.id, "😂")}>😂</button><button title="Surprised" onClick={() => void toggleReaction(message.id, "😮")}>😮</button>{message.body.startsWith("📎 ") && <button title="Open attachment" onClick={() => void openAttachment(message.id)}><Paperclip size={12}/></button>}{mine && !message.deleted_at && <><button title="Edit message" onClick={() => void editMessage(message)}><Pencil size={12}/></button><button title="Delete message" onClick={() => void deleteMessage(message)}><Trash2 size={12}/></button></>}</div>{(reactions[message.id] || []).length > 0 && <div className="reaction-strip">{Array.from(new Set((reactions[message.id] || []).map(r => r.emoji))).map(emoji => <button key={emoji} onClick={() => void toggleReaction(message.id, emoji)}>{emoji} {(reactions[message.id] || []).filter(r => r.emoji === emoji).length}</button>)}</div>}<div className="message-meta">{message.edited_at && <span>Edited</span>}{mine && <>{readMessageIds.includes(message.id) && <span>Read</span>}<Check size={12}/></>}</div></div></div>;
+            return <div key={message.id} className={"message-line" + (mine ? " mine" : "")}><div className="message-avatar">{mine ? (profileAvatar ? <img src={profileAvatar} alt="Your profile"/> : (profileDisplayName || session.user.email || session.user.phone || "Y").slice(0,1).toUpperCase()) : (current?.avatar_path && supabase ? <img src={supabase.storage.from("gitmessage-avatars").getPublicUrl(current.avatar_path).data.publicUrl} alt=""/> : (current?.title || "G").slice(0,1).toUpperCase())}</div><div className="message-content"><div className="message-author">{mine ? "You" : (current?.title || "Contact")} <time>{new Date(message.created_at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</time></div>{message.body.startsWith("📎 ") && attachmentPreviews[message.id] ? <div className="message-attachment-card">
+                {attachmentPreviews[message.id].mime_type.startsWith("image/") ? <button type="button" className="image-attachment" onClick={() => void openAttachment(message.id)} title="Open full-size image"><img src={attachmentPreviews[message.id].url} alt={attachmentPreviews[message.id].file_name}/></button> : null}
+                <div className="attachment-file-row"><Paperclip size={15}/><span><b>{attachmentPreviews[message.id].file_name}</b><small>{(attachmentPreviews[message.id].size_bytes / 1024 / 1024).toFixed(2)} MB</small></span><button type="button" onClick={() => void openAttachment(message.id)}>Open</button></div>
+              </div> : <div className="message-bubble">{message.body}</div>}<div className="message-actions"><button title="Like" onClick={() => void toggleReaction(message.id, "❤️")}>❤️</button><button title="Laugh" onClick={() => void toggleReaction(message.id, "😂")}>😂</button><button title="Surprised" onClick={() => void toggleReaction(message.id, "😮")}>😮</button>{message.body.startsWith("📎 ") && <button title="Open attachment" onClick={() => void openAttachment(message.id)}><Paperclip size={12}/></button>}{mine && !message.deleted_at && <><button title="Edit message" onClick={() => void editMessage(message)}><Pencil size={12}/></button><button title="Delete message" onClick={() => void deleteMessage(message)}><Trash2 size={12}/></button></>}</div>{(reactions[message.id] || []).length > 0 && <div className="reaction-strip">{Array.from(new Set((reactions[message.id] || []).map(r => r.emoji))).map(emoji => <button key={emoji} onClick={() => void toggleReaction(message.id, emoji)}>{emoji} {(reactions[message.id] || []).filter(r => r.emoji === emoji).length}</button>)}</div>}<div className="message-meta">{message.edited_at && <span>Edited</span>}{mine && <>{readMessageIds.includes(message.id) && <span>Read</span>}<Check size={12}/></>}</div></div></div>;
           }) : <div className="empty-conversation"><div className="empty-art"><div className="art-ring ring-one"/><div className="art-ring ring-two"/><div className="art-core"><MessageCircle size={27}/></div><span className="art-spark spark-one"/><span className="art-spark spark-two"/></div><div className="eyebrow">A SPACE OF YOUR OWN</div><h3>Every good conversation<br/><span>starts somewhere.</span></h3><p>Send the first message and let it unfold.</p></div> : <div className="empty-conversation"><div className="empty-art"><div className="art-ring ring-one"/><div className="art-ring ring-two"/><div className="art-core"><Sparkles size={27}/></div><span className="art-spark spark-one"/><span className="art-spark spark-two"/></div><div className="eyebrow">YOUR PEOPLE, YOUR PLACE</div><h3>Make room for<br/><span>the good stuff.</span></h3><p>Choose a conversation or create a new one.</p><button className="empty-create" onClick={() => setModal("new")}><Plus size={15}/> New conversation</button></div>}
           <div ref={endRef}/><audio ref={remoteAudioRef} autoPlay/><video ref={remoteVideoRef} autoPlay playsInline className={"remote-call-video" + (callState !== "idle" && callKind === "video" ? " visible" : "")}/><video ref={localVideoRef} autoPlay muted playsInline className={"local-call-video" + (callState !== "idle" && callKind === "video" ? " visible" : "")}/>
         </div>

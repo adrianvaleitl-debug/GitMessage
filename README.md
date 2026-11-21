@@ -1,4 +1,4 @@
-# GitMessage 4.0 — Official Stable Release
+# GitMessage v1 — Official Stable Release
 
 <p align="center">
   <strong>One place for real-time conversations across web and Windows.</strong><br>
@@ -7,7 +7,7 @@
   <a href="https://adrianvaleitl-debug.github.io/Adrian-Vales-Projects/#gitmessage-launch">Launch announcement</a>
 </p>
 
-**GitMessage 4.0 is officially released.** The stable public release is available now. Sign in on the web or install the Windows desktop app and use the same account across both.
+**GitMessage v1 is officially released.** The stable public release is available now. Sign in on the web or install the Windows desktop app and use the same account across both.
 
 ## What you can do
 

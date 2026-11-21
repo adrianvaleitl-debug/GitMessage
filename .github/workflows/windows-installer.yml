@@ -13,6 +13,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Set release version
+        shell: pwsh
+        run: npm version "4.0.${{ github.run_number }}" --no-git-tag-version
       - name: Prepare GitMessage application icon
         shell: pwsh
         run: |
@@ -27,20 +30,20 @@ jobs:
           VITE_SUPABASE_URL: https://pvoywcvyhfuszalczycm.supabase.co
           VITE_SUPABASE_PUBLISHABLE_KEY: ${{ secrets.VITE_SUPABASE_PUBLISHABLE_KEY }}
       - name: Build Windows installer
-        run: npx electron-builder --win nsis --x64
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: npx electron-builder --win nsis --x64 --publish never
       - uses: actions/upload-artifact@v4
         with:
           name: GitMessage-Windows-Installer
-          path: release/*.exe
+          path: release/*
           if-no-files-found: error
-
-      - name: Publish installer to GitHub Releases
+      - name: Publish installer and update metadata to GitHub Releases
         uses: softprops/action-gh-release@v2
         with:
           tag_name: gitmessage-build-${{ github.run_number }}
           name: GitMessage build ${{ github.run_number }}
-          body: Automated Windows installer build from commit ${{ github.sha }}.
+          body: Automated Windows installer build from commit ${{ github.sha }}. Includes automatic update metadata.
           prerelease: true
-          files: release/*.exe
+          files: |
+            release/*.exe
+            release/*.blockmap
+            release/latest.yml

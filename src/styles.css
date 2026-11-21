@@ -1095,3 +1095,66 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
 .server-channel-main .server-chat-composer{display:flex;gap:8px;margin-top:10px}
 .server-channel-main .server-chat-composer input{flex:1;min-width:0}
 @media(max-width:680px){.rail-server-list{max-height:36vh}.rail-server-button{width:38px;height:38px;flex-basis:38px}.modal-card:has(.server-workspace){width:100%;height:100%;max-height:100%;border-radius:0!important}.server-workspace{grid-template-columns:112px minmax(0,1fr);min-height:0}.server-channel-sidebar{padding:12px 7px}.server-workspace-title{padding:5px 4px 12px}.server-workspace-title b{font-size:12px}.server-channel-link{padding:8px 6px;font-size:11px}.server-channel-create{flex-wrap:wrap}.server-channel-create input{width:100%}.server-channel-main{padding:0 9px 12px}.server-channel-header{height:50px;flex-basis:50px;flex-wrap:wrap;gap:3px}.server-channel-header span{display:none}}
+
+
+/* Final phone layout pass: safe-area spacing, consistent control sizing and no clipped top edge. */
+@media(max-width:760px){
+  html,body,#root{width:100%!important;height:100%!important;min-height:0!important;overflow:hidden!important}
+  body{position:fixed!important;inset:0!important}
+  .desktop-shell{
+    position:fixed!important;inset:0!important;width:100%!important;height:100dvh!important;
+    min-height:0!important;max-height:100dvh!important;box-sizing:border-box!important;
+    padding: max(env(safe-area-inset-top),12px) 0 max(env(safe-area-inset-bottom),8px)!important;
+    margin:0!important;display:grid!important;grid-template-columns:minmax(0,1fr)!important;
+    grid-template-rows:minmax(0,1fr)!important;gap:0!important;overflow:hidden!important
+  }
+  .desktop-shell>.sidebar,.desktop-shell>.conversation-pane{
+    width:100%!important;min-width:0!important;min-height:0!important;height:100%!important;
+    max-height:100%!important;margin:0!important;overflow:hidden!important;align-self:stretch!important
+  }
+  .desktop-shell>.sidebar{display:flex!important;flex-direction:column!important}
+  .desktop-shell>.conversation-pane{display:none!important;flex-direction:column!important}
+  .desktop-shell.mobile-chat-open>.sidebar{display:none!important}
+  .desktop-shell.mobile-chat-open>.conversation-pane{display:flex!important}
+  .sidebar-brand,.conversation-header{height:60px!important;min-height:60px!important;flex:0 0 60px!important}
+  .sidebar-brand{padding:0 16px!important}
+  .brand-lockup{font-size:15px!important;gap:9px!important}
+  .search-field{height:42px!important;min-height:42px!important;flex:0 0 42px!important;margin:12px 12px 14px!important;padding:0 12px!important}
+  .list-heading{padding:0 15px!important;margin-bottom:8px!important;font-size:10px!important}
+  .conversation-list{flex:1 1 auto!important;min-height:0!important;overflow-y:auto!important;padding:0 9px 10px!important}
+  .conversation-item{min-height:58px!important;padding:9px 10px!important;gap:11px!important;border-radius:12px!important}
+  .conversation-avatar{width:38px!important;height:38px!important;flex:0 0 38px!important}
+  .conversation-meta{gap:4px!important}
+  .conversation-meta b{font-size:13px!important}
+  .conversation-meta small{font-size:11px!important}
+  .account-chip{flex:0 0 auto!important;margin:8px 10px max(6px,env(safe-area-inset-bottom))!important;padding:10px 6px!important}
+  .conversation-header{gap:8px!important;padding:8px 12px!important;overflow:hidden!important}
+  .mobile-back{width:36px!important;height:36px!important;min-width:36px!important;flex:0 0 36px!important;margin:0 2px 0 0!important}
+  .header-person{flex:1 1 auto!important;min-width:0!important;gap:8px!important}
+  .header-avatar{width:34px!important;height:34px!important;min-width:34px!important;flex:0 0 34px!important}
+  .header-person h2{max-width:36vw!important;margin:0 0 3px!important;font-size:13px!important;line-height:1.2!important}
+  .header-person p{font-size:10px!important;line-height:1.25!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}
+  .header-tools{flex:0 0 auto!important;gap:2px!important}
+  .header-tools .call-action-button,.header-tools .glass-icon{width:34px!important;height:34px!important;min-width:34px!important;flex:0 0 34px!important}
+  .message-canvas{flex:1 1 auto!important;min-height:0!important;max-height:none!important;padding:8px 4px 12px!important;overflow-y:auto!important}
+  .message-line{gap:9px!important;padding:7px 10px!important}
+  .message-avatar{width:32px!important;height:32px!important;flex:0 0 32px!important}
+  .message-content{min-width:0!important;max-width:100%!important}
+  .message-author{gap:7px!important;font-size:11px!important}
+  .message-bubble{font-size:13px!important;line-height:1.45!important}
+  .message-line.grouped .message-content{margin-left:41px!important}
+  .composer-area{flex:0 0 auto!important;margin:0!important;padding:7px 10px max(8px,env(safe-area-inset-bottom))!important}
+  .composer-glass{min-height:46px!important;gap:6px!important;padding:5px 8px!important;border-radius:15px!important}
+  .composer-glass textarea{min-height:34px!important;max-height:100px!important;padding:8px 4px!important;font-size:14px!important}
+  .composer-glass .glass-icon,.composer-glass .send-button{width:34px!important;height:34px!important;min-width:34px!important;flex:0 0 34px!important}
+  .composer-caption{display:none!important}
+  .conversation-details{display:none!important}
+  .modal-backdrop{padding: max(env(safe-area-inset-top),12px) 10px max(env(safe-area-inset-bottom),12px)!important}
+  .modal-card{width:100%!important;max-width:520px!important;max-height:calc(100dvh - 24px)!important;padding:22px!important;border-radius:18px!important;overflow-y:auto!important}
+}
+@media(max-width:390px){
+  .header-person h2{max-width:30vw!important;font-size:12px!important}
+  .header-person p{font-size:9px!important}
+  .header-tools .call-action-button,.header-tools .glass-icon{width:31px!important;height:31px!important;min-width:31px!important;flex-basis:31px!important}
+  .conversation-item{min-height:54px!important}
+}

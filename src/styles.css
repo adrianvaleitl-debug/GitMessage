@@ -68,7 +68,7 @@ button:disabled{cursor:not-allowed;opacity:.45}
 .header-tools .glass-icon{width:32px;height:32px;color:#b5bac1}
 .header-tools .glass-icon:hover{background:#41434a;color:#fff}
 .header-tools .live-pill{display:none}
-.message-canvas{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:0;padding:8px 0 20px!important;background:#313338;scrollbar-width:thin;scrollbar-color:#4a4c53 transparent;overscroll-behavior-y:contain;}
+.message-canvas{flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column-reverse;gap:0;padding:8px 0 20px!important;background:#313338;scrollbar-width:thin;scrollbar-color:#4a4c53 transparent;overscroll-behavior-y:contain;}
 .message-canvas::before{content:none}
 .message-line{position:relative;flex:0 0 auto;display:flex;align-items:flex-start;gap:12px;padding:7px 22px 8px;animation:message-in .16s ease-out both}.message-avatar{width:34px;height:34px;flex:0 0 34px;display:grid;place-items:center;margin-top:1px;border-radius:50%;background:#5865f2;color:#fff;font-size:12px;font-weight:700}.message-line.mine .message-avatar{background:#3c657e}
 .message-line:hover{background:#2e3035}
@@ -1213,21 +1213,3 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
 .public-profile-banner{height:132px;margin:-25px -25px 18px;width:calc(100% + 50px);border-radius:22px 22px 0 0}
 .profile-banner-preview{height:86px;margin:0 0 12px;border-radius:11px}
 .public-profile-card .public-profile-heading{min-height:56px}
-
-/* Discord-style message blocks: author and timestamp on their own line,
-   with message text directly underneath and grouped messages aligned. */
-.message-canvas{display:flex!important;flex-direction:column!important;align-items:stretch!important}
-.message-line{display:flex!important;align-items:flex-start!important;gap:14px!important;padding:9px 28px!important;margin-top:9px!important}
-.message-line.grouped{padding-top:1px!important;padding-bottom:1px!important;margin-top:0!important}
-.message-content{display:flex!important;flex:1 1 auto!important;flex-direction:column!important;align-items:flex-start!important;gap:3px!important;min-width:0!important;width:100%!important;margin-left:0!important;line-height:1.5!important}
-.message-line.grouped .message-content{margin-left:56px!important}
-.message-author{display:flex!important;align-items:baseline!important;gap:9px!important;margin:0!important;width:max-content;max-width:100%;font-size:14px!important;line-height:1.45!important}
-.message-author time{font-size:11px!important;color:#949ba7!important}
-.message-bubble,.message-line.mine .message-bubble,.message-line:not(.mine) .message-bubble{display:block!important;width:auto!important;max-width:100%!important;padding:0!important;margin:0!important;border:0!important;border-radius:0!important;background:transparent!important;box-shadow:none!important;font-size:15px!important;line-height:1.55!important;vertical-align:initial!important;white-space:pre-wrap!important;overflow-wrap:anywhere!important}
-@media(max-width:680px){
- .message-line{padding:8px 12px!important;gap:10px!important}
- .message-avatar{width:36px!important;height:36px!important;flex-basis:36px!important}
- .message-line.grouped .message-content{margin-left:46px!important}
- .message-author{font-size:13px!important}
- .message-bubble,.message-line.mine .message-bubble,.message-line:not(.mine) .message-bubble{font-size:14px!important}
-}

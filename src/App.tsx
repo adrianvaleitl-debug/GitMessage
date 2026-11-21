@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { FormEvent } from "react";
 import { supabase } from "./lib/supabase";
 import {
-  MessageCircle, Search, Plus, ArrowUp, Settings, Users, LogOut, Sparkles,
+  MessageCircle, Search, Plus, ArrowUp, ArrowLeft, Settings, Users, LogOut, Sparkles,
   ShieldCheck, X, Moon, Sun, MoreHorizontal, ArrowUpRight, Check,
   RefreshCw, UserRoundPlus, Paperclip, Pencil, Trash2, Mic, MicOff, Phone, Video, PhoneOff
 } from "lucide-react";
@@ -578,7 +578,7 @@ export default function App() {
   );
 
   return (
-    <main className={"desktop-shell" + (lightMode ? " light" : "")}>
+    <main className={"desktop-shell" + (lightMode ? " light" : "") + (active ? " mobile-chat-open" : "") + (navigator.userAgent.includes("Electron") ? " electron-shell" : "")}>
       <nav className="app-rail" aria-label="Main navigation">
 
         <button className="rail-button selected" title="Messages" onClick={() => { setQuery(""); setActive(conversations[0]?.id || ""); }}><MessageCircle size={20}/></button>
@@ -603,7 +603,7 @@ export default function App() {
       </aside>
       
       <section className="conversation-pane glass-panel">
-        <header className="conversation-header"><div className="header-person"><div className="header-avatar"><MessageCircle size={18}/></div><div><h2>{current?.title || "Your messages"}</h2><p><span className="status-light"/> {someoneTyping ? "Someone is typing…" : current ? "Conversation space" : "A little room for good conversations"}</p></div></div><div className="header-tools"><button className="glass-icon" title="Voice call" disabled={!active || callState!=="idle"} onClick={() => void startCall("audio")}><Phone size={16}/></button><button className="glass-icon" title="Video call" disabled={!active || callState!=="idle"} onClick={() => void startCall("video")}><Video size={16}/></button><span className="live-pill"><i/> LIVE SYNC</span><button className="glass-icon" title="Refresh conversations" onClick={() => void loadConversations()}><RefreshCw size={16}/></button><button className="glass-icon" title="Preferences" onClick={() => setModal("settings")}><Settings size={16}/></button></div></header>
+        <header className="conversation-header"><button className="mobile-back glass-icon" title="Back to conversations" onClick={() => setActive("")}><ArrowLeft size={19}/></button><div className="header-person"><div className="header-avatar"><MessageCircle size={18}/></div><div><h2>{current?.title || "Your messages"}</h2><p><span className="status-light"/> {someoneTyping ? "Someone is typing…" : current ? "Conversation space" : "A little room for good conversations"}</p></div></div><div className="header-tools"><button className="glass-icon" title="Voice call" disabled={!active || callState!=="idle"} onClick={() => void startCall("audio")}><Phone size={16}/></button><button className="glass-icon" title="Video call" disabled={!active || callState!=="idle"} onClick={() => void startCall("video")}><Video size={16}/></button><span className="live-pill"><i/> LIVE SYNC</span><button className="glass-icon" title="Refresh conversations" onClick={() => void loadConversations()}><RefreshCw size={16}/></button><button className="glass-icon" title="Preferences" onClick={() => setModal("settings")}><Settings size={16}/></button></div></header>
         <div className="message-canvas" ref={messageCanvasRef}>
           {active ? messages.length ? [...messages].reverse().map(message => {
             const mine = message.sender_id === session.user.id;

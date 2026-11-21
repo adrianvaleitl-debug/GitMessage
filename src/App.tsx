@@ -12,6 +12,26 @@ type Message = { id: string; body: string; sender_id: string; created_at: string
 type AttachmentPreview = { file_name: string; mime_type: string; size_bytes: number; url: string };
 type ContactMatch = { user_id: string; email: string; username?: string; display_name?: string; avatar_path?: string | null };
 
+function renderBioWithLinks(bio: string) {
+  const urlPattern = /(?:https?:\\/\\/|www\\.)[^\\s<]+/gi;
+  const parts: React.ReactNode[] = [];
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+  while ((match = urlPattern.exec(bio)) !== null) {
+    let rawUrl = match[0];
+    let url = rawUrl;
+    while (/[.,!?;:)]$/.test(url)) url = url.slice(0, -1);
+    if (!url) continue;
+    if (match.index > lastIndex) parts.push(bio.slice(lastIndex, match.index));
+    const href = /^https?:\\/\\//i.test(url) ? url : `https://${url}`;
+    parts.push(<a key={match.index} href={href} target="_blank" rel="noopener noreferrer">{url}</a>);
+    parts.push(rawUrl.slice(url.length));
+    lastIndex = match.index + rawUrl.length;
+  }
+  if (lastIndex < bio.length) parts.push(bio.slice(lastIndex));
+  return parts;
+}
+
 export default function App() {
   const [session, setSession] = useState<any>(null);
   const [authReady, setAuthReady] = useState(false);
@@ -987,7 +1007,7 @@ export default function App() {
     <div className={"profile-photo profile-accent-" + (publicProfile?.profile_palette || "graphite") + (publicProfile?.profile_frame ? " profile-frame-" + publicProfile.profile_frame : "")}>{publicProfileAvatar ? <img src={publicProfileAvatar} alt="Profile"/> : <UserRound size={30} strokeWidth={1.7}/>}</div>
     <div className="public-profile-names"><b>{publicProfile?.display_name || publicProfile?.username || "User"}</b>{publicProfile?.profile_show_username !== false && <span>@{publicProfile?.username || "user"}</span>}{publicProfile?.profile_badge && <span className={"profile-special-tag " + publicProfile.profile_badge}>{publicProfile.profile_badge}</span>}</div>
   </div>
-  {publicProfile?.profile_show_bio !== false ? (publicProfile?.bio ? <p className="profile-bio">{publicProfile.bio}</p> : <p className="public-profile-empty-bio">No bio added yet.</p>) : null}
+  {publicProfile?.profile_show_bio !== false ? (publicProfile?.bio ? <p className="profile-bio">{renderBioWithLinks(publicProfile.bio)}</p> : <p className="public-profile-empty-bio">No bio added yet.</p>) : null}
   <button className="primary-button public-profile-message" onClick={() => { if(publicProfile?.user_id) void startDirectConversation({user_id:publicProfile.user_id,email:"",username:publicProfile.username,display_name:publicProfile.display_name}); }}>Message <ArrowUpRight size={17}/></button>
   <div className="profile-safety-actions"><button type="button" onClick={() => void blockPublicProfile()}>Block user</button><button type="button" onClick={() => void reportPublicProfile()}>Report user</button></div>
   {notice && <p className="notice">{notice}</p>}

@@ -165,7 +165,7 @@ export default function App() {
     const canvas = messageCanvasRef.current;
     if (!canvas) return;
     const frame = requestAnimationFrame(() => {
-      canvas.scrollTop = Math.max(0, canvas.scrollHeight - canvas.clientHeight);
+      canvas.scrollTop = 0;
     });
     return () => cancelAnimationFrame(frame);
   }, [messages, active, attachmentPreviews]);

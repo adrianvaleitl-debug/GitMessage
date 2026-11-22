@@ -1761,8 +1761,8 @@ export default function App() {
           <section className="preferences-section preferences-notifications"><div className="preferences-section-heading"><span className="preference-icon"><Bell size={17}/></span><div><h3>Notifications</h3><p>Stay up to date when GitMessage is running.</p></div></div><button className="preferences-action-row" onClick={()=>void enableDesktopAlerts()}><span><b>Desktop notifications</b><small>Message and activity alerts</small></span><span className="preferences-pill">{desktopAlerts?"Enabled":"Enable"}</span></button></section>
         </div>
         <button className="preferences-signout" onClick={()=>void signOut()}><LogOut size={17}/><span><b>Sign out</b><small>Sign out of this device</small></span><ArrowUpRight size={15}/></button>
-      </div>}
-      </section></div>}
+      </div> : null}
+      </section></div>
     </main>
   );
 }

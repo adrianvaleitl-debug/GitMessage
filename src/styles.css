@@ -1247,7 +1247,7 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
 .profile-expanded .public-profile-identity .profile-photo{width:96px;height:96px;flex-basis:96px}
 .profile-expanded .profile-bio{font-size:14px;line-height:1.7}
 .profile-card-gta-vice-city{position:relative;isolation:isolate;overflow:hidden;border-color:rgba(255,113,177,.42)!important;background:radial-gradient(ellipse at 92% 5%,rgba(255,74,155,.32),transparent 44%),radial-gradient(ellipse at 0% 100%,rgba(79,113,255,.28),transparent 48%),linear-gradient(145deg,#21142e 0%,#17172f 52%,#101b36 100%)!important;color:#fff!important}
-.profile-card-gta-vice-city:before{content:"VICE CITY";display:block;margin:0 0 18px;color:#ff83ba;font:900 clamp(30px,5vw,58px)/.9 'Barlow Condensed',Inter,sans-serif;letter-spacing:.13em;text-shadow:0 4px 25px rgba(255,75,158,.3)}
+.profile-card-gta-vice-city:before{content:none!important;display:none!important}
 .profile-card-gta-vice-city .public-profile-heading{border-color:rgba(255,126,187,.28)}
 .profile-card-gta-vice-city .public-profile-heading .eyebrow{color:#ff9cc8!important}
 .profile-card-gta-vice-city .profile-photo{border-color:#ff68ad!important;box-shadow:0 0 0 5px rgba(255,104,173,.2),0 0 28px rgba(255,104,173,.25)!important}
@@ -1260,3 +1260,8 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
  .profile-expanded .profile-customize{grid-template-columns:1fr}
  .profile-expanded .profile-customize h3,.profile-expanded .profile-customize p{grid-column:auto}
 }
+
+/* Avatar and banner framing controls */
+.profile-photo img,.profile-banner img,.profile-banner-editor-preview img{object-fit:cover;}
+.profile-editor input[type=range]{width:100%;accent-color:var(--blue);}
+.header-avatar img{width:100%;height:100%;object-fit:cover;border-radius:inherit;display:block;}

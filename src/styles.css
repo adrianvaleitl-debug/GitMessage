@@ -1890,43 +1890,6 @@ html,body,#root{width:100%;height:100%;min-height:100%;margin:0;overflow:hidden}
 .group-access-settings small{font-size:11px;line-height:1.4;opacity:.65}
 
 
-/* Profile layout repair: keep the editor and public card within the viewport. */
-.modal-card.profile-expanded:has(.profile-editor){
-  width:min(760px,calc(100vw - 40px))!important;
-  min-width:0!important;
-  max-width:760px!important;
-  max-height:90dvh!important;
-  padding:clamp(18px,2.4vw,30px)!important;
-  box-sizing:border-box;
-}
-.modal-card.profile-expanded:has(.profile-editor) .profile-editor{width:100%;min-width:0;box-sizing:border-box;gap:12px}
-.modal-card.profile-expanded:has(.profile-editor) .profile-editor>*{min-width:0;max-width:100%;box-sizing:border-box}
-.modal-card.profile-expanded:has(.profile-editor) .profile-customize{grid-template-columns:repeat(2,minmax(0,1fr));}
-.modal-card.profile-expanded:has(.profile-editor) .profile-customize h3,
-.modal-card.profile-expanded:has(.profile-editor) .profile-customize p{grid-column:1/-1}
-.modal-card.profile-expanded:has(.profile-editor) .profile-banner-editor-preview{height:150px!important}
-.modal-card.profile-expanded:has(.profile-editor) .profile-photo-adjustments{grid-template-columns:minmax(0,1fr);gap:12px}
-.modal-card.profile-expanded:has(.profile-editor) .profile-photo-adjustments .profile-photo-row{grid-column:1;grid-row:auto}
-.modal-card.profile-expanded:has(.profile-editor) .profile-photo-adjustments .photo-crop-control{grid-column:1}
-.modal-card.profile-expanded:has(.public-profile-card){
-  width:min(720px,calc(100vw - 40px))!important;
-  min-width:0!important;
-  max-width:720px!important;
-  max-height:90dvh!important;
-}
-.modal-card.profile-expanded:has(.public-profile-card) .public-profile-card{width:100%;min-width:0;box-sizing:border-box}
-@media(max-width:600px){
-  .modal-card.profile-expanded:has(.profile-editor){width:calc(100vw - 20px)!important;max-height:94dvh!important;padding:16px!important}
-  .modal-card.profile-expanded:has(.profile-editor) .profile-customize{grid-template-columns:minmax(0,1fr);padding:12px}
-  .modal-card.profile-expanded:has(.profile-editor) .profile-customize h3,
-  .modal-card.profile-expanded:has(.profile-editor) .profile-customize p{grid-column:1}
-  .modal-card.profile-expanded:has(.profile-editor) .profile-banner-editor-preview{height:120px!important}
-  .modal-card.profile-expanded:has(.public-profile-card){width:calc(100vw - 20px)!important;max-height:94dvh!important}
-  .profile-expanded .public-profile-card{min-height:0;padding:20px!important}
-  .profile-expanded .public-profile-identity{margin:18px 0}
-  .profile-expanded .public-profile-identity .profile-photo{width:72px;height:72px;flex-basis:72px}
-}
-
 
 /* Consistent dropdowns and balanced group creation layout. */
 select{appearance:none;-webkit-appearance:none;min-width:0;max-width:100%;box-sizing:border-box;padding-right:36px!important;color-scheme:dark;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23aeb8ca' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")!important;background-repeat:no-repeat!important;background-position:right 12px center!important;background-size:14px!important}
@@ -1946,101 +1909,6 @@ select option{background:#202631;color:#eef2f8}
 @media(max-width:600px){.group-create-modal{width:calc(100vw - 20px)!important;max-height:92dvh!important;padding:18px!important}.group-create-modal .group-friend-picker{max-height:190px}}
 
 
-/* Final profile editor overflow and stacking fix. */
-.modal-backdrop:has(.profile-editor){
-  display:flex!important;
-  align-items:flex-start!important;
-  justify-content:center!important;
-  overflow-y:auto!important;
-  overscroll-behavior:contain;
-  padding: max(16px,env(safe-area-inset-top)) 16px max(16px,env(safe-area-inset-bottom))!important;
-}
-.modal-card.profile-expanded:has(.profile-editor){
-  position:relative!important;
-  display:block!important;
-  flex:0 0 auto!important;
-  width:min(760px,100%)!important;
-  min-width:0!important;
-  max-width:760px!important;
-  height:auto!important;
-  max-height:none!important;
-  margin:auto 0!important;
-  overflow:visible!important;
-  padding:28px!important;
-}
-.modal-card.profile-expanded:has(.profile-editor)>.modal-close{
-  position:sticky!important;
-  float:right;
-  top:0!important;
-  right:0!important;
-  z-index:20!important;
-  margin:-12px -12px 0 0!important;
-}
-.modal-card.profile-expanded:has(.profile-editor) .profile-editor{
-  display:flex!important;
-  flex-direction:column!important;
-  gap:14px!important;
-  width:100%!important;
-  min-width:0!important;
-  height:auto!important;
-  overflow:visible!important;
-}
-.modal-card.profile-expanded:has(.profile-editor) .profile-editor>*{
-  position:relative;
-  flex:0 0 auto!important;
-  min-height:min-content;
-  min-width:0!important;
-  max-width:100%!important;
-}
-.modal-card.profile-expanded:has(.profile-editor) .profile-banner-editor,
-.modal-card.profile-expanded:has(.profile-editor) .profile-photo-adjustments,
-.modal-card.profile-expanded:has(.profile-editor) .profile-customize,
-.modal-card.profile-expanded:has(.profile-editor) .profile-preview-card,
-.modal-card.profile-expanded:has(.profile-editor) .profile-editor form{
-  width:100%!important;
-  min-width:0!important;
-  margin-block:8px!important;
-}
-.modal-card.profile-expanded:has(.profile-editor) .profile-banner-editor-preview{
-  height:clamp(110px,20vw,170px)!important;
-  min-height:0!important;
-}
-.modal-card.profile-expanded:has(.profile-editor) .profile-photo-adjustments{
-  display:grid!important;
-  grid-template-columns:minmax(0,1fr)!important;
-  align-items:start!important;
-  gap:12px!important;
-}
-.modal-card.profile-expanded:has(.profile-editor) .profile-photo-adjustments>*{
-  min-width:0!important;
-}
-@media(max-width:600px){
-  .modal-backdrop:has(.profile-editor){
-    padding: max(10px,env(safe-area-inset-top)) 10px max(10px,env(safe-area-inset-bottom))!important;
-  }
-  .modal-card.profile-expanded:has(.profile-editor){
-    width:100%!important;
-    max-width:none!important;
-    margin:0!important;
-    padding:18px!important;
-    border-radius:16px!important;
-  }
-  .modal-card.profile-expanded:has(.profile-editor)>.modal-close{
-    margin:-7px -7px 0 0!important;
-  }
-  .modal-card.profile-expanded:has(.profile-editor) .profile-customize{
-    grid-template-columns:minmax(0,1fr)!important;
-    padding:12px!important;
-  }
-  .modal-card.profile-expanded:has(.profile-editor) .profile-customize h3,
-  .modal-card.profile-expanded:has(.profile-editor) .profile-customize p{
-    grid-column:1!important;
-  }
-  .modal-card.profile-expanded:has(.profile-editor) .profile-banner-editor-preview{
-    height:120px!important;
-  }
-}
-
 /* Compact voice-note player replacing inconsistent browser audio controls. */
 .voice-note-player{position:relative;display:grid;grid-template-columns:42px minmax(0,1fr) 38px;align-items:center;gap:11px;width:min(330px,100%);min-width:0;padding:11px 12px;border:1px solid color-mix(in srgb,var(--accent,#8295ff) 24%,transparent);border-radius:16px;background:color-mix(in srgb,var(--panel-2,#252832) 82%,transparent);box-sizing:border-box}
 .voice-note-player audio{display:none}
@@ -2053,3 +1921,43 @@ select option{background:#202631;color:#eef2f8}
 .voice-note-speed{height:29px;min-width:36px;padding:0 5px;border:1px solid var(--line,rgba(150,160,190,.22));border-radius:9px;background:transparent;color:var(--text,inherit);font-size:11px;font-weight:700;cursor:pointer}
 .voice-note-seek{grid-column:2/4;width:100%;height:4px;margin:0;accent-color:var(--accent,#8295ff);cursor:pointer}
 @media(max-width:520px){.voice-note-player{width:min(290px,100%);grid-template-columns:38px minmax(0,1fr) 34px;gap:8px;padding:9px}.voice-note-play{width:36px;height:36px}.voice-note-wave{gap:1px}}
+
+/* Keep the profile avatar in its own flex column so it never covers identity text. */
+.public-profile-identity>.github-profile-avatar-wrap{
+  position:relative;
+  z-index:1;
+  flex:0 0 76px;
+  width:76px;
+  height:76px;
+  min-width:76px;
+}
+.public-profile-identity>.github-profile-avatar-wrap>.profile-photo{
+  width:100%;
+  height:100%;
+}
+.public-profile-identity>.public-profile-names{
+  position:relative;
+  z-index:2;
+  flex:1 1 0;
+  min-width:0;
+  overflow-wrap:anywhere;
+}
+.public-profile-identity>.public-profile-names b,
+.public-profile-identity>.public-profile-names>span{
+  max-width:100%;
+  overflow-wrap:anywhere;
+}
+.profile-expanded .public-profile-identity>.github-profile-avatar-wrap{
+  flex-basis:96px;
+  width:96px;
+  height:96px;
+  min-width:96px;
+}
+@media(max-width:600px){
+  .profile-expanded .public-profile-identity>.github-profile-avatar-wrap{
+    flex-basis:72px;
+    width:72px;
+    height:72px;
+    min-width:72px;
+  }
+}

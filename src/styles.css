@@ -1370,3 +1370,7 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
 .profile-editor .profile-preview-card.palette-ember{--editor-accent:#df9564}
 .profile-editor .profile-preview-card.palette-moss{--editor-accent:#8fb58a}
 .profile-editor .profile-preview-card.palette-sand{--editor-accent:#d1b47a}
+
+
+/* Thread replies */
+.replying-to-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 12px;margin:0 4px 8px;border-left:3px solid var(--accent,#8b83ff);border-radius:10px;background:var(--surface-2,rgba(127,127,127,.12));color:var(--text-secondary,inherit);font-size:12px}.replying-to-bar span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.replying-to-bar button{display:grid;place-items:center;border:0;background:transparent;color:inherit;cursor:pointer}.message-reply-context{display:block;max-width:100%;margin:0 0 7px;padding:5px 9px;border:0;border-left:2px solid var(--accent,#8b83ff);border-radius:5px;background:var(--surface-2,rgba(127,127,127,.1));color:var(--text-secondary,inherit);font-size:11px;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}

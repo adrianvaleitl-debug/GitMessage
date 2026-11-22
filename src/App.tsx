@@ -338,6 +338,16 @@ export default function App() {
     setServerDraft("");
   }
 
+  useEffect(()=>{
+    if(!supabase||modal!=="server-chat"||!activeServerChannel)return;
+    let alive=true;
+    const channel=supabase.channel("server-channel-"+activeServerChannel).on("postgres_changes",{event:"*",schema:"public",table:"gitmessage_server_messages",filter:"channel_id=eq."+activeServerChannel},async()=>{
+      const {data,error}=await supabase!.from("gitmessage_server_messages").select("id,body,sender_id,created_at").eq("server_id",activeServer.server_id).eq("channel_id",activeServerChannel).order("created_at",{ascending:true}).limit(300);
+      if(alive&&!error){setServerMessages(data||[]);const ids=Array.from(new Set((data||[]).map((row:any)=>row.sender_id)));if(ids.length){const {data:profiles}=await supabase!.from("profiles").select("id,display_name,username,avatar_path").in("id",ids);if(alive&&profiles){setServerMessageProfiles(previous=>{const next={...previous};profiles.forEach((profile:any)=>{next[profile.id]=profile;});return next;});}}}
+    }).subscribe();
+    return()=>{alive=false;void supabase!.removeChannel(channel);};
+  },[modal,activeServer?.server_id,activeServerChannel]);
+
   async function loadConversations() {
     if (!supabase || !session) return;
     const { data, error } = await supabase.rpc("get_my_conversations");

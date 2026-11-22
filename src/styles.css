@@ -2071,3 +2071,61 @@ select option{background:#202631;color:#eef2f8}
 .call-banner .call-dismiss-button{width:34px;min-width:34px;height:34px;display:grid;place-items:center;padding:0;border:1px solid #646a76;background:transparent;color:inherit;border-radius:9px}
 .call-banner .call-dismiss-button:hover{background:#7f3038;color:#fff}
 .call-banner.active-call-banner .call-banner-copy small{opacity:.9}
+
+
+/* Server channels share the conversation workspace; the channel list is the only extra panel. */
+.modal-card.servers-fullscreen:has(.server-chat-shell){padding:0!important;overflow:hidden!important}
+.modal-card.servers-fullscreen:has(.server-chat-shell)>.modal-close{display:none}
+.server-chat-shell{width:100%;height:100%;min-height:0;grid-template-columns:250px minmax(0,1fr);background:var(--panel);color:var(--text)}
+.server-chat-shell .server-channel-sidebar{background:var(--panel);border-right:1px solid var(--line);padding:18px 12px;color:var(--text)}
+.server-chat-shell .server-workspace-title{border-bottom:1px solid var(--line);padding:4px 8px 16px}
+.server-chat-shell .server-workspace-title b{font-size:17px;color:var(--text)}
+.server-chat-shell .server-workspace-title small{font-size:11px;color:var(--muted)}
+.server-back-button{display:flex;align-items:center;gap:7px;border:0;background:transparent;color:var(--muted);padding:5px 0 13px;font-size:12px;cursor:pointer}
+.server-back-button:hover{color:var(--text)}
+.server-chat-shell .server-channel-heading{padding:17px 9px 7px;color:var(--muted);font-size:10px;letter-spacing:.1em}
+.server-chat-shell .server-channel-link{min-height:38px;padding:8px 10px;border-radius:9px;color:var(--muted);font-size:13px}
+.server-chat-shell .server-channel-link span{font-size:17px;color:var(--subtle)}
+.server-chat-shell .server-channel-link:hover,.server-chat-shell .server-channel-link.active{background:var(--panel-3);color:var(--text)}
+.server-chat-shell .server-channel-create{margin-top:auto;display:flex;gap:7px}
+.server-chat-shell .server-channel-create input{height:38px!important;min-width:0;padding:0 10px!important;border:1px solid var(--line)!important;border-radius:10px!important;background:var(--panel-2)!important;color:var(--text)!important;font-size:12px!important}
+.server-chat-shell .server-channel-create button{width:38px;flex-basis:38px;border-radius:10px;background:var(--blue)}
+.server-chat-shell .server-conversation-pane{padding:0;background:var(--bg);color:var(--text)}
+.server-chat-shell .server-conversation-header{height:68px;min-height:68px;flex:0 0 68px;padding:10px 22px;background:var(--panel);border-bottom:1px solid var(--line)}
+.server-chat-shell .server-conversation-header .header-person{display:flex;align-items:center;gap:12px;min-width:0}
+.server-chat-shell .server-conversation-header .header-person h2{margin:0 0 3px;font-size:16px}
+.server-chat-shell .server-conversation-header .header-person p{margin:0;color:var(--muted);font-size:11px}
+.server-chat-shell .server-conversation-header .header-avatar{display:grid;place-items:center;overflow:hidden;border-radius:12px;background:var(--panel-3);color:var(--text)}
+.server-chat-shell .server-conversation-header .header-avatar img{width:100%;height:100%;object-fit:cover}
+.server-chat-shell .server-message-canvas{flex:1;min-height:0;max-height:none;overflow-y:auto;padding:20px clamp(14px,3vw,42px)}
+.server-chat-shell .message-line{max-width:100%;padding:9px 10px}
+.server-chat-shell .message-content{min-width:0}
+.server-chat-shell .message-bubble{white-space:pre-wrap;overflow-wrap:anywhere}
+.server-chat-shell .server-composer-area{margin:0;padding:10px clamp(14px,3vw,42px) 18px;background:var(--bg)}
+.server-chat-shell .server-composer-area .composer-glass{display:flex;align-items:center;gap:10px;min-height:50px;padding:6px 9px 6px 16px}
+.server-chat-shell .server-composer-area input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:var(--text);font:inherit;font-size:14px}
+.server-chat-shell .server-composer-area .send-button{width:38px;height:38px;min-width:38px;display:grid;place-items:center;border:0;border-radius:11px}
+.server-chat-shell .server-notice{position:absolute;bottom:72px;right:22px;max-width:min(420px,80%);z-index:2}
+@media(max-width:760px){
+ .modal-card.servers-fullscreen:has(.server-chat-shell){width:100vw!important;height:100dvh!important;max-height:100dvh!important;border-radius:0!important}
+ .server-chat-shell{grid-template-columns:116px minmax(0,1fr)}
+ .server-chat-shell .server-channel-sidebar{padding:12px 7px}
+ .server-chat-shell .server-workspace-title{padding:3px 4px 12px}
+ .server-chat-shell .server-workspace-title b{font-size:12px}
+ .server-chat-shell .server-workspace-title small{font-size:9px;overflow-wrap:anywhere}
+ .server-chat-shell .server-channel-link{padding:8px 5px;font-size:11px;overflow-wrap:anywhere}
+ .server-chat-shell .server-channel-create{flex-wrap:wrap}
+ .server-chat-shell .server-channel-create input{width:100%}
+ .server-chat-shell .server-conversation-header{height:56px;min-height:56px;flex-basis:56px;padding:7px 9px;gap:4px}
+ .server-chat-shell .server-conversation-header .header-person{gap:7px}
+ .server-chat-shell .server-conversation-header .header-avatar{width:30px;height:30px;min-width:30px}
+ .server-chat-shell .server-conversation-header .header-person h2{font-size:12px}
+ .server-chat-shell .server-conversation-header .header-person p,.server-chat-shell .server-conversation-header .live-pill{display:none}
+ .server-chat-shell .server-message-canvas{padding:8px 4px 12px}
+ .server-chat-shell .message-line{gap:8px;padding:7px 5px}
+ .server-chat-shell .message-avatar{width:30px;height:30px;flex-basis:30px}
+ .server-chat-shell .server-composer-area{padding:7px 8px max(8px,env(safe-area-inset-bottom))}
+ .server-chat-shell .server-composer-area .composer-glass{min-height:44px;padding:4px 6px 4px 10px}
+ .server-chat-shell .server-composer-area input{font-size:12px}
+ .server-chat-shell .server-composer-area .send-button{width:33px;height:33px;min-width:33px}
+}

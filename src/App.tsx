@@ -46,6 +46,7 @@ export default function App() {
   const [active, setActive] = useState("");
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [canManageGroupMessages, setCanManageGroupMessages] = useState(false);
   const [messageProfiles, setMessageProfiles] = useState<Record<string, {display_name?:string;username?:string;avatar_path?:string|null}>>({});
   const [attachmentPreviews, setAttachmentPreviews] = useState<Record<string, AttachmentPreview>>({});
   const [imageViewerUrl, setImageViewerUrl] = useState("");
@@ -299,6 +300,16 @@ export default function App() {
     });
     return () => { alive = false; };
   }, [active, session]);
+
+  useEffect(() => {
+    if (!supabase || !active || !session?.user?.id || !current?.is_group) { setCanManageGroupMessages(false); return; }
+    let alive=true;
+    void supabase.from("conversation_members").select("member_role,member_permissions").eq("conversation_id",active).eq("user_id",session.user.id).maybeSingle().then(({data,error})=>{
+      if(!alive)return;
+      setCanManageGroupMessages(!error && !!data && (data.member_role==="owner" || !!data.member_permissions?.manage_messages));
+    });
+    return()=>{alive=false;};
+  },[active,session,current?.is_group]);
 
   useEffect(() => {
     if (!active || !supabase || !session?.user?.id) { setMessages([]); return; }
@@ -755,11 +766,14 @@ export default function App() {
   }
 
   async function deleteMessage(message: Message) {
-    if (!supabase || message.sender_id !== session.user.id) return;
-    if (!window.confirm("Delete this message?")) return;
-    const { error } = await supabase.from("messages").update({ body: "This message was deleted.", deleted_at: new Date().toISOString() }).eq("id", message.id);
-    if (error) { setNotice(error.message); return; }
-    setMessages(rows => rows.map(row => row.id === message.id ? { ...row, body: "This message was deleted.", deleted_at: new Date().toISOString() } : row));
+    if (!supabase || (message.sender_id !== session.user.id && (!current?.is_group || !canManageGroupMessages))) return;
+    if (!window.confirm(message.sender_id === session.user.id ? "Delete this message?" : "Delete this member's message?")) return;
+    const deletedAt=new Date().toISOString();
+    const result = message.sender_id === session.user.id
+      ? await supabase.from("messages").update({ body: "This message was deleted.", deleted_at: deletedAt }).eq("id", message.id)
+      : await supabase.rpc("delete_gitmessage_group_message",{target_message_id:message.id});
+    if (result.error) { setNotice(result.error.message); return; }
+    setMessages(rows => rows.map(row => row.id === message.id ? { ...row, body: "This message was deleted.", deleted_at: deletedAt } : row));
   }
 
   useEffect(() => {
@@ -1021,7 +1035,7 @@ export default function App() {
             const mine = message.sender_id === session.user.id;
             return <div key={message.id} onContextMenu={event => showProfileContextMenu(event,message.sender_id,mine ? (profileUsername || "you") : (messageProfiles[message.sender_id]?.username || "user"),message.body,mine)} className={"message-line" + (mine ? " mine" : "")}><button type="button" className="message-avatar profile-trigger" title="View profile" onContextMenu={event => !mine && showProfileContextMenu(event,message.sender_id,messageProfiles[message.sender_id]?.username || "user")} onClick={() => mine ? void loadProfile() : void openPublicProfile(message.sender_id)}>{mine ? (profileAvatar ? <img src={profileAvatar} alt="Your profile"/> : <UserRound size={22} strokeWidth={1.8}/>) : (messageProfiles[message.sender_id]?.avatar_path && supabase ? <img src={supabase.storage.from("gitmessage-avatars").getPublicUrl(messageProfiles[message.sender_id].avatar_path!).data.publicUrl} alt=""/> : <UserRound size={22} strokeWidth={1.8}/>)}</button><div className="message-content"><div className="message-author"><button type="button" className="profile-name-trigger" onContextMenu={event => !mine && showProfileContextMenu(event,message.sender_id,messageProfiles[message.sender_id]?.username || "user")} onClick={() => mine ? void loadProfile() : void openPublicProfile(message.sender_id)}>{mine ? (profileDisplayName || "You") : (messageProfiles[message.sender_id]?.display_name || messageProfiles[message.sender_id]?.username || "Member")}</button> <time>{new Date(message.created_at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}</time></div>{message.body.startsWith("📞 [GITMESSAGE_CALL:") ? <div className="call-message-card"><div className="call-message-icon">{message.body.includes(":video]") ? <Video size={19}/> : <Phone size={19}/>}</div><div className="call-message-copy"><b>{message.body.includes(":video]") ? "Video call" : "Voice call"}</b><span>{message.body.replace(/^📞 \[GITMESSAGE_CALL:(audio|video)\] /,"")}</span></div>{!mine && pendingCall && pendingCall.sender_id===message.sender_id && active===pendingCall.conversation_id && <button type="button" className="call-message-accept" onClick={() => void acceptCall()}>Accept</button>}</div> : message.body.startsWith("📎 ") && attachmentPreviews[message.id] ? <div className={attachmentPreviews[message.id].mime_type.startsWith("image/") ? "image-attachment-wrap" : "message-attachment-card"}>
                 {attachmentPreviews[message.id].mime_type.startsWith("image/") ? <button type="button" className="image-attachment" onClick={() => setImageViewerUrl(attachmentPreviews[message.id].url)} title="Maximise image"><img src={attachmentPreviews[message.id].url} alt={attachmentPreviews[message.id].file_name}/></button> : attachmentPreviews[message.id].mime_type.startsWith("video/") || /\\.mp4$/i.test(attachmentPreviews[message.id].file_name) ? <div className="media-attachment"><video controls playsInline preload="metadata" src={attachmentPreviews[message.id].url}><track kind="captions"/></video><small>{attachmentPreviews[message.id].file_name}</small></div> : attachmentPreviews[message.id].mime_type.startsWith("audio/") || /\\.(webm|mp3|m4a|wav|ogg)$/i.test(attachmentPreviews[message.id].file_name) ? <div className="media-attachment audio-attachment"><div><Mic size={16}/><b>{attachmentPreviews[message.id].file_name}</b></div><audio controls preload="metadata" src={attachmentPreviews[message.id].url}/></div> : <div className="attachment-file-row"><Paperclip size={15}/><span><b>{attachmentPreviews[message.id].file_name}</b><small>{(attachmentPreviews[message.id].size_bytes / 1024 / 1024).toFixed(2)} MB</small></span><button type="button" onClick={() => void openAttachment(message.id)}>Open</button></div>}
-              </div> : <div className="message-bubble">{renderMessageText(message.body)}</div>}<div className="message-actions"><button title="Like" onClick={() => void toggleReaction(message.id, "❤️")}>❤️</button><button title="Laugh" onClick={() => void toggleReaction(message.id, "😂")}>😂</button><button title="Surprised" onClick={() => void toggleReaction(message.id, "😮")}>😮</button>{mine && !message.deleted_at && <><button title="Edit message" onClick={() => void editMessage(message)}><Pencil size={12}/></button><button title="Delete message" onClick={() => void deleteMessage(message)}><Trash2 size={12}/></button></>}</div>{(reactions[message.id] || []).length > 0 && <div className="reaction-strip">{Array.from(new Set((reactions[message.id] || []).map(r => r.emoji))).map(emoji => <button key={emoji} onClick={() => void toggleReaction(message.id, emoji)}>{emoji} {(reactions[message.id] || []).filter(r => r.emoji === emoji).length}</button>)}</div>}<div className="message-meta">{message.edited_at && <span>Edited</span>}</div></div></div>;
+              </div> : <div className="message-bubble">{renderMessageText(message.body)}</div>}<div className="message-actions"><button title="Like" onClick={() => void toggleReaction(message.id, "❤️")}>❤️</button><button title="Laugh" onClick={() => void toggleReaction(message.id, "😂")}>😂</button><button title="Surprised" onClick={() => void toggleReaction(message.id, "😮")}>😮</button>{!message.deleted_at && <>{mine && <button title="Edit message" onClick={() => void editMessage(message)}><Pencil size={12}/></button>}{(mine || (current?.is_group && canManageGroupMessages)) && <button title={mine ? "Delete message" : "Moderate: delete message"} onClick={() => void deleteMessage(message)}><Trash2 size={12}/></button>}</>}</div>{(reactions[message.id] || []).length > 0 && <div className="reaction-strip">{Array.from(new Set((reactions[message.id] || []).map(r => r.emoji))).map(emoji => <button key={emoji} onClick={() => void toggleReaction(message.id, emoji)}>{emoji} {(reactions[message.id] || []).filter(r => r.emoji === emoji).length}</button>)}</div>}<div className="message-meta">{message.edited_at && <span>Edited</span>}</div></div></div>;
           }) : <div className="empty-conversation"><div className="empty-art"><div className="art-ring ring-one"/><div className="art-ring ring-two"/><div className="art-core"><MessageCircle size={27}/></div><span className="art-spark spark-one"/><span className="art-spark spark-two"/></div><div className="eyebrow">A SPACE OF YOUR OWN</div><h3>Every good conversation<br/><span>starts somewhere.</span></h3><p>Send the first message and let it unfold.</p></div> : <div className="empty-conversation"><div className="empty-art"><div className="art-ring ring-one"/><div className="art-ring ring-two"/><div className="art-core"><Sparkles size={27}/></div><span className="art-spark spark-one"/><span className="art-spark spark-two"/></div><div className="eyebrow">YOUR PEOPLE, YOUR PLACE</div><h3>Make room for<br/><span>the good stuff.</span></h3><p>Choose a conversation or create a new one.</p><button className="empty-create" onClick={() => setModal("new")}><Plus size={15}/> New conversation</button></div>}
           <audio ref={remoteAudioRef} autoPlay/><video ref={remoteVideoRef} autoPlay playsInline className={"remote-call-video" + (callState !== "idle" && callKind === "video" ? " visible" : "")}/><video ref={localVideoRef} autoPlay muted playsInline className={"local-call-video" + (callState !== "idle" && callKind === "video" ? " visible" : "")}/>
         </div>

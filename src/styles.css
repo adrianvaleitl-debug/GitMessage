@@ -1318,3 +1318,5 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
 @media(max-width:520px){.profile-photo-adjustments{grid-template-columns:1fr;gap:10px}.profile-photo-adjustments .profile-photo-row{grid-column:1;grid-row:auto}.profile-photo-adjustments .photo-crop-control{grid-column:1}}
 
 .saved-message-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}.saved-message-row p{grid-column:1/-1;margin:0;color:var(--text);font-size:12px;line-height:1.5;overflow-wrap:anywhere}.saved-message-row small{color:var(--muted);font-size:10px}.saved-message-row button{grid-column:2;grid-row:2}
+
+.schedule-message-time{width:34px;min-width:34px;max-width:34px;height:30px;opacity:.65;cursor:pointer;color:var(--muted);background:transparent;border:0;font-size:9px}.schedule-message-time:focus,.schedule-message-time:valid{width:150px;max-width:150px;opacity:1;outline:1px solid var(--blue);border-radius:6px;padding:0 4px;color:var(--text);background:var(--panel-2)}

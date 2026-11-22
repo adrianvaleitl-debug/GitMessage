@@ -1448,3 +1448,31 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
 .header-member-count{padding:2px 6px;border:1px solid #424650;border-radius:10px;background:#2a2e36;color:#bfc5d0;font-size:9px;font-weight:650;white-space:nowrap}
 .header-member-count:hover{border-color:var(--blue);color:#fff}
 @media(max-width:390px){.header-member-peek{display:none}}
+
+
+/* Conversation details panel visual polish; preserve its existing layout and width. */
+.conversation-details{background:linear-gradient(180deg,#252830 0%,#22252c 100%)!important;border-left:1px solid #3a3e49!important;scrollbar-color:#555b68 transparent}
+.details-heading{position:sticky;top:0;z-index:4;height:50px!important;min-height:50px!important;padding:0 36px 0 2px!important;border-bottom:1px solid #3b404b!important;background:rgba(37,40,48,.95);backdrop-filter:blur(12px);color:#c5cad5!important;letter-spacing:1.1px!important}
+.details-heading>span{margin:0!important;font-weight:800}
+.details-heading .details-close{right:0!important;width:28px!important;height:28px!important;border:1px solid #444a57!important;border-radius:9px!important;background:#30343e!important;color:#aeb6c5!important}
+.details-heading .details-close:hover{background:#414755!important;color:#fff!important;border-color:#68728a!important}
+.details-profile{position:relative;margin:12px 0 2px;padding:22px 10px 19px!important;border:1px solid #414654!important;border-radius:14px;background:radial-gradient(ellipse at 50% 0%,rgba(111,119,255,.16),transparent 70%),linear-gradient(145deg,#303440,#292d36);box-shadow:0 8px 22px #0002}
+.details-avatar{width:68px!important;height:68px!important;margin-bottom:12px!important;border:3px solid #626b80!important;outline:4px solid #ffffff08;background:linear-gradient(145deg,#6977ff,#a34fd0)!important;box-shadow:0 5px 18px #0005}
+.details-profile h3{margin-bottom:6px!important;font-size:15px!important}
+.details-profile p{display:inline-flex;align-items:center;padding:4px 9px;border:1px solid #4a5060;border-radius:20px;background:#252a34;color:#b8c1d2!important;font-size:9px!important;font-weight:650}
+.details-section{padding:16px 0 13px!important;border-bottom:1px solid #3b404b!important}
+.details-label{display:flex;align-items:center;gap:8px;margin:0 0 10px!important;color:#9da8bb!important;font-size:9px!important;font-weight:850!important;letter-spacing:1.05px!important}
+.details-label:after{content:"";height:1px;flex:1;background:linear-gradient(90deg,#454b59,transparent)}
+.details-notification-setting{min-height:46px;margin:7px 0!important;padding:8px 9px!important;border:1px solid #424856!important;border-radius:10px!important;background:linear-gradient(145deg,#30343d,#2b2f37)!important;box-shadow:0 2px 5px #00000012;transition:border-color .15s,background .15s}
+.details-notification-setting:hover{border-color:#626c80!important;background:linear-gradient(145deg,#363b46,#2d323b)!important}
+.details-notification-setting>span{color:#d8dce5!important;font-size:10px!important;font-weight:650!important;line-height:1.35}
+.details-notification-setting select,.details-notification-setting input:not([type=checkbox]){height:32px!important;border:1px solid #505766!important;border-radius:8px!important;background:#22262e!important;color:#eef1f7!important;font-size:10px!important}
+.details-notification-setting select:hover,.details-notification-setting input:not([type=checkbox]):hover{border-color:#737e95!important}
+.details-notification-setting input[type=checkbox]{width:17px!important;height:17px!important;accent-color:#8b91ff!important}
+.details-section .settings-row{min-height:40px;display:flex;align-items:center;gap:8px;margin:6px 0!important;padding:9px 11px!important;border:1px solid #424856!important;border-radius:10px!important;background:linear-gradient(145deg,#323640,#2b2f38)!important;color:#e3e7ef!important;font-size:10px!important;font-weight:650;transition:transform .14s,border-color .14s,background .14s}
+.details-section .settings-row>span{margin-left:auto;color:#a9b2c4;font-size:15px}
+.details-section .settings-row:hover{transform:translateY(-1px);border-color:#727c9a!important;background:linear-gradient(145deg,#3b4150,#303541)!important}
+.details-row{min-height:29px;gap:10px!important;padding:5px 8px;margin:5px 0!important;border-radius:8px;background:#ffffff04;color:#cbd1dc!important;font-size:10px!important}
+.details-row svg{color:#9ba7bc!important}
+.details-count{font-size:28px!important;letter-spacing:-1px;color:#f3f4fa!important}
+.details-muted{color:#9da6b6!important;font-size:10px!important}

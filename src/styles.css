@@ -1393,7 +1393,7 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
 .header-avatar img{display:block;width:100%!important;height:100%!important;min-width:100%;min-height:100%;object-fit:cover!important;object-position:center}
 .details-notification-setting{display:grid!important;grid-template-columns:minmax(0,1fr) minmax(112px,48%);align-items:center;gap:10px;margin:8px 0!important;padding:10px 11px;border:1px solid #41434a;border-radius:9px;background:#323439;color:#e1e3e7!important;font-size:11px!important;font-weight:550!important}
 .details-notification-setting>span{min-width:0;color:#d7d9de}
-.details-notification-setting select,.details-notification-setting input:not([type=checkbox]){width:100%;min-width:0;height:33px;box-sizing:border-box;padding:0 8px;border:1px solid #50535c;border-radius:7px;background:#24262b;color:#f2f3f5;font:11px inherit;outline:none}
+.details-notification-setting select,.details-notification-setting input:not([type=checkbox]){width:100%;min-width:0;height:33px;box-sizing:border-box;padding:0 8px;border:1px solid #50535c;border-radius:7px;background:#24262b;color:#f2f3f5;font:inherit;font-size:11px;outline:none}
 .details-notification-setting select:focus,.details-notification-setting input:focus{border-color:var(--blue);box-shadow:0 0 0 2px color-mix(in srgb,var(--blue) 22%,transparent)}
 .details-notification-setting input[type=checkbox]{justify-self:end;width:17px;height:17px;margin:0;accent-color:var(--blue)}
 .details-section .settings-row{width:100%;margin:7px 0;padding:10px 11px;border:1px solid #41434a;border-radius:9px;background:#323439;color:#e1e3e7;text-align:left}
@@ -1416,3 +1416,11 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
 .schedule-message-popover button:last-child{background:var(--blue);border-color:var(--blue);color:white}
 .schedule-message-popover button:disabled{opacity:.45;cursor:not-allowed}
 @media(max-width:520px){.details-notification-setting{grid-template-columns:minmax(0,1fr) minmax(100px,44%)}.schedule-message-popover{grid-template-columns:1fr 1fr}.schedule-message-popover label,.schedule-message-popover input{grid-column:1/-1}}
+
+/* Keep crop sliders inside their themed editor cards. */
+.profile-editor .profile-banner-editor input[type=range],.profile-editor .profile-photo-adjustments input[type=range]{box-sizing:border-box;min-width:0;max-width:100%;width:100%;accent-color:var(--accent)!important}
+.profile-editor.palette-ocean input[type=range]{accent-color:#42a9c5!important}
+.profile-editor.palette-plum input[type=range]{accent-color:#a87bd0!important}
+.profile-editor.palette-ember input[type=range]{accent-color:#df815d!important}
+.profile-editor.palette-moss input[type=range]{accent-color:#79a878!important}
+.profile-editor.palette-sand input[type=range]{accent-color:#c2a66c!important}

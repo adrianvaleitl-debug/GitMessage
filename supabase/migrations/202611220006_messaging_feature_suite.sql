@@ -151,11 +151,11 @@ with check(editor_id=auth.uid() and exists(select 1 from public.messages m where
 
 drop policy if exists gm_pins_member_read on public.gitmessage_pinned_messages;
 create policy gm_pins_member_read on public.gitmessage_pinned_messages for select to authenticated
-using(exists(select 1 from public.conversation_members cm where cm.conversation_id=conversation_id and cm.user_id=auth.uid()));
+using(exists(select 1 from public.conversation_members cm where cm.conversation_id=gitmessage_pinned_messages.conversation_id and cm.user_id=auth.uid()));
 drop policy if exists gm_pins_member_write on public.gitmessage_pinned_messages;
 create policy gm_pins_member_write on public.gitmessage_pinned_messages for all to authenticated
 using(pinned_by=auth.uid() and exists(select 1 from public.conversation_members cm where cm.conversation_id=gitmessage_pinned_messages.conversation_id and cm.user_id=auth.uid()))
-with check(pinned_by=auth.uid() and exists(select 1 from public.conversation_members cm where cm.conversation_id=gitmessage_pinned_messages.conversation_id and cm.user_id=auth.uid()) and exists(select 1 from public.messages m where m.id=message_id and m.conversation_id=conversation_id));
+with check(pinned_by=auth.uid() and exists(select 1 from public.conversation_members cm where cm.conversation_id=gitmessage_pinned_messages.conversation_id and cm.user_id=auth.uid()) and exists(select 1 from public.messages m where m.id=gitmessage_pinned_messages.message_id and m.conversation_id=gitmessage_pinned_messages.conversation_id));
 
 drop policy if exists gm_scheduled_self on public.gitmessage_scheduled_messages;
 create policy gm_scheduled_self on public.gitmessage_scheduled_messages for all to authenticated
@@ -186,10 +186,10 @@ with check(user_id=auth.uid() and (gitmessage_notification_preferences.conversat
 
 drop policy if exists gm_polls_member_read on public.gitmessage_polls;
 create policy gm_polls_member_read on public.gitmessage_polls for select to authenticated
-using(exists(select 1 from public.conversation_members cm where cm.conversation_id=gitmessage_polls.conversation_id and cm.user_id=auth.uid());
+using(exists(select 1 from public.conversation_members cm where cm.conversation_id=gitmessage_polls.conversation_id and cm.user_id=auth.uid()));
 drop policy if exists gm_polls_member_create on public.gitmessage_polls;
 create policy gm_polls_member_create on public.gitmessage_polls for insert to authenticated
-with check(creator_id=auth.uid() and exists(select 1 from public.conversation_members cm where cm.conversation_id=conversation_id and cm.user_id=auth.uid()));
+with check(creator_id=auth.uid() and exists(select 1 from public.conversation_members cm where cm.conversation_id=gitmessage_polls.conversation_id and cm.user_id=auth.uid()));
 drop policy if exists gm_poll_options_member_read on public.gitmessage_poll_options;
 create policy gm_poll_options_member_read on public.gitmessage_poll_options for select to authenticated
 using(exists(select 1 from public.gitmessage_polls p join public.conversation_members cm on cm.conversation_id=p.conversation_id where p.id=poll_id and cm.user_id=auth.uid()));
@@ -207,7 +207,7 @@ create policy gm_events_member_read on public.gitmessage_events for select to au
 using(exists(select 1 from public.conversation_members cm where cm.conversation_id=gitmessage_events.conversation_id and cm.user_id=auth.uid()));
 drop policy if exists gm_events_member_create on public.gitmessage_events;
 create policy gm_events_member_create on public.gitmessage_events for insert to authenticated
-with check(creator_id=auth.uid() and exists(select 1 from public.conversation_members cm where cm.conversation_id=conversation_id and cm.user_id=auth.uid()));
+with check(creator_id=auth.uid() and exists(select 1 from public.conversation_members cm where cm.conversation_id=gitmessage_events.conversation_id and cm.user_id=auth.uid()));
 drop policy if exists gm_event_rsvps_member on public.gitmessage_event_rsvps;
 create policy gm_event_rsvps_member on public.gitmessage_event_rsvps for all to authenticated
 using(user_id=auth.uid() and exists(select 1 from public.gitmessage_events e join public.conversation_members cm on cm.conversation_id=e.conversation_id where e.id=event_id and cm.user_id=auth.uid()))

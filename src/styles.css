@@ -1298,3 +1298,12 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
 .group-friend-name small{font-size:9px;color:#aeb1b8}
 .group-friend-check{width:21px;height:21px;display:grid;place-items:center;border-radius:6px;background:#383b44;color:#dfe2e8;font-size:13px;font-weight:800}
 .group-friend-option.selected .group-friend-check{background:var(--blue);color:white}
+
+
+/* Live editor preview mirrors the full public-profile banner dimensions. */
+.profile-preview-live-label{display:flex;flex-direction:column;gap:4px;margin:10px 0 8px;color:#e3e5e8;font-size:11px;font-weight:700}
+.profile-preview-live-label span{color:#aeb1b8;font-size:10px;font-weight:400}
+.profile-preview-card .profile-banner-preview{height:220px!important;min-height:220px;margin:0 0 12px;border-radius:12px;overflow:hidden}
+.profile-preview-card .profile-banner-preview img{width:100%;height:100%;display:block;object-fit:cover}
+.profile-preview-card .public-profile-identity{align-items:center}
+.profile-preview-card .profile-photo{overflow:hidden}

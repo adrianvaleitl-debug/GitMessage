@@ -1497,6 +1497,15 @@ export default function App() {
     setCallCameraEnabled(next);
   }
 
+  useEffect(()=>{
+    if(callState==="idle")return;
+    if(localVideoRef.current&&localStreamRef.current)localVideoRef.current.srcObject=localStreamRef.current;
+    if(remoteStreamRef.current){
+      if(remoteVideoRef.current){remoteVideoRef.current.srcObject=remoteStreamRef.current;remoteVideoRef.current.muted=true;}
+      if(remoteAudioRef.current)remoteAudioRef.current.srcObject=new MediaStream(remoteStreamRef.current.getAudioTracks());
+    }
+  },[callState,callKind]);
+
   useEffect(()=>{if(callState!=="connected"||!callConnectedAt)return;const update=()=>setCallElapsed(Math.max(0,Math.floor((Date.now()-callConnectedAt)/1000)));update();const timer=window.setInterval(update,1000);return()=>window.clearInterval(timer);},[callState,callConnectedAt]);
 
   async function endCall(notifyRemote = true) {

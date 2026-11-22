@@ -302,14 +302,15 @@ export default function App() {
   }, [active, session]);
 
   useEffect(() => {
-    if (!supabase || !active || !session?.user?.id || !current?.is_group) { setCanManageGroupMessages(false); return; }
+    const activeConversation=conversations.find(row=>row.id===active);
+    if (!supabase || !active || !session?.user?.id || !activeConversation?.is_group) { setCanManageGroupMessages(false); return; }
     let alive=true;
     void supabase.from("conversation_members").select("member_role,member_permissions").eq("conversation_id",active).eq("user_id",session.user.id).maybeSingle().then(({data,error})=>{
       if(!alive)return;
       setCanManageGroupMessages(!error && !!data && (data.member_role==="owner" || !!data.member_permissions?.manage_messages));
     });
     return()=>{alive=false;};
-  },[active,session,current?.is_group]);
+  },[active,session,conversations]);
 
   useEffect(() => {
     if (!active || !supabase || !session?.user?.id) { setMessages([]); return; }

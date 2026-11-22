@@ -154,39 +154,39 @@ create policy gm_pins_member_read on public.gitmessage_pinned_messages for selec
 using(exists(select 1 from public.conversation_members cm where cm.conversation_id=conversation_id and cm.user_id=auth.uid()));
 drop policy if exists gm_pins_member_write on public.gitmessage_pinned_messages;
 create policy gm_pins_member_write on public.gitmessage_pinned_messages for all to authenticated
-using(pinned_by=auth.uid() and exists(select 1 from public.conversation_members cm where cm.conversation_id=conversation_id and cm.user_id=auth.uid()))
-with check(pinned_by=auth.uid() and exists(select 1 from public.conversation_members cm where cm.conversation_id=conversation_id and cm.user_id=auth.uid()) and exists(select 1 from public.messages m where m.id=message_id and m.conversation_id=conversation_id));
+using(pinned_by=auth.uid() and exists(select 1 from public.conversation_members cm where cm.conversation_id=gitmessage_pinned_messages.conversation_id and cm.user_id=auth.uid()))
+with check(pinned_by=auth.uid() and exists(select 1 from public.conversation_members cm where cm.conversation_id=gitmessage_pinned_messages.conversation_id and cm.user_id=auth.uid()) and exists(select 1 from public.messages m where m.id=message_id and m.conversation_id=conversation_id));
 
 drop policy if exists gm_scheduled_self on public.gitmessage_scheduled_messages;
 create policy gm_scheduled_self on public.gitmessage_scheduled_messages for all to authenticated
-using(sender_id=auth.uid() and exists(select 1 from public.conversation_members cm where cm.conversation_id=conversation_id and cm.user_id=auth.uid()))
-with check(sender_id=auth.uid() and exists(select 1 from public.conversation_members cm where cm.conversation_id=conversation_id and cm.user_id=auth.uid()));
+using(sender_id=auth.uid() and exists(select 1 from public.conversation_members cm where cm.conversation_id=gitmessage_scheduled_messages.conversation_id and cm.user_id=auth.uid()))
+with check(sender_id=auth.uid() and exists(select 1 from public.conversation_members cm where cm.conversation_id=gitmessage_scheduled_messages.conversation_id and cm.user_id=auth.uid()));
 
 drop policy if exists gm_conversation_prefs_self on public.gitmessage_conversation_preferences;
 create policy gm_conversation_prefs_self on public.gitmessage_conversation_preferences for all to authenticated
-using(user_id=auth.uid() and exists(select 1 from public.conversation_members cm where cm.conversation_id=conversation_id and cm.user_id=auth.uid()))
-with check(user_id=auth.uid() and exists(select 1 from public.conversation_members cm where cm.conversation_id=conversation_id and cm.user_id=auth.uid()));
+using(user_id=auth.uid() and exists(select 1 from public.conversation_members cm where cm.conversation_id=gitmessage_conversation_preferences.conversation_id and cm.user_id=auth.uid()))
+with check(user_id=auth.uid() and exists(select 1 from public.conversation_members cm where cm.conversation_id=gitmessage_conversation_preferences.conversation_id and cm.user_id=auth.uid()));
 
 drop policy if exists gm_drafts_self on public.gitmessage_drafts;
 create policy gm_drafts_self on public.gitmessage_drafts for all to authenticated
-using(user_id=auth.uid() and exists(select 1 from public.conversation_members cm where cm.conversation_id=conversation_id and cm.user_id=auth.uid()))
-with check(user_id=auth.uid() and exists(select 1 from public.conversation_members cm where cm.conversation_id=conversation_id and cm.user_id=auth.uid()));
+using(user_id=auth.uid() and exists(select 1 from public.conversation_members cm where cm.conversation_id=gitmessage_drafts.conversation_id and cm.user_id=auth.uid()))
+with check(user_id=auth.uid() and exists(select 1 from public.conversation_members cm where cm.conversation_id=gitmessage_drafts.conversation_id and cm.user_id=auth.uid()));
 
 drop policy if exists gm_status_read on public.gitmessage_user_status;
 create policy gm_status_read on public.gitmessage_user_status for select to authenticated
-using(user_id=auth.uid() or visibility='everyone' or (visibility='friends' and exists(select 1 from public.user_contacts uc where uc.user_id=auth.uid() and uc.contact_id=user_id)));
+using(user_id=auth.uid() or visibility='everyone' or (visibility='friends' and exists(select 1 from public.user_contacts uc where uc.user_id=auth.uid() and uc.contact_id=gitmessage_user_status.user_id)));
 drop policy if exists gm_status_self_write on public.gitmessage_user_status;
 create policy gm_status_self_write on public.gitmessage_user_status for all to authenticated
 using(user_id=auth.uid()) with check(user_id=auth.uid());
 
 drop policy if exists gm_notification_prefs_self on public.gitmessage_notification_preferences;
 create policy gm_notification_prefs_self on public.gitmessage_notification_preferences for all to authenticated
-using(user_id=auth.uid() and (conversation_id is null or exists(select 1 from public.conversation_members cm where cm.conversation_id=conversation_id and cm.user_id=auth.uid())))
-with check(user_id=auth.uid() and (conversation_id is null or exists(select 1 from public.conversation_members cm where cm.conversation_id=conversation_id and cm.user_id=auth.uid())));
+using(user_id=auth.uid() and (conversation_id is null or exists(select 1 from public.conversation_members cm where cm.conversation_id=gitmessage_notification_preferences.conversation_id and cm.user_id=auth.uid())))
+with check(user_id=auth.uid() and (gitmessage_notification_preferences.conversation_id is null or exists(select 1 from public.conversation_members cm where cm.conversation_id=gitmessage_notification_preferences.conversation_id and cm.user_id=auth.uid())));
 
 drop policy if exists gm_polls_member_read on public.gitmessage_polls;
 create policy gm_polls_member_read on public.gitmessage_polls for select to authenticated
-using(exists(select 1 from public.conversation_members cm where cm.conversation_id=conversation_id and cm.user_id=auth.uid()));
+using(exists(select 1 from public.conversation_members cm where cm.conversation_id=gitmessage_polls.conversation_id and cm.user_id=auth.uid());
 drop policy if exists gm_polls_member_create on public.gitmessage_polls;
 create policy gm_polls_member_create on public.gitmessage_polls for insert to authenticated
 with check(creator_id=auth.uid() and exists(select 1 from public.conversation_members cm where cm.conversation_id=conversation_id and cm.user_id=auth.uid()));
@@ -204,7 +204,7 @@ with check(user_id=auth.uid() and exists(select 1 from public.gitmessage_polls p
 
 drop policy if exists gm_events_member_read on public.gitmessage_events;
 create policy gm_events_member_read on public.gitmessage_events for select to authenticated
-using(exists(select 1 from public.conversation_members cm where cm.conversation_id=conversation_id and cm.user_id=auth.uid()));
+using(exists(select 1 from public.conversation_members cm where cm.conversation_id=gitmessage_events.conversation_id and cm.user_id=auth.uid()));
 drop policy if exists gm_events_member_create on public.gitmessage_events;
 create policy gm_events_member_create on public.gitmessage_events for insert to authenticated
 with check(creator_id=auth.uid() and exists(select 1 from public.conversation_members cm where cm.conversation_id=conversation_id and cm.user_id=auth.uid()));

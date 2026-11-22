@@ -126,6 +126,7 @@ export default function App() {
 
   const messageCanvasRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const draftConversationRef=useRef("");
   const composerInputRef = useRef<HTMLTextAreaElement>(null);
   const peerRef = useRef<RTCPeerConnection | null>(null);
   const localStreamRef = useRef<MediaStream | null>(null);
@@ -422,6 +423,26 @@ export default function App() {
       .subscribe();
     return () => { void supabase!.removeChannel(channel); };
   }, [active, session]);
+
+  useEffect(()=>{
+    if(!supabase||!session||!active){draftConversationRef.current="";setDraft("");return;}
+    let alive=true;
+    void supabase.from("gitmessage_drafts").select("body").eq("conversation_id",active).eq("user_id",session.user.id).maybeSingle().then(({data,error})=>{
+      if(!alive)return;
+      if(error){console.warn("Draft sync:",error.message);return;}
+      draftConversationRef.current=active;
+      setDraft(data?.body||"");
+    });
+    return()=>{alive=false;};
+  },[active,session?.user?.id]);
+
+  useEffect(()=>{
+    if(!supabase||!session||!active||draftConversationRef.current!==active)return;
+    const timer=window.setTimeout(()=>{
+      void supabase!.from("gitmessage_drafts").upsert({conversation_id:active,user_id:session.user.id,body:draft,updated_at:new Date().toISOString()},{onConflict:"conversation_id,user_id"}).then(({error})=>{if(error)console.warn("Draft sync:",error.message);});
+    },500);
+    return()=>window.clearTimeout(timer);
+  },[draft,active,session?.user?.id]);
 
   async function updateDraft(value: string) {
     setDraft(value);

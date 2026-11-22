@@ -1807,3 +1807,7 @@ html,body,#root{width:100%;height:100%;min-height:100%;margin:0;overflow:hidden}
 }
 @media(max-width:390px){.account-chip{margin-inline:10px!important}.conversation-list{padding-inline:7px!important}.conversation-item{min-height:68px!important;padding:9px!important;gap:9px!important}.conversation-avatar{width:43px!important;height:43px!important;flex-basis:43px!important}.header-tools .glass-icon{width:32px!important;height:32px!important;min-width:32px!important}.conversation-header{gap:6px!important;padding-inline:8px!important}.message-canvas{padding-inline:7px!important}.composer-area{padding-inline:7px!important}}
 @media(hover:none) and (max-width:760px){.conversation-item:active,.mobile-tab:active,.glass-icon:active{transform:scale(.985)!important;transition:transform .12s ease}}
+
+
+.details-unfriend-button{width:100%;min-height:36px;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px;padding:7px 10px;border:1px solid #75434b;border-radius:9px;background:#39252d;color:#ffb8c0;font-size:10px;font-weight:750;cursor:pointer;transition:background .18s,border-color .18s}
+.details-unfriend-button:hover{background:#512b35;border-color:#a75b68}

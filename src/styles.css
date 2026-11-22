@@ -1218,3 +1218,13 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
 .server-delete-button{width:29px;height:29px;flex:0 0 29px;display:grid;place-items:center;border:1px solid rgba(220,92,105,.22);border-radius:8px;background:rgba(220,92,105,.08);color:#df858d;cursor:pointer}
 .server-delete-button:hover{background:rgba(220,92,105,.18);color:#ffabb1}
 .server-delete-button:disabled{opacity:.45;cursor:wait}
+
+
+.conversation-member-avatars{display:flex;align-items:center;margin-top:5px;padding-left:2px}
+.conversation-member-avatars span{width:19px;height:19px;margin-left:-3px;display:grid;place-items:center;overflow:hidden;border:2px solid var(--panel);border-radius:50%;background:var(--panel-3);color:var(--text);font-size:8px;font-weight:700}
+.conversation-member-avatars span:first-child{margin-left:0}
+.conversation-member-avatars img,.server-list-avatar img{width:100%;height:100%;object-fit:cover}
+.conversation-member-avatars .conversation-member-extra{width:auto;min-width:21px;padding:0 4px;border-radius:12px;font-size:8px}
+.server-list-avatar{overflow:hidden;border-radius:50%}
+.server-list-avatar img{display:block}
+#group-description,#server-description{min-height:72px;padding:10px 11px;resize:vertical}

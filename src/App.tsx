@@ -3,7 +3,7 @@ import type { FormEvent, MouseEvent, ReactNode } from "react";
 import { supabase } from "./lib/supabase";
 import {
   MessageCircle, Search, Plus, ArrowUp, ArrowLeft, Settings, Users, UserRound, LogOut, Sparkles,
-  ShieldCheck, X, Moon, Sun, MoreHorizontal, ArrowUpRight, Check,
+  ShieldCheck, X, Moon, Sun, MoreHorizontal, ArrowUpRight, Check, CheckCheck,
   RefreshCw, Eye, UserRoundPlus, Paperclip, Pencil, Trash2, Mic, MicOff, Phone, Video, PhoneOff
 } from "lucide-react";
 
@@ -44,6 +44,8 @@ export default function App() {
   const [busy, setBusy] = useState(false);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [contactStatuses,setContactStatuses]=useState<Record<string,string>>({});
+  const [conversationTyping,setConversationTyping]=useState<Record<string,boolean>>({});
+  const [conversationSeen,setConversationSeen]=useState<Record<string,boolean>>({});
   const [active, setActive] = useState("");
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -313,6 +315,34 @@ export default function App() {
     void loadConversations();
     void loadServers();
   }, [session]);
+
+  useEffect(() => {
+    if(!supabase||!session||!conversations.length){setConversationTyping({});setConversationSeen({});return;}
+    let alive=true;
+    const refreshIndicators=async()=>{
+      const conversationIds=conversations.map(row=>row.id);
+      const [typingResult,messageResult]=await Promise.all([
+        supabase!.from("gitmessage_typing").select("conversation_id,user_id,updated_at").in("conversation_id",conversationIds).neq("user_id",session.user.id),
+        supabase!.from("messages").select("id,conversation_id,sender_id,created_at").in("conversation_id",conversationIds).eq("sender_id",session.user.id).order("created_at",{ascending:false}).limit(Math.max(40,conversationIds.length*4))
+      ]);
+      if(!alive)return;
+      const typing:Record<string,boolean>={};
+      (typingResult.data||[]).forEach((row:any)=>{if(Date.now()-new Date(row.updated_at).getTime()<6000)typing[row.conversation_id]=true;});
+      setConversationTyping(typing);
+      const latest:Record<string,string>={};
+      (messageResult.data||[]).forEach((row:any)=>{if(!latest[row.conversation_id])latest[row.conversation_id]=row.id;});
+      const messageIds=Object.values(latest);
+      if(!messageIds.length){setConversationSeen({});return;}
+      const receipts=await supabase!.from("gitmessage_message_read_receipts").select("message_id,user_id").in("message_id",messageIds).neq("user_id",session.user.id);
+      if(!alive)return;
+      const seen:Record<string,boolean>={};
+      Object.entries(latest).forEach(([conversationId,messageId])=>{seen[conversationId]=(receipts.data||[]).some((row:any)=>row.message_id===messageId);});
+      setConversationSeen(seen);
+    };
+    void refreshIndicators();
+    const timer=window.setInterval(()=>void refreshIndicators(),4000);
+    return()=>{alive=false;window.clearInterval(timer);};
+  },[conversations,session?.user?.id]);
 
   useEffect(() => {
     if(!supabase||!session||!conversations.length){setContactStatuses({});return;}
@@ -1337,7 +1367,7 @@ export default function App() {
         <div className="list-heading"><span>{gtaViTheme ? "THE CONTACTS" : "DIRECT MESSAGES"}</span><button className="glass-icon tiny" title="New conversation" onClick={() => setModal("new")}><Plus size={17}/></button></div>
         <div className="conversation-list">
           {filtered.map((conversation, index) => <div key={conversation.id} role="button" tabIndex={0} className={"conversation-item" + (active === conversation.id ? " active" : "")} onContextMenu={event=>{event.preventDefault();event.stopPropagation();setChatContextMenu({x:Math.min(event.clientX,window.innerWidth-220),y:Math.min(event.clientY,window.innerHeight-100),conversation});}} onClick={() => {setChatContextMenu(null);setActive(conversation.id)}} onTouchEnd={event => { event.preventDefault(); event.stopPropagation(); setActive(conversation.id); }} onKeyDown={event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setActive(conversation.id); } }}>
-            <div className={"conversation-avatar avatar-tone-" + (index % 4)}>{conversation.avatar_path && supabase ? <img src={supabase.storage.from(conversation.is_group ? "gitmessage-group-avatars" : "gitmessage-avatars").getPublicUrl(conversation.avatar_path).data.publicUrl} alt=""/> : <MessageCircle size={17}/>}</div><div className="conversation-meta"><div className="conversation-name-line"><b>{conversation.title || "Conversation"}</b>{(conversation.members||[]).filter(member=>member.user_id!==session.user.id).slice(0,1).map(member=>contactStatuses[member.user_id] ? <span key={member.user_id} className="contact-status-bubble" title="Status">{contactStatuses[member.user_id]}</span> : null)}</div><small>{conversation.is_group ? (conversation.description || "Group conversation") : "Open conversation"}</small>{conversation.is_group && <div className="conversation-member-avatars">{(conversation.members || []).slice(0,5).map(member=><span key={member.user_id} title={member.display_name || member.username || "Member"}>{member.avatar_path && supabase ? <img src={supabase.storage.from("gitmessage-avatars").getPublicUrl(member.avatar_path).data.publicUrl} alt="" style={{objectPosition:member.avatar_position||"50% 50%"}}/> : (member.display_name || member.username || "?").slice(0,1).toUpperCase()}</span>)}{(conversation.members || []).length>5 && <span className="conversation-member-extra">+{(conversation.members || []).length-5}</span>}</div>}</div>{active === conversation.id && <span className="active-indicator"/>}
+            <div className={"conversation-avatar avatar-tone-" + (index % 4)}>{conversation.avatar_path && supabase ? <img src={supabase.storage.from(conversation.is_group ? "gitmessage-group-avatars" : "gitmessage-avatars").getPublicUrl(conversation.avatar_path).data.publicUrl} alt=""/> : <MessageCircle size={17}/>}</div><div className="conversation-meta"><div className="conversation-name-line"><b>{conversation.title || "Conversation"}</b>{(conversation.members||[]).filter(member=>member.user_id!==session.user.id).slice(0,1).map(member=>contactStatuses[member.user_id] ? <span key={member.user_id} className="contact-status-bubble" title="Status">{contactStatuses[member.user_id]}</span> : null)}{conversationTyping[conversation.id] && <span className="conversation-typing-indicator" title="Typing"><i/><i/><i/></span>}{conversationSeen[conversation.id] && <span className="conversation-seen-indicator" title="Seen"><CheckCheck size={13}/></span>}</div><small>{conversation.is_group ? (conversation.description || "Group conversation") : "Open conversation"}</small>{conversation.is_group && <div className="conversation-member-avatars">{(conversation.members || []).slice(0,5).map(member=><span key={member.user_id} title={member.display_name || member.username || "Member"}>{member.avatar_path && supabase ? <img src={supabase.storage.from("gitmessage-avatars").getPublicUrl(member.avatar_path).data.publicUrl} alt="" style={{objectPosition:member.avatar_position||"50% 50%"}}/> : (member.display_name || member.username || "?").slice(0,1).toUpperCase()}</span>)}{(conversation.members || []).length>5 && <span className="conversation-member-extra">+{(conversation.members || []).length-5}</span>}</div>}</div>{active === conversation.id && <span className="active-indicator"/>}
           </div>)}
           {filtered.length === 0 && <div className="list-empty"><div className="empty-orb"><MessageCircle size={19}/></div><b>{query ? "Nothing found" : "A quiet beginning"}</b><p>{query ? "Try another name." : "Start a conversation to see it here."}</p>{!query && <button onClick={() => setModal("new")}>Start a conversation <Plus size={14}/></button>}</div>}
         </div>

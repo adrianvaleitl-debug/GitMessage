@@ -1310,6 +1310,24 @@ export default function App() {
     return () => { void supabase!.removeChannel(channel); };
   }, [session, callState]);
 
+  useEffect(() => {
+    if(!supabase||!session)return;
+    let alive=true;
+    const checkIncomingCall=async()=>{
+      if(!alive||callState!=="idle")return;
+      const cutoff=new Date(Date.now()-60000).toISOString();
+      const {data,error}=await supabase!.from("gitmessage_call_signals").select("id,conversation_id,sender_id,recipient_id,signal_type,payload,created_at").eq("recipient_id",session.user.id).eq("signal_type","offer").gte("created_at",cutoff).order("created_at",{ascending:false}).limit(1);
+      if(!alive||error||!data?.length||callState!=="idle")return;
+      const offer=data[0] as any;
+      setPendingCall(offer);
+      setCallKind(offer.payload?.kind==="video"?"video":"audio");
+      setCallState("incoming");
+    };
+    void checkIncomingCall();
+    const timer=window.setInterval(()=>void checkIncomingCall(),2500);
+    return()=>{alive=false;window.clearInterval(timer);};
+  },[session?.user?.id,callState]);
+
   async function enableDesktopAlerts() {
     if (typeof Notification === "undefined") { setNotice("Desktop notifications are not supported here."); return; }
     const permission = await Notification.requestPermission();

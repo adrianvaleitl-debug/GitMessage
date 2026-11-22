@@ -525,7 +525,7 @@ export default function App() {
     setProfileContextMenu({
       x: Math.max(8, Math.min(event.clientX, window.innerWidth - 220)),
       y: Math.max(8, Math.min(event.clientY, window.innerHeight - (messageBody ? 210 : 150))),
-      userId, username, messageBody, isOwn
+      userId, username, messageBody, messageId, isOwn
     });
   }
 

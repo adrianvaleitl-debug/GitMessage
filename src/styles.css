@@ -2129,3 +2129,73 @@ select option{background:#202631;color:#eef2f8}
  .server-chat-shell .server-composer-area input{font-size:12px}
  .server-chat-shell .server-composer-area .send-button{width:33px;height:33px;min-width:33px}
 }
+
+
+/* Full-screen calling experience */
+.call-experience{position:fixed;inset:0;z-index:9999;display:grid;grid-template-rows:64px minmax(0,1fr) auto;gap:0;overflow:hidden;padding:0 30px max(24px,env(safe-area-inset-bottom));background:radial-gradient(ellipse at 50% 42%,#26334a 0%,#151c29 42%,#0b1019 100%);color:#f5f7fb;isolation:isolate;animation:call-experience-in .24s ease-out}
+@keyframes call-experience-in{from{opacity:0;transform:scale(1.012)}to{opacity:1;transform:scale(1)}}
+.call-experience:before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at 50% 100%,#5679a01a,transparent 55%),linear-gradient(120deg,#ffffff05,transparent 40%,#ffffff03)}
+.call-experience-top{display:flex;align-items:center;justify-content:space-between;gap:16px;width:min(1120px,100%);margin:0 auto}
+.call-brand-mark{display:flex;align-items:center;gap:9px;color:#d7e0ed;font-size:10px;font-weight:800;letter-spacing:.16em}
+.call-brand-mark svg{color:#8db7f4}
+.call-top-status{display:flex;align-items:center;gap:8px;color:#aab8ca;font-size:10px;font-weight:750;letter-spacing:.14em}
+.call-top-status i,.call-live-dot{width:7px;height:7px;border-radius:50%;background:#e5b45d;box-shadow:0 0 12px #e5b45d99}
+.call-top-status i.is-live,.call-live-dot{background:#4bd69b;box-shadow:0 0 12px #4bd69b99}
+.call-close-top{width:38px;height:38px;display:grid;place-items:center;border:1px solid #ffffff20;border-radius:50%;background:#ffffff0b;color:#e7edf5;cursor:pointer}
+.call-close-top:hover{background:#ffffff18}
+.call-stage{position:relative;display:grid;place-items:center;width:min(1120px,100%);min-height:0;margin:0 auto;overflow:hidden;border:1px solid #ffffff12;border-radius:28px;background:radial-gradient(ellipse at 50% 45%,#34445c 0%,#202c3d 36%,#121b29 78%);box-shadow:0 28px 90px #0005}
+.call-stage.audio-stage{background:radial-gradient(ellipse at 50% 44%,#34445d 0%,#202b3d 40%,#111925 100%)}
+.call-person-card{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:13px;padding:28px;text-align:center}
+.call-avatar-orbit{width:144px;height:144px;display:grid;place-items:center;border:1px solid #ffffff25;border-radius:50%;background:linear-gradient(145deg,#ffffff16,#ffffff04);box-shadow:0 0 0 12px #ffffff05,0 0 0 28px #ffffff03;animation:call-avatar-breathe 3.2s ease-in-out infinite}
+@keyframes call-avatar-breathe{0%,100%{transform:scale(1);box-shadow:0 0 0 12px #ffffff05,0 0 0 28px #ffffff03}50%{transform:scale(1.035);box-shadow:0 0 0 16px #ffffff07,0 0 0 34px #ffffff03}}
+.call-avatar-core{width:116px;height:116px;display:grid;place-items:center;overflow:hidden;border:3px solid #ffffff26;border-radius:50%;background:linear-gradient(145deg,#6d8fbd,#394f70);color:white;font-size:42px;font-weight:750;box-shadow:0 12px 35px #0005}
+.call-avatar-core img{width:100%;height:100%;object-fit:cover}
+.call-person-card h2{max-width:min(70vw,560px);margin:16px 0 0;color:#f5f7fb;font-size:clamp(22px,3vw,32px);font-weight:700;letter-spacing:-.04em}
+.call-person-card p{margin:0;color:#aebbd0;font-size:13px;font-weight:500}
+.call-connecting-dots{display:flex;gap:6px;margin-top:5px}
+.call-connecting-dots i{width:6px;height:6px;border-radius:50%;background:#a8c9f7;animation:call-dot 1s ease-in-out infinite}
+.call-connecting-dots i:nth-child(2){animation-delay:.15s}.call-connecting-dots i:nth-child(3){animation-delay:.3s}
+@keyframes call-dot{0%,70%,100%{opacity:.35;transform:translateY(0)}35%{opacity:1;transform:translateY(-5px)}}
+.call-remote-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#0b111b}
+.call-remote-video.audio-hidden{display:none}
+.call-audio-output{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+.call-stage.video-stage{background:#080d15}
+.call-stage.video-stage:after{content:"";position:absolute;inset:45% 0 0;z-index:1;pointer-events:none;background:linear-gradient(transparent,#080d15a8)}
+.call-stage.video-stage .video-person-card{position:absolute;left:28px;bottom:26px;z-index:2;align-items:flex-start;padding:0;text-align:left;gap:5px}
+.call-stage.video-stage .video-person-card .call-avatar-orbit{display:none}
+.call-stage.video-stage .video-person-card h2{margin:0;font-size:18px;text-shadow:0 2px 12px #000}
+.call-stage.video-stage .video-person-card p{color:#e2e8f0;text-shadow:0 1px 8px #000}
+.call-local-video{position:absolute;right:22px;top:22px;z-index:3;width:min(220px,24%);aspect-ratio:4/3;max-height:30%;object-fit:cover;border:1px solid #ffffff60;border-radius:17px;background:#17202d;box-shadow:0 12px 36px #0008;transform:scaleX(-1)}
+.call-video-caption{position:absolute;right:22px;bottom:22px;z-index:3;display:flex;align-items:center;gap:8px;padding:9px 12px;border:1px solid #ffffff20;border-radius:30px;background:#080d15a8;color:#e8edf5;font-size:9px;font-weight:800;letter-spacing:.1em;backdrop-filter:blur(14px)}
+.call-experience-bottom{display:flex;align-items:center;justify-content:center;gap:18px;width:min(1120px,100%);min-height:116px;margin:0 auto}
+.call-control-cluster{display:flex;align-items:center;justify-content:center;gap:14px}
+.call-action-control,.call-action-end,.call-action-answer,.call-action-decline{min-width:76px;height:72px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;border:1px solid #ffffff1c;border-radius:19px;background:#ffffff0c;color:#edf2f8;cursor:pointer;transition:background .16s,transform .16s,border-color .16s}
+.call-action-control:hover{background:#ffffff19;transform:translateY(-2px)}
+.call-action-control span,.call-action-end span,.call-action-answer span,.call-action-decline span{font-size:10px;font-weight:650}
+.call-action-control.disabled{border-color:#e36b7770;background:#a8334140;color:#ffb8c0}
+.call-action-end,.call-action-decline{min-width:92px;border-color:#f26a7660;background:linear-gradient(145deg,#dc5362,#a92f43);color:white;box-shadow:0 8px 24px #a92f4340}
+.call-action-end:hover,.call-action-decline:hover{background:linear-gradient(145deg,#ef6472,#bb394e);transform:translateY(-2px)}
+.call-action-answer{min-width:118px;border-color:#4ed59a70;background:linear-gradient(145deg,#24b879,#138b61);color:white;box-shadow:0 8px 24px #168c6244}
+.call-action-answer:hover{background:linear-gradient(145deg,#35ca8b,#159b6c);transform:translateY(-2px)}
+.call-experience-expanded .call-stage{width:100%;border-radius:0}
+.call-experience-expanded{padding-left:0;padding-right:0}
+.call-experience-expanded .call-experience-top,.call-experience-expanded .call-experience-bottom{padding-left:30px;padding-right:30px}
+@media(max-width:700px){
+.call-experience{grid-template-rows:58px minmax(0,1fr) auto;padding:0 12px max(14px,env(safe-area-inset-bottom))}
+.call-brand-mark{font-size:9px;letter-spacing:.12em}.call-top-status{font-size:9px}
+.call-stage{border-radius:21px;min-height:280px}
+.call-avatar-orbit{width:116px;height:116px}.call-avatar-core{width:92px;height:92px;font-size:34px}
+.call-person-card{gap:10px;padding:18px}.call-person-card h2{font-size:23px}
+.call-experience-bottom{min-height:108px;gap:12px;padding:8px 0 3px}
+.call-control-cluster{gap:8px}
+.call-action-control,.call-action-end,.call-action-answer,.call-action-decline{min-width:62px;height:64px;border-radius:16px;gap:6px}
+.call-action-control svg,.call-action-end svg,.call-action-answer svg,.call-action-decline svg{width:19px;height:19px}
+.call-action-control span,.call-action-end span,.call-action-answer span,.call-action-decline span{font-size:9px}
+.call-action-end,.call-action-decline{min-width:72px}.call-action-answer{min-width:84px}
+.call-local-video{top:12px;right:12px;width:34%;border-radius:12px}
+.call-stage.video-stage .video-person-card{left:16px;bottom:16px}
+.call-video-caption{right:12px;bottom:12px;font-size:8px}
+.call-experience-expanded .call-experience-top,.call-experience-expanded .call-experience-bottom{padding-left:12px;padding-right:12px}
+}
+@media(max-width:370px){.call-action-control,.call-action-end,.call-action-answer,.call-action-decline{min-width:55px}.call-action-end,.call-action-decline{min-width:65px}.call-control-cluster{gap:5px}}
+@media(prefers-reduced-motion:reduce){.call-experience,.call-avatar-orbit,.call-connecting-dots i{animation:none}}

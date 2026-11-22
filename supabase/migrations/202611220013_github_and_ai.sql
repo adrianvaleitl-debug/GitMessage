@@ -6,8 +6,12 @@ alter table public.profiles add constraint profiles_github_username_check
 
 drop function if exists public.get_my_gitmessage_profile();
 create function public.get_my_gitmessage_profile()
-returns table(username text, display_name text, avatar_path text, bio text, profile_palette text, profile_frame text, profile_badge text, github_username text)
-language plpgsql security definer set search_path=public,auth as $$
+returns table(
+  username text, display_name text, avatar_path text, bio text, profile_palette text, profile_frame text, profile_badge text,
+  profile_card_style text, profile_avatar_ring text, profile_show_bio boolean, profile_show_username boolean,
+  banner_path text, avatar_position text, banner_position text, github_username text
+)
+language plpgsql security definer set search_path=public,auth as $
 declare uid uuid := auth.uid(); mail text; base_name text;
 begin
   if uid is null then raise exception 'Sign in required.'; end if;
@@ -17,7 +21,9 @@ begin
   insert into public.profiles(id,username,display_name)
   values(uid, left(base_name,16)||'_'||left(replace(uid::text,'-',''),6), coalesce(nullif(split_part(coalesce(mail,'Friend'),'@',1),''),'Friend'))
   on conflict(id) do nothing;
-  return query select p.username,p.display_name,p.avatar_path,p.bio,p.profile_palette,p.profile_frame,p.profile_badge,p.github_username
+  return query select p.username,p.display_name,p.avatar_path,p.bio,p.profile_palette,p.profile_frame,p.profile_badge,
+    p.profile_card_style,p.profile_avatar_ring,p.profile_show_bio,p.profile_show_username,
+    p.banner_path,p.avatar_position,p.banner_position,p.github_username
   from public.profiles p where p.id=uid;
 end $$;
 revoke all on function public.get_my_gitmessage_profile() from public,anon;

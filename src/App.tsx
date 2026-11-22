@@ -1762,7 +1762,7 @@ export default function App() {
         </div>
         <button className="preferences-signout" onClick={()=>void signOut()}><LogOut size={17}/><span><b>Sign out</b><small>Sign out of this device</small></span><ArrowUpRight size={15}/></button>
       </div> : null}
-      </section></div>
+      </section></div>}
     </main>
   );
 }

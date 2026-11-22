@@ -1385,7 +1385,10 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
 
 
 /* Consistent conversation controls */
-.details-heading{justify-content:space-between;gap:8px}
+.details-heading{position:relative;justify-content:flex-start;gap:8px;padding:0 34px 0 0}
+.details-heading>span{margin-left:auto;white-space:nowrap}
+.details-heading .details-back-button{position:absolute;left:0;top:50%;transform:translateY(-50%);z-index:3}
+.details-heading .details-close{position:absolute;right:0;top:50%;transform:translateY(-50%);z-index:4;width:28px;height:28px;display:grid;place-items:center}
 .details-back-button,.group-admin-back{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border:1px solid #41434a;border-radius:8px;background:#383a40;color:#d9dbe0;font-size:10px;font-weight:650;cursor:pointer}
 .details-back-button:hover,.group-admin-back:hover{background:#454850;color:#fff}
 .group-admin-back{margin:0 0 15px;background:var(--panel-2);border-color:var(--line);color:var(--text)}

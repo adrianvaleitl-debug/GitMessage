@@ -197,6 +197,7 @@ export default function App() {
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const callRecipientRef = useRef<string>("");
+  const callConversationRef = useRef<string>("");
   const [callState, setCallState] = useState<"idle" | "calling" | "incoming" | "connected">("idle");
   const [pendingCall, setPendingCall] = useState<any>(null);
   const [callKind, setCallKind] = useState<"audio" | "video">("audio");
@@ -1325,18 +1326,18 @@ export default function App() {
     });
   }, [messages]);
 
-  async function sendCallSignal(recipientId: string, signalType: string, payload: any = {}) {
-    if (!supabase || !active || !session) return;
+  async function sendCallSignal(recipientId: string, signalType: string, payload: any = {}, conversationId: string | null = active) {
+    if (!supabase || !conversationId || !session) return;
     const { error } = await supabase.from("gitmessage_call_signals").insert({
-      conversation_id: active, sender_id: session.user.id, recipient_id: recipientId, signal_type: signalType, payload
+      conversation_id: conversationId, sender_id: session.user.id, recipient_id: recipientId, signal_type: signalType, payload
     });
     if (error) setNotice(error.message);
   }
 
-  async function makePeer(recipientId: string) {
+  async function makePeer(recipientId: string, conversationId: string | null = active) {
     const peer = new RTCPeerConnection({ iceServers: [{ urls: "stun:stun.l.google.com:19302" }, { urls: "stun:stun1.l.google.com:19302" }] });
     peerRef.current = peer;
-    peer.onicecandidate = event => { if (event.candidate) void sendCallSignal(recipientId, "ice", { candidate: event.candidate.toJSON() }); };
+    peer.onicecandidate = event => { if (event.candidate) void sendCallSignal(recipientId, "ice", { candidate: event.candidate.toJSON() }, conversationId); };
     peer.ontrack = event => { if (remoteAudioRef.current) remoteAudioRef.current.srcObject = event.streams[0]; if (remoteVideoRef.current) remoteVideoRef.current.srcObject = event.streams[0]; setCallState("connected"); };
     peer.onconnectionstatechange = () => {
       if (peer.connectionState === "connected") setCallState("connected");
@@ -1364,10 +1365,11 @@ export default function App() {
     if (error || !members?.length) { setNotice(error?.message || "No other person is in this conversation."); return; }
     const recipient = members[0].user_id as string;
     callRecipientRef.current = recipient;
+    callConversationRef.current = active;
     try {
       const stream = await getOptionalCallMedia(kind);
       setCallKind(kind); setCallState("calling");
-      const peer = await makePeer(recipient);
+      const peer = await makePeer(recipient, active);
       const audio = peer.addTransceiver("audio", { direction:"recvonly" });
       const audioTrack = stream?.getAudioTracks()[0];
       if (audioTrack) { await audio.sender.replaceTrack(audioTrack); audio.direction = "sendrecv"; }
@@ -1396,14 +1398,15 @@ export default function App() {
       const kind = pendingCall.payload?.kind === "video" ? "video" : "audio";
       const stream = await getOptionalCallMedia(kind);
       setCallKind(kind);
-      const peer = await makePeer(pendingCall.sender_id);
+      callConversationRef.current = pendingCall.conversation_id;
+      const peer = await makePeer(pendingCall.sender_id, pendingCall.conversation_id);
       await peer.setRemoteDescription(new RTCSessionDescription(pendingCall.payload.description));
       for (const transceiver of peer.getTransceivers()) {
         const track = transceiver.receiver.track.kind === "audio" ? stream?.getAudioTracks()[0] : stream?.getVideoTracks()[0];
         if (track) { await transceiver.sender.replaceTrack(track); transceiver.direction = "sendrecv"; }
       }
       const answer = await peer.createAnswer(); await peer.setLocalDescription(answer);
-      await sendCallSignal(pendingCall.sender_id,"answer",{description:answer});
+      await sendCallSignal(pendingCall.sender_id,"answer",{description:answer},pendingCall.conversation_id);
       callRecipientRef.current = pendingCall.sender_id;
       setPendingCall(null); setCallState("calling");
     } catch (error) { setNotice(error instanceof Error ? error.message : "Could not accept call."); }
@@ -1421,8 +1424,9 @@ export default function App() {
   }
 
   async function endCall(notifyRemote = true) {
-    if (notifyRemote && supabase && callRecipientRef.current && callState !== "incoming") await sendCallSignal(callRecipientRef.current,"hangup",{});
+    if (notifyRemote && supabase && callRecipientRef.current && callState !== "incoming") await sendCallSignal(callRecipientRef.current,"hangup",{},callConversationRef.current || active);
     callRecipientRef.current = "";
+    callConversationRef.current = "";
     if (localStreamRef.current) localStreamRef.current.getTracks().forEach(track => track.stop());
     localStreamRef.current = null;
     if (localVideoRef.current) localVideoRef.current.srcObject = null;
@@ -1532,7 +1536,7 @@ export default function App() {
       </aside>
       
       <section className={"conversation-pane glass-panel chat-theme-" + chatTheme}>
-        <header className="conversation-header"><button className="mobile-back glass-icon" title="Back to conversations" onClick={() => setActive("")}><ArrowLeft size={19}/></button><div className="header-person"><button type="button" className="header-avatar" title="View conversation profile" onClick={() => current?.is_group ? setDetailsOpen(value=>!value) : void openConversationProfile()}>{current?.avatar_path && supabase ? <img src={supabase.storage.from(current.is_group ? "gitmessage-group-avatars" : "gitmessage-avatars").getPublicUrl(current.avatar_path).data.publicUrl} alt=""/> : <MessageCircle size={18}/>}</button><div><h2><button type="button" className="header-title-link" onClick={() => void openConversationProfile()}>{current?.title || "Your messages"}</button></h2><p><span className="status-light"/> {someoneTyping ? "Someone is typing…" : current ? "Conversation space" : "A little room for good conversations"}</p>{current?.is_group && (current.members||[]).length>0 && <div className="header-member-peek" aria-label={(current.members||[]).length+" group members"}><div className="header-member-stack">{(current.members||[]).slice(0,5).map(member=><button type="button" key={member.user_id} title={member.display_name||member.username||"View member"} aria-label={"View "+(member.display_name||member.username||"member")+"'s profile"} onClick={()=>void openPublicProfile(member.user_id)}>{member.avatar_path&&supabase?<img src={supabase.storage.from("gitmessage-avatars").getPublicUrl(member.avatar_path).data.publicUrl} alt="" style={{objectPosition:member.avatar_position||"50% 50%"}}/>:<span>{(member.display_name||member.username||"?").slice(0,1).toUpperCase()}</span>}</button>)}</div><button type="button" className="header-member-count" onClick={()=>setDetailsOpen(true)}>{(current.members||[]).length} members</button></div>}</div></div><div className="header-tools call-header-tools"><button type="button" className="call-action-button voice-call-button" title={callState==="incoming" && callKind==="audio" ? "Join voice call" : "Start voice call"} aria-label={callState==="incoming" && callKind==="audio" ? "Join voice call" : "Start voice call"} disabled={!active || (callState!=="idle" && !(callState==="incoming" && callKind==="audio"))} onClick={() => callState==="incoming" && callKind==="audio" ? void acceptCall() : void startCall("audio")}><Phone size={17}/><span>{callState==="incoming" && callKind==="audio" ? "Join call" : "Call"}</span></button><button type="button" className="call-action-button video-call-button" title={callState==="incoming" && callKind==="video" ? "Join video call" : "Start video call"} aria-label={callState==="incoming" && callKind==="video" ? "Join video call" : "Start video call"} disabled={!active || (callState!=="idle" && !(callState==="incoming" && callKind==="video"))} onClick={() => callState==="incoming" && callKind==="video" ? void acceptCall() : void startCall("video")}><Video size={17}/><span>{callState==="incoming" && callKind==="video" ? "Join call" : "Video"}</span></button><span className="live-pill"><i/> LIVE SYNC</span><button className="glass-icon" title="Refresh conversations" onClick={() => void loadConversations()}><RefreshCw size={16}/></button><button className="glass-icon" title="Conversation details" aria-label="Toggle conversation details" aria-expanded={detailsOpen} onClick={() => setDetailsOpen(value => !value)}><MoreHorizontal size={18}/></button></div></header>
+        <header className="conversation-header"><button className="mobile-back glass-icon" title="Back to conversations" onClick={() => setActive("")}><ArrowLeft size={19}/></button><div className="header-person"><button type="button" className="header-avatar" title="View conversation profile" onClick={() => current?.is_group ? setDetailsOpen(value=>!value) : void openConversationProfile()}>{current?.avatar_path && supabase ? <img src={supabase.storage.from(current.is_group ? "gitmessage-group-avatars" : "gitmessage-avatars").getPublicUrl(current.avatar_path).data.publicUrl} alt=""/> : <MessageCircle size={18}/>}</button><div><h2><button type="button" className="header-title-link" onClick={() => void openConversationProfile()}>{current?.title || "Your messages"}</button></h2><p><span className="status-light"/> {someoneTyping ? "Someone is typing…" : current ? "Conversation space" : "A little room for good conversations"}</p>{current?.is_group && (current.members||[]).length>0 && <div className="header-member-peek" aria-label={(current.members||[]).length+" group members"}><div className="header-member-stack">{(current.members||[]).slice(0,5).map(member=><button type="button" key={member.user_id} title={member.display_name||member.username||"View member"} aria-label={"View "+(member.display_name||member.username||"member")+"'s profile"} onClick={()=>void openPublicProfile(member.user_id)}>{member.avatar_path&&supabase?<img src={supabase.storage.from("gitmessage-avatars").getPublicUrl(member.avatar_path).data.publicUrl} alt="" style={{objectPosition:member.avatar_position||"50% 50%"}}/>:<span>{(member.display_name||member.username||"?").slice(0,1).toUpperCase()}</span>}</button>)}</div><button type="button" className="header-member-count" onClick={()=>setDetailsOpen(true)}>{(current.members||[]).length} members</button></div>}</div></div><div className="header-tools call-header-tools">{callState==="incoming" ? <button type="button" className="call-action-button call-answer-header-button" title="Answer incoming call" aria-label="Answer incoming call" onClick={() => void acceptCall()}><Phone size={17}/><span>Answer call</span></button> : <><button type="button" className="call-action-button voice-call-button" title="Start voice call" aria-label="Start voice call" disabled={!active || callState!=="idle"} onClick={() => void startCall("audio")}><Phone size={17}/><span>Call</span></button><button type="button" className="call-action-button video-call-button" title="Start video call" aria-label="Start video call" disabled={!active || callState!=="idle"} onClick={() => void startCall("video")}><Video size={17}/><span>Video</span></button></>}<span className="live-pill"><i/> LIVE SYNC</span><button className="glass-icon" title="Refresh conversations" onClick={() => void loadConversations()}><RefreshCw size={16}/></button><button className="glass-icon" title="Conversation details" aria-label="Toggle conversation details" aria-expanded={detailsOpen} onClick={() => setDetailsOpen(value => !value)}><MoreHorizontal size={18}/></button></div></header>
         <div className="message-canvas" ref={messageCanvasRef}>
           {active ? messages.length ? [...messages].reverse().map(message => {
             const mine = message.sender_id === session.user.id;

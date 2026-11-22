@@ -906,6 +906,12 @@ export default function App() {
   }
 
   useEffect(()=>{
+    if(!supabase||!session||!active||!readReceipts||messages.length===0)return;
+    const incoming=messages.filter(message=>message.sender_id!==session.user.id).map(message=>({message_id:message.id,user_id:session.user.id,read_at:new Date().toISOString()}));
+    if(incoming.length)void supabase.from("gitmessage_message_read_receipts").upsert(incoming,{onConflict:"message_id,user_id",ignoreDuplicates:true});
+  },[messages,active,session?.user?.id,readReceipts]);
+
+  useEffect(()=>{
     if(!lastSentMessage)return;
     const timer=window.setTimeout(()=>setLastSentMessage(null),5000);
     return()=>window.clearTimeout(timer);
@@ -1247,7 +1253,7 @@ export default function App() {
   );
 
   return (
-    <main onTouchStart={e=>{const t=e.touches[0];mobileSwipeStart.current={x:t.clientX,y:t.clientY};}} onTouchEnd={handleMobileSwipeEnd} className={"desktop-shell accent-" + accentChoice + " density-" + density + " text-" + messageSize + (gtaViTheme ? " gta-vi" : "") + " profile-card-" + profileCardStyle + " profile-ring-" + profileAvatarRing + (profileShowBio ? " profile-show-bio" : " profile-hide-bio") + (profileShowUsername ? " profile-show-username" : " profile-hide-username") + (!animations ? " no-animations" : "") + (lightMode ? " light" : "") + (active ? " mobile-chat-open" : "") + (navigator.userAgent.includes("Electron") ? " electron-shell" : "")}>
+    <main onTouchStart={e=>{const t=e.touches[0];mobileSwipeStart.current={x:t.clientX,y:t.clientY};}} onTouchEnd={handleMobileSwipeEnd} className={"desktop-shell chat-theme-" + chatTheme + " accent-" + accentChoice + " density-" + density + " text-" + messageSize + (gtaViTheme ? " gta-vi" : "") + " profile-card-" + profileCardStyle + " profile-ring-" + profileAvatarRing + (profileShowBio ? " profile-show-bio" : " profile-hide-bio") + (profileShowUsername ? " profile-show-username" : " profile-hide-username") + (!animations ? " no-animations" : "") + (lightMode ? " light" : "") + (active ? " mobile-chat-open" : "") + (navigator.userAgent.includes("Electron") ? " electron-shell" : "")}>
       <nav className="app-rail" aria-label="Main navigation">
 
         <button className="rail-button selected" title="Messages" onClick={() => { setQuery(""); setActive(conversations[0]?.id || ""); }}><MessageCircle size={20}/></button>

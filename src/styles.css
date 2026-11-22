@@ -1508,3 +1508,14 @@ img{max-width:100%}
  .header-tools{gap:0}
  .header-tools .call-action-button,.header-tools .glass-icon{width:28px;height:28px}
 }
+
+
+/* Small interaction details: message hover affordance, quick reactions and reaction tooltips. */
+.message-quick-react{transition:transform .14s ease,box-shadow .14s ease;cursor:default}
+.message-line:hover .message-quick-react{box-shadow:0 2px 12px rgba(0,0,0,.10)}
+.message-quick-react:active{transform:scale(.985)}
+.message-author time{cursor:help;text-decoration:underline dotted rgba(150,160,178,.35);text-underline-offset:3px}
+.reaction-strip button{transition:transform .14s ease,background .14s ease,border-color .14s ease}
+.reaction-strip button:hover{transform:translateY(-2px) scale(1.05);border-color:var(--blue);background:rgba(104,112,255,.14)}
+.message-actions button{transition:transform .13s ease,background .13s ease}
+.message-actions button:hover{transform:translateY(-2px) scale(1.08)}

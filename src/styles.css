@@ -1611,3 +1611,12 @@ select:focus-visible,input:focus-visible,textarea:focus-visible,button:focus-vis
 @media(prefers-reduced-motion:reduce){
   *,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
 }
+
+/* Profile status bubbles */
+.account-avatar-status{position:relative;overflow:visible!important}
+.avatar-status-pop{position:absolute;left:50%;bottom:calc(100% + 10px);z-index:50;max-width:190px;width:max-content;overflow:hidden;padding:7px 11px;border:1px solid #525d75;border-radius:12px;background:#252c3a;color:#f1f4fb;font-size:10px;font-weight:700;line-height:1.25;text-overflow:ellipsis;white-space:nowrap;box-shadow:0 8px 25px #0007;opacity:0;visibility:hidden;transform:translate(-50%,5px) scale(.96);transform-origin:bottom center;transition:opacity .16s ease,transform .18s cubic-bezier(.2,.75,.25,1),visibility .16s}
+.avatar-status-pop:after{content:"";position:absolute;left:calc(50% - 5px);bottom:-5px;width:9px;height:9px;transform:rotate(45deg);background:#252c3a;border-right:1px solid #525d75;border-bottom:1px solid #525d75}
+.account-avatar-status:hover .avatar-status-pop,.account-avatar-status:focus-visible .avatar-status-pop{opacity:1;visibility:visible;transform:translate(-50%,0) scale(1)}
+.conversation-name-line{display:flex;align-items:center;gap:7px;min-width:0;flex-wrap:wrap}
+.conversation-name-line>b{min-width:0}
+.contact-status-bubble{display:inline-flex;align-items:center;max-width:125px;overflow:hidden;padding:3px 7px;border:1px solid #6474a044;border-radius:999px;background:linear-gradient(110deg,#6574c52b,#b05ca52b);color:#c8d2ff;font-size:8px;font-weight:750;line-height:1.2;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle}

@@ -33,6 +33,7 @@ Deno.serve(async (req) => {
 
     const admin = createClient(supabaseUrl, serviceKey);
     let history: { role: "user" | "assistant"; content: string }[] = [];
+    let sharedChatContext = "";
     if (scope === "shared") {
       const { data: membership, error: membershipError } = await admin.from("conversation_members")
         .select("user_id").eq("conversation_id", conversationId).eq("user_id", user.id).maybeSingle();
@@ -44,6 +45,18 @@ Deno.serve(async (req) => {
         .select("role,content").eq("conversation_id", conversationId).order("created_at", { ascending: false }).limit(24);
       if (error) throw error;
       history = (data || []).reverse().map((row) => ({ role: row.role, content: row.content }));
+      const { data: chatRows, error: chatError } = await admin.from("messages")
+        .select("sender_id,body,created_at").eq("conversation_id", conversationId).is("deleted_at", null)
+        .order("created_at", { ascending: false }).limit(20);
+      if (chatError) throw chatError;
+      const senderIds = [...new Set((chatRows || []).map((row) => row.sender_id))];
+      const { data: chatProfiles } = senderIds.length
+        ? await admin.from("profiles").select("id,username,display_name").in("id", senderIds)
+        : { data: [] };
+      const profileById = new Map((chatProfiles || []).map((profile) => [profile.id, profile.display_name || profile.username || "Member"]));
+      sharedChatContext = (chatRows || []).reverse()
+        .map((row) => (profileById.get(row.sender_id) || "Member") + ": " + row.body)
+        .join("\\n").slice(-12000);
     } else {
       const { error: insertError } = await admin.from("gitmessage_private_ai_messages")
         .insert({ user_id: user.id, role: "user", content: prompt });
@@ -61,7 +74,7 @@ Deno.serve(async (req) => {
         model: "gpt-4.1-mini",
         messages: [
           { role: "system", content: scope === "shared"
-            ? "You are GitMessage Shared AI. You are assisting everyone in this conversation. Treat all prompts as visible to every conversation member. Be concise, practical, and collaborative. Never claim to see private AI chats."
+            ? "You are GitMessage Shared AI. You are assisting everyone in this conversation. Treat all prompts as visible to every conversation member. Be concise, practical, and collaborative. Never claim to see private AI chats.\n\nRecent messages from this shared chat (context only; all members can already see them):\n" + (sharedChatContext || "No recent chat messages.")
             : "You are GitMessage Private AI. This conversation is private to the signed-in user. Be useful, direct, and practical. Never imply that other GitMessage users can see this history." },
           ...history,
         ],

@@ -340,8 +340,10 @@ export default function App() {
         supabase!.from("messages").select("id,conversation_id,sender_id,created_at").in("conversation_id",conversationIds).eq("sender_id",session.user.id).order("created_at",{ascending:false}).limit(Math.max(40,conversationIds.length*4))
       ]);
       if(!alive)return;
+      if(typingResult.error) console.warn("Typing indicators:",typingResult.error.message);
+      if(messageResult.error) console.warn("Latest sent messages for seen indicators:",messageResult.error.message);
       const typing:Record<string,boolean>={};
-      (typingResult.data||[]).forEach((row:any)=>{if(Date.now()-new Date(row.updated_at).getTime()<6000)typing[row.conversation_id]=true;});
+      (typingResult.data||[]).forEach((row:any)=>{if(Date.now()-new Date(row.updated_at).getTime()<9000)typing[row.conversation_id]=true;});
       setConversationTyping(typing);
       const latest:Record<string,string>={};
       (messageResult.data||[]).forEach((row:any)=>{if(!latest[row.conversation_id])latest[row.conversation_id]=row.id;});
@@ -506,15 +508,19 @@ export default function App() {
 
   useEffect(() => {
     if (!supabase || !active || !session) { setSomeoneTyping(false); return; }
+    let alive=true;
     const refreshTyping = async () => {
-      const { data } = await supabase!.from("gitmessage_typing").select("user_id,updated_at").eq("conversation_id", active).neq("user_id", session.user.id);
-      setSomeoneTyping((data || []).some(row => Date.now() - new Date(row.updated_at).getTime() < 5000));
+      const { data,error } = await supabase!.from("gitmessage_typing").select("user_id,updated_at").eq("conversation_id", active).neq("user_id", session.user.id);
+      if(!alive)return;
+      if(error){console.warn("Chat typing indicator:",error.message);return;}
+      setSomeoneTyping((data || []).some(row => Date.now() - new Date(row.updated_at).getTime() < 9000));
     };
     void refreshTyping();
     const channel = supabase.channel("gitmessage-typing-" + active)
       .on("postgres_changes", { event: "*", schema: "public", table: "gitmessage_typing", filter: "conversation_id=eq." + active }, () => void refreshTyping())
       .subscribe();
-    return () => { void supabase!.removeChannel(channel); };
+    const poll=window.setInterval(()=>void refreshTyping(),2500);
+    return () => { alive=false;window.clearInterval(poll);void supabase!.removeChannel(channel); };
   }, [active, session]);
 
   useEffect(()=>{
@@ -541,12 +547,26 @@ export default function App() {
     setDraft(value);
     if (!supabase || !active || !session) return;
     if (value.trim()) {
-      const { error } = await supabase.from("gitmessage_typing").upsert({ conversation_id: active, user_id: session.user.id, updated_at: new Date().toISOString() });
-      if (error) setNotice(error.message);
+      const { error } = await supabase.from("gitmessage_typing").upsert({ conversation_id: active, user_id: session.user.id, updated_at: new Date().toISOString() },{onConflict:"conversation_id,user_id"});
+      if (error) setNotice("Typing status unavailable: "+error.message);
     } else {
-      await supabase.from("gitmessage_typing").delete().eq("conversation_id", active).eq("user_id", session.user.id);
+      const {error}=await supabase.from("gitmessage_typing").delete().eq("conversation_id", active).eq("user_id", session.user.id);
+      if(error)console.warn("Could not clear typing status:",error.message);
     }
   }
+
+  useEffect(()=>{
+    if(!supabase||!session||!active||!draft.trim())return;
+    const heartbeat=window.setInterval(()=>{
+      void supabase!.from("gitmessage_typing").upsert({conversation_id:active,user_id:session.user.id,updated_at:new Date().toISOString()},{onConflict:"conversation_id,user_id"});
+    },3000);
+    return()=>window.clearInterval(heartbeat);
+  },[active,session?.user?.id,!!draft.trim()]);
+
+  useEffect(()=>{
+    if(!supabase||!session||!active)return;
+    return()=>{void supabase!.from("gitmessage_typing").delete().eq("conversation_id",active).eq("user_id",session.user.id);};
+  },[active,session?.user?.id]);
 
   useEffect(() => {
     const canvas = messageCanvasRef.current;

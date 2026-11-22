@@ -1374,3 +1374,9 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
 
 /* Thread replies */
 .replying-to-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:8px 12px;margin:0 4px 8px;border-left:3px solid var(--accent,#8b83ff);border-radius:10px;background:var(--surface-2,rgba(127,127,127,.12));color:var(--text-secondary,inherit);font-size:12px}.replying-to-bar span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.replying-to-bar button{display:grid;place-items:center;border:0;background:transparent;color:inherit;cursor:pointer}.message-reply-context{display:block;max-width:100%;margin:0 0 7px;padding:5px 9px;border:0;border-left:2px solid var(--accent,#8b83ff);border-radius:5px;background:var(--surface-2,rgba(127,127,127,.1));color:var(--text-secondary,inherit);font-size:11px;text-align:left;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}
+
+/* Conversation theme presets */
+.desktop-shell.chat-theme-midnight{--bg:#101827;--panel:#172338;--panel-2:#111d30;--panel-3:#243650;--line:#30435e;--blue:#647df5}
+.desktop-shell.chat-theme-ocean{--bg:#10242b;--panel:#18343d;--panel-2:#142b34;--panel-3:#24505a;--line:#32616b;--blue:#35a9c7}
+.desktop-shell.chat-theme-forest{--bg:#17251e;--panel:#20352a;--panel-2:#192c22;--panel-3:#304b39;--line:#3b5944;--blue:#4eaa76}
+.desktop-shell.chat-theme-sunset{--bg:#2b1d24;--panel:#3b2830;--panel-2:#302129;--panel-3:#52343a;--line:#68454a;--blue:#d77b68}

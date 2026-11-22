@@ -107,6 +107,12 @@ export default function App() {
   const [recording, setRecording] = useState(false);
   const [someoneTyping, setSomeoneTyping] = useState(false);
   const [notificationLevel,setNotificationLevel]=useState<"all"|"mentions"|"muted">("all");
+  const [chatTheme,setChatTheme]=useState("default");
+  const [temporaryAfter,setTemporaryAfter]=useState("0");
+  const [readReceipts,setReadReceipts]=useState(true);
+  const [customSound,setCustomSound]=useState("default");
+  const [quietStart,setQuietStart]=useState("");
+  const [quietEnd,setQuietEnd]=useState("");
 
   const [lightMode, setLightMode] = useState(() => { try { return localStorage.getItem("gitmessage-theme") !== "dark"; } catch { return true; } });
   const mobileSwipeStart = useRef<{x:number;y:number}|null>(null);
@@ -333,7 +339,8 @@ export default function App() {
   useEffect(() => {
     if(!supabase||!active||!session?.user?.id){setNotificationLevel("all");return;}
     let alive=true;
-    void supabase.from("gitmessage_conversation_preferences").select("notification_level").eq("conversation_id",active).eq("user_id",session.user.id).maybeSingle().then(({data})=>{if(alive)setNotificationLevel((data?.notification_level||"all") as "all"|"mentions"|"muted");});
+    void supabase.from("gitmessage_conversation_preferences").select("notification_level,theme,disappearing_after_seconds,read_receipts").eq("conversation_id",active).eq("user_id",session.user.id).maybeSingle().then(({data})=>{if(alive){setNotificationLevel((data?.notification_level||"all") as "all"|"mentions"|"muted");setChatTheme(data?.theme?.preset||"default");setTemporaryAfter(String(data?.disappearing_after_seconds||0));setReadReceipts(data?.read_receipts!==false);}});
+    void supabase.from("gitmessage_notification_preferences").select("sound,quiet_start,quiet_end").eq("conversation_id",active).eq("user_id",session.user.id).maybeSingle().then(({data})=>{if(alive){setCustomSound(data?.sound||"default");setQuietStart(data?.quiet_start||"");setQuietEnd(data?.quiet_end||"");}});
     return()=>{alive=false;};
   },[active,session?.user?.id]);
 
@@ -779,6 +786,47 @@ export default function App() {
     setNotificationLevel(level);
     const {error}=await supabase.from("gitmessage_conversation_preferences").upsert({conversation_id:active,user_id:session.user.id,notification_level:level,updated_at:new Date().toISOString()},{onConflict:"conversation_id,user_id"});
     if(error)setNotice(error.message);else setNotice(level==="muted"?"Conversation muted.":level==="mentions"?"Notifications set to mentions only.":"Conversation notifications enabled.");
+  }
+
+  async function saveConversationFeatures(patch:Record<string,any>,success:string){
+    if(!supabase||!session||!active)return;
+    const {error}=await supabase.from("gitmessage_conversation_preferences").upsert({conversation_id:active,user_id:session.user.id,...patch,updated_at:new Date().toISOString()},{onConflict:"conversation_id,user_id"});
+    setNotice(error?error.message:success);
+  }
+
+  async function saveCustomNotification(){
+    if(!supabase||!session||!active)return;
+    const {error}=await supabase.from("gitmessage_notification_preferences").upsert({conversation_id:active,user_id:session.user.id,enabled:notificationLevel!=="muted",sound:customSound,quiet_start:quietStart||null,quiet_end:quietEnd||null,updated_at:new Date().toISOString()},{onConflict:"user_id,conversation_id"});
+    setNotice(error?error.message:"Custom notifications saved.");
+  }
+
+  async function createConversationPoll(){
+    if(!supabase||!session||!active)return;
+    const question=window.prompt("Poll question");if(!question?.trim())return;
+    const labels=(window.prompt("Options, separated by commas")||"").split(",").map(x=>x.trim()).filter(Boolean).slice(0,10);
+    if(labels.length<2){setNotice("A poll needs at least two options.");return;}
+    const {data,error}=await supabase.from("gitmessage_polls").insert({conversation_id:active,creator_id:session.user.id,question:question.trim()}).select("id").single();
+    if(error||!data){setNotice(error?.message||"Could not create poll.");return;}
+    const result=await supabase.from("gitmessage_poll_options").insert(labels.map((label,position)=>({poll_id:data.id,label,position})));
+    setNotice(result.error?result.error.message:"Poll created. Poll options are saved.");
+  }
+
+  async function createConversationEvent(){
+    if(!supabase||!session||!active)return;
+    const title=window.prompt("Event name");if(!title?.trim())return;
+    const starts=window.prompt("Start date and time (for example 2026-12-01T18:00)");if(!starts)return;
+    const date=new Date(starts);if(Number.isNaN(date.getTime())||date.getTime()<=Date.now()){setNotice("Choose a valid future date and time.");return;}
+    const description=window.prompt("Event description (optional)")||"";
+    const {error}=await supabase.from("gitmessage_events").insert({conversation_id:active,creator_id:session.user.id,title:title.trim(),description,starts_at:date.toISOString()});
+    setNotice(error?"Event could not be created: "+error.message:"Event created.");
+  }
+
+  async function addAnotherAccount(){
+    if(!supabase)return;
+    const accountEmail=window.prompt("Email address for the account to switch to");if(!accountEmail?.trim())return;
+    const accountPassword=window.prompt("Password (used once to sign in; not saved)");if(!accountPassword)return;
+    const {error}=await supabase.auth.signInWithPassword({email:accountEmail.trim(),password:accountPassword});
+    if(error)setNotice(error.message);else{setNotice("Account switched.");setActive("");}
   }
 
   async function saveProfileStatus(){
@@ -1246,7 +1294,7 @@ export default function App() {
         </div>
         {current && <>
           <div className="details-section">{current.is_group && <button className="settings-row" onClick={() => void openGroupAdmin()}><ShieldCheck size={15}/> Manage group <span>›</span></button>}
-            <div className="details-label">NOTIFICATIONS</div><label className="details-notification-setting"><span>Alert me</span><select value={notificationLevel} onChange={e=>void saveConversationNotificationLevel(e.target.value as "all"|"mentions"|"muted")}><option value="all">All messages</option><option value="mentions">Mentions only</option><option value="muted">Muted</option></select></label><div className="details-label">ABOUT</div>
+            <div className="details-label">NOTIFICATIONS</div><label className="details-notification-setting"><span>Alert me</span><select value={notificationLevel} onChange={e=>void saveConversationNotificationLevel(e.target.value as "all"|"mentions"|"muted")}><option value="all">All messages</option><option value="mentions">Mentions only</option><option value="muted">Muted</option></select></label><label className="details-notification-setting"><span>Notification sound</span><select value={customSound} onChange={e=>setCustomSound(e.target.value)}><option value="default">Default</option><option value="subtle">Subtle</option><option value="none">Silent</option></select></label><label className="details-notification-setting"><span>Quiet hours start</span><input type="time" value={quietStart} onChange={e=>setQuietStart(e.target.value)}/></label><label className="details-notification-setting"><span>Quiet hours end</span><input type="time" value={quietEnd} onChange={e=>setQuietEnd(e.target.value)}/></label><button className="settings-row" onClick={()=>void saveCustomNotification()}>Save notification settings <span>›</span></button><div className="details-label">CHAT PERSONALISATION</div><label className="details-notification-setting"><span>Chat theme</span><select value={chatTheme} onChange={e=>{setChatTheme(e.target.value);void saveConversationFeatures({theme:{preset:e.target.value}},"Chat theme saved.");}}><option value="default">Default</option><option value="midnight">Midnight</option><option value="ocean">Ocean</option><option value="forest">Forest</option><option value="sunset">Sunset</option></select></label><label className="details-notification-setting"><span>Temporary messages</span><select value={temporaryAfter} onChange={e=>{setTemporaryAfter(e.target.value);void saveConversationFeatures({disappearing_after_seconds:e.target.value==="0"?null:Number(e.target.value)},"Temporary chat setting saved.");}}><option value="0">Off</option><option value="3600">1 hour</option><option value="86400">24 hours</option><option value="604800">7 days</option><option value="2592000">30 days</option></select></label><label className="details-notification-setting"><span>Read receipts</span><input type="checkbox" checked={readReceipts} onChange={e=>{setReadReceipts(e.target.checked);void saveConversationFeatures({read_receipts:e.target.checked},"Read receipt preference saved.");}}/></label><div className="details-label">CHAT TOOLS</div><button className="settings-row" onClick={()=>void createConversationPoll()}>Create a poll <span>＋</span></button><button className="settings-row" onClick={()=>void createConversationEvent()}>Create an event <span>＋</span></button><button className="settings-row" onClick={()=>void addAnotherAccount()}>Switch / add account <span>＋</span></button><div className="details-label">ABOUT</div>
             <div className="details-row"><MessageCircle size={15}/><span>{current.is_group ? "Group chat" : "Private conversation"}</span></div>
             <div className="details-row"><ShieldCheck size={15}/><span>Conversation members only</span></div>
           </div>

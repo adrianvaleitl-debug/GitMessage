@@ -2642,3 +2642,69 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
  .appearance-mode-option{min-height:40px;padding:7px 8px}
  .preferences-status-preview{max-width:58%}
 }
+
+
+/* Unified light appearance across the complete app. */
+.desktop-shell.light:not(.gta-vi){
+ color-scheme:light!important;--bg:#f3f5f9!important;--panel:#fff!important;--panel-2:#f7f8fb!important;--panel-3:#edf0f5!important;--line:#e1e5ec!important;--text:#202938!important;--muted:#687386!important;--subtle:#8993a3!important;--blue:#5268d9;
+ background:#eef1f6!important;color:#202938!important
+}
+.desktop-shell.light:not(.gta-vi)>.app-rail{background:#f8f9fc!important;border-color:#e1e5ec!important;box-shadow:0 5px 20px #29364a0a!important}
+.desktop-shell.light:not(.gta-vi)>.sidebar,.desktop-shell.light:not(.gta-vi)>.conversation-details{background:#f8f9fc!important;border-color:#e1e5ec!important;box-shadow:0 5px 20px #29364a0a!important}
+.desktop-shell.light:not(.gta-vi)>.conversation-pane{background:#fff!important;border-color:#e1e5ec!important;box-shadow:0 8px 28px #29364a0d!important}
+.desktop-shell.light:not(.gta-vi) .sidebar-brand,.desktop-shell.light:not(.gta-vi) .conversation-header,.desktop-shell.light:not(.gta-vi) .details-heading,.desktop-shell.light:not(.gta-vi) .details-profile,.desktop-shell.light:not(.gta-vi) .details-section{border-color:#e8ebf1!important}
+.desktop-shell.light:not(.gta-vi) .brand-lockup,.desktop-shell.light:not(.gta-vi) .account-copy b,.desktop-shell.light:not(.gta-vi) .header-person h2,.desktop-shell.light:not(.gta-vi) .message-author,.desktop-shell.light:not(.gta-vi) .message-author button,.desktop-shell.light:not(.gta-vi) .details-profile h3,.desktop-shell.light:not(.gta-vi) .details-count,.desktop-shell.light:not(.gta-vi) .preferences-header h2,.desktop-shell.light:not(.gta-vi) .preferences-section-heading h3{color:#202938!important}
+.desktop-shell.light:not(.gta-vi) .account-copy small,.desktop-shell.light:not(.gta-vi) .list-heading,.desktop-shell.light:not(.gta-vi) .conversation-meta small,.desktop-shell.light:not(.gta-vi) .header-person p,.desktop-shell.light:not(.gta-vi) .message-author time,.desktop-shell.light:not(.gta-vi) .message-meta,.desktop-shell.light:not(.gta-vi) .composer-caption,.desktop-shell.light:not(.gta-vi) .details-profile p,.desktop-shell.light:not(.gta-vi) .details-muted,.desktop-shell.light:not(.gta-vi) .details-row,.desktop-shell.light:not(.gta-vi) .preferences-header p,.desktop-shell.light:not(.gta-vi) .preferences-section-heading p{color:#687386!important}
+.desktop-shell.light:not(.gta-vi) .rail-button{background:#eef1f6!important;color:#697589!important}
+.desktop-shell.light:not(.gta-vi) .rail-button:hover,.desktop-shell.light:not(.gta-vi) .rail-button.selected{background:#5268d9!important;color:#fff!important}
+.desktop-shell.light:not(.gta-vi) .rail-user{background:#e9edf4!important;color:#39465a!important}
+.desktop-shell.light:not(.gta-vi) .search-field,.desktop-shell.light:not(.gta-vi) .account-chip{background:#eef1f6!important;border-color:#e1e5ec!important}
+.desktop-shell.light:not(.gta-vi) .search-field input{background:transparent!important;color:#202938!important}
+.desktop-shell.light:not(.gta-vi) .conversation-item{color:#526075!important}
+.desktop-shell.light:not(.gta-vi) .conversation-item:hover,.desktop-shell.light:not(.gta-vi) .settings-row:hover{background:#edf1f7!important;color:#202938!important}
+.desktop-shell.light:not(.gta-vi) .conversation-item.active{background:#e8edfb!important;color:#344aab!important}
+.desktop-shell.light:not(.gta-vi) .conversation-pane,.desktop-shell.light:not(.gta-vi) .conversation-header,.desktop-shell.light:not(.gta-vi) .message-canvas,.desktop-shell.light:not(.gta-vi) .composer-area{background:#fff!important}
+.desktop-shell.light:not(.gta-vi) .message-line:hover{background:#f6f8fb!important}
+.desktop-shell.light:not(.gta-vi) .message-bubble,.desktop-shell.light:not(.gta-vi) .message-line:not(.mine) .message-bubble{background:#f0f2f6!important;border:1px solid #e8ebf1!important;color:#293548!important}
+.desktop-shell.light:not(.gta-vi) .message-line.mine .message-bubble{background:#e8edff!important;border:1px solid #dce4ff!important;color:#263b91!important}
+.desktop-shell.light:not(.gta-vi) .composer-glass{background:#f7f8fb!important;border:1px solid #e1e5ec!important;box-shadow:0 2px 8px #29364a08!important}
+.desktop-shell.light:not(.gta-vi) .composer-glass textarea{background:transparent!important;color:#202938!important}
+.desktop-shell.light:not(.gta-vi) .composer-glass textarea::placeholder{color:#929bad!important}
+.desktop-shell.light:not(.gta-vi) .glass-icon,.desktop-shell.light:not(.gta-vi) .composer-glass .glass-icon{color:#687386!important}
+.desktop-shell.light:not(.gta-vi) .glass-icon:hover{background:#e9edf4!important;color:#263449!important}
+.desktop-shell.light:not(.gta-vi) .modal-card,.desktop-shell.light:not(.gta-vi) .glass-panel{background:#fff!important;border-color:#e1e5ec!important;color:#202938!important;box-shadow:0 20px 60px #17243a20!important}
+.desktop-shell.light:not(.gta-vi) .modal-card .eyebrow,.desktop-shell.light:not(.gta-vi) .modal-description,.desktop-shell.light:not(.gta-vi) .modal-card label,.desktop-shell.light:not(.gta-vi) .contact-result-copy small{color:#687386!important}
+.desktop-shell.light:not(.gta-vi) .modal-icon,.desktop-shell.light:not(.gta-vi) .preference-icon,.desktop-shell.light:not(.gta-vi) .preferences-heading-icon{background:#eef1f7!important;color:#5268d9!important;border-color:#e1e5ec!important}
+.desktop-shell.light:not(.gta-vi) input:not([type=checkbox]):not([type=radio]):not([type=file]),.desktop-shell.light:not(.gta-vi) textarea,.desktop-shell.light:not(.gta-vi) select{background-color:#f8f9fc!important;border-color:#dfe4ec!important;color:#202938!important}
+.desktop-shell.light:not(.gta-vi) input::placeholder,.desktop-shell.light:not(.gta-vi) textarea::placeholder{color:#929bad!important}
+.desktop-shell.light:not(.gta-vi) input:focus,.desktop-shell.light:not(.gta-vi) textarea:focus,.desktop-shell.light:not(.gta-vi) select:focus{border-color:#8799ed!important;box-shadow:0 0 0 3px #5268d91a!important;outline:0!important}
+.desktop-shell.light:not(.gta-vi) .contact-result,.desktop-shell.light:not(.gta-vi) .settings-account,.desktop-shell.light:not(.gta-vi) .preferences-account-card,.desktop-shell.light:not(.gta-vi) .preferences-section{background:#fff!important;border-color:#e1e5ec!important}
+.desktop-shell.light:not(.gta-vi) .preferences-action-row b,.desktop-shell.light:not(.gta-vi) .preferences-account-copy b,.desktop-shell.light:not(.gta-vi) .preferences-status-input{color:#202938!important}
+.desktop-shell.light:not(.gta-vi) .preferences-action-row small,.desktop-shell.light:not(.gta-vi) .preferences-account-copy small,.desktop-shell.light:not(.gta-vi) .preferences-field label,.desktop-shell.light:not(.gta-vi) .preferences-inline-note{color:#687386!important}
+.desktop-shell.light:not(.gta-vi) .preferences-pill,.desktop-shell.light:not(.gta-vi) .appearance-mode-options{background:#f3f5f9!important;border-color:#e1e5ec!important;color:#39465a!important}
+.desktop-shell.light:not(.gta-vi) .appearance-mode-option{color:#687386!important}
+.desktop-shell.light:not(.gta-vi) .appearance-mode-option.active{background:#e9edff!important;border-color:#cfd8ff!important;color:#344aab!important}
+.desktop-shell.light:not(.gta-vi) .preferences-status-preview{background:#f3f5f9!important;border-color:#e1e5ec!important;color:#39465a!important}
+.desktop-shell.light:not(.gta-vi) .contact-start-button,.desktop-shell.light:not(.gta-vi) .attachment-file-row button{background:#edf1f7!important;color:#344258!important}
+.desktop-shell.light:not(.gta-vi) .message-attachment-card,.desktop-shell.light:not(.gta-vi) .reaction-strip button{background:#fff!important;border-color:#e1e5ec!important;color:#344258!important}
+.desktop-shell.light:not(.gta-vi) .call-banner{background:#fff!important;border-color:#e1e5ec!important;color:#202938!important}
+.desktop-shell.light:not(.gta-vi) .auth-shell{background:#f3f5f9!important;color:#202938!important}
+.desktop-shell.light:not(.gta-vi) .auth-card{background:#fff!important;border-color:#e1e5ec!important;color:#202938!important}
+.desktop-shell.light:not(.gta-vi) .auth-copy p,.desktop-shell.light:not(.gta-vi) .auth-card-heading p,.desktop-shell.light:not(.gta-vi) .auth-card label,.desktop-shell.light:not(.gta-vi) .top-caption,.desktop-shell.light:not(.gta-vi) .auth-foot{color:#687386!important}
+.desktop-shell.light:not(.gta-vi) .auth-method-switch{background:#f1f3f7!important}
+.desktop-shell.light:not(.gta-vi) .auth-method-switch button{color:#687386!important}
+.desktop-shell.light:not(.gta-vi) .auth-method-switch button.selected{background:#fff!important;color:#344aab!important;box-shadow:0 1px 4px #17243a14!important}
+.desktop-shell.light:not(.gta-vi) .group-permission,.desktop-shell.light:not(.gta-vi) .group-role-select{background:#f5f7fa!important;border-color:#e1e5ec!important;color:#344258!important}
+.desktop-shell.light:not(.gta-vi) .group-member-card,.desktop-shell.light:not(.gta-vi) .group-action-tile{background:#fff!important;border-color:#e1e5ec!important;color:#344258!important}
+.desktop-shell.light:not(.gta-vi) .dropdown-menu,.desktop-shell.light:not(.gta-vi) .context-menu,.desktop-shell.light:not(.gta-vi) .message-menu,.desktop-shell.light:not(.gta-vi) [role=menu]{background:#fff!important;border-color:#e1e5ec!important;color:#344258!important;box-shadow:0 12px 32px #17243a1c!important}
+.desktop-shell.light:not(.gta-vi) .dropdown-menu button:hover,.desktop-shell.light:not(.gta-vi) .context-menu button:hover,.desktop-shell.light:not(.gta-vi) .message-menu button:hover,.desktop-shell.light:not(.gta-vi) [role=menu] button:hover{background:#f0f3f8!important;color:#202938!important}
+.desktop-shell.light:not(.gta-vi) .server-channel-sidebar,.desktop-shell.light:not(.gta-vi) .server-channel-panel{background:#f8f9fc!important;border-color:#e1e5ec!important}
+.desktop-shell.light:not(.gta-vi) .server-channel-item:hover,.desktop-shell.light:not(.gta-vi) .server-channel-item.active{background:#e9edfb!important;color:#344aab!important}
+.desktop-shell.light:not(.gta-vi) .account-avatar-status .avatar-status-pop{background:#fff!important;border-color:#dfe4ec!important;color:#202938!important}
+.desktop-shell.light:not(.gta-vi) .contact-status-bubble{background:#edf1ff!important;border-color:#d8e0ff!important;color:#4258b5!important}
+@media(max-width:680px){
+ .desktop-shell.light:not(.gta-vi){--bg:#f3f5f9!important;--panel:#fff!important;--panel-2:#f7f8fb!important;--panel-3:#edf0f5!important;--line:#e1e5ec!important;--text:#202938!important;--muted:#687386!important;--subtle:#8993a3!important;background:#f3f5f9!important;color:#202938!important;color-scheme:light!important}
+ .desktop-shell.light:not(.gta-vi)>.sidebar,.desktop-shell.light:not(.gta-vi)>.conversation-pane{background:#fff!important;color:#202938!important}
+ .desktop-shell.light:not(.gta-vi) .message-canvas,.desktop-shell.light:not(.gta-vi) .composer-area,.desktop-shell.light:not(.gta-vi) .conversation-header{background:#fff!important}
+ html:has(.desktop-shell.light:not(.gta-vi)),body:has(.desktop-shell.light:not(.gta-vi)){background:#f3f5f9!important;color-scheme:light!important}
+}

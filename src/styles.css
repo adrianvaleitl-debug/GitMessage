@@ -1731,3 +1731,72 @@ select:focus-visible,input:focus-visible,textarea:focus-visible,button:focus-vis
   .call-message-card{flex-wrap:wrap}
   .call-message-accept{width:100%;min-height:52px;font-size:16px!important}
 }
+
+
+/* Mobile layout correction: use one viewport-wide panel, never the desktop grid. */
+@media (max-width:760px){
+  .desktop-shell{
+    display:grid!important;
+    grid-template-columns:minmax(0,1fr)!important;
+    grid-template-rows:minmax(0,1fr)!important;
+    width:100%!important;
+    max-width:100vw!important;
+    height:100dvh!important;
+    min-width:0!important;
+    min-height:0!important;
+    overflow:hidden!important;
+    position:relative!important;
+  }
+  .desktop-shell>.sidebar{
+    grid-column:1!important;
+    grid-row:1!important;
+    width:100%!important;
+    min-width:0!important;
+    min-height:0!important;
+  }
+  .desktop-shell:not(.mobile-chat-open)>.conversation-pane{
+    display:none!important;
+  }
+  .desktop-shell.mobile-chat-open>.sidebar{
+    display:none!important;
+  }
+  .desktop-shell.mobile-chat-open>.conversation-pane{
+    display:flex!important;
+    grid-column:1!important;
+    grid-row:1!important;
+    width:100%!important;
+    max-width:100%!important;
+    min-width:0!important;
+    min-height:0!important;
+  }
+  .conversation-header{
+    width:100%!important;
+    min-width:0!important;
+    gap:7px!important;
+    padding-left:10px!important;
+    padding-right:10px!important;
+  }
+  .header-person{flex:1 1 auto!important;min-width:0!important;gap:8px!important}
+  .header-person>div{min-width:0!important}
+  .header-tools{flex:0 0 auto!important;gap:3px!important}
+  .header-tools .call-action-button{min-width:34px!important;padding:0 7px!important}
+  .header-tools .call-action-button span{display:none!important}
+  .message-canvas{width:100%!important;min-width:0!important}
+  .message-line{width:100%!important;min-width:0!important}
+  .composer-area{width:100%!important;min-width:0!important}
+  .composer-glass{width:100%!important;min-width:0!important}
+  .mobile-tab-bar{
+    position:absolute!important;
+    left:0!important;right:0!important;bottom:0!important;
+    width:100%!important;max-width:100%!important;
+  }
+  .desktop-shell>.conversation-details{
+    position:fixed!important;
+    z-index:40!important;
+    left:8px!important;right:8px!important;
+    top:calc(env(safe-area-inset-top) + 8px)!important;
+    bottom:calc(env(safe-area-inset-bottom) + 8px)!important;
+    width:auto!important;max-width:none!important;
+    min-width:0!important;
+  }
+}

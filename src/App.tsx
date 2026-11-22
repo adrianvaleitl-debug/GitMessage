@@ -198,6 +198,7 @@ export default function App() {
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const callRecipientRef = useRef<string>("");
   const callConversationRef = useRef<string>("");
+  const pendingIceCandidatesRef = useRef<any[]>([]);
   const [callState, setCallState] = useState<"idle" | "calling" | "incoming" | "connected">("idle");
   const [pendingCall, setPendingCall] = useState<any>(null);
   const [callKind, setCallKind] = useState<"audio" | "video">("audio");
@@ -1346,6 +1347,16 @@ export default function App() {
     return peer;
   }
 
+  async function applyQueuedCallIce(senderId: string, conversationId: string) {
+    if (!peerRef.current?.remoteDescription) return;
+    const queued = pendingIceCandidatesRef.current;
+    const matching = queued.filter(item => item.sender_id === senderId && item.conversation_id === conversationId);
+    pendingIceCandidatesRef.current = queued.filter(item => item.sender_id !== senderId || item.conversation_id !== conversationId);
+    for (const signal of matching) {
+      try { await peerRef.current.addIceCandidate(new RTCIceCandidate(signal.payload.candidate)); } catch { /* Ignore stale ICE candidates. */ }
+    }
+  }
+
   async function getOptionalCallMedia(kind: "audio" | "video") {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio:true, video:kind==="video" });
@@ -1401,6 +1412,7 @@ export default function App() {
       callConversationRef.current = pendingCall.conversation_id;
       const peer = await makePeer(pendingCall.sender_id, pendingCall.conversation_id);
       await peer.setRemoteDescription(new RTCSessionDescription(pendingCall.payload.description));
+      await applyQueuedCallIce(pendingCall.sender_id, pendingCall.conversation_id);
       for (const transceiver of peer.getTransceivers()) {
         const track = transceiver.receiver.track.kind === "audio" ? stream?.getAudioTracks()[0] : stream?.getVideoTracks()[0];
         if (track) { await transceiver.sender.replaceTrack(track); transceiver.direction = "sendrecv"; }
@@ -1427,6 +1439,7 @@ export default function App() {
     if (notifyRemote && supabase && callRecipientRef.current && callState !== "incoming") await sendCallSignal(callRecipientRef.current,"hangup",{},callConversationRef.current || active);
     callRecipientRef.current = "";
     callConversationRef.current = "";
+    pendingIceCandidatesRef.current = [];
     if (localStreamRef.current) localStreamRef.current.getTracks().forEach(track => track.stop());
     localStreamRef.current = null;
     if (localVideoRef.current) localVideoRef.current.srcObject = null;
@@ -1445,9 +1458,14 @@ export default function App() {
         if (signal.signal_type === "offer" && callState === "idle") { setPendingCall(signal); setCallKind(signal.payload?.kind === "video" ? "video" : "audio"); setCallState("incoming"); return; }
         if (signal.signal_type === "answer" && peerRef.current && signal.sender_id) {
           await peerRef.current.setRemoteDescription(new RTCSessionDescription(signal.payload.description));
+          await applyQueuedCallIce(signal.sender_id, signal.conversation_id);
           setCallState("connected");
-        } else if (signal.signal_type === "ice" && peerRef.current && signal.payload?.candidate) {
-          try { await peerRef.current.addIceCandidate(new RTCIceCandidate(signal.payload.candidate)); } catch { /* Candidate can arrive before remote description. */ }
+        } else if (signal.signal_type === "ice" && signal.payload?.candidate) {
+          if (peerRef.current?.remoteDescription) {
+            try { await peerRef.current.addIceCandidate(new RTCIceCandidate(signal.payload.candidate)); } catch { /* Ignore stale ICE candidates. */ }
+          } else {
+            pendingIceCandidatesRef.current.push(signal);
+          }
         } else if (["hangup","reject"].includes(signal.signal_type)) { await endCall(false); }
       }).subscribe();
     return () => { void supabase!.removeChannel(channel); };

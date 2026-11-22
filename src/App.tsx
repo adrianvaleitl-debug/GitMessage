@@ -767,6 +767,15 @@ export default function App() {
     event?.preventDefault();
     if (!supabase || !active || !session || !draft.trim() || sending) return;
     const body = draft.trim();
+    if(!navigator.onLine){
+      try{
+        const key="gitmessage-offline-outbox";
+        const queue=JSON.parse(localStorage.getItem(key)||"[]");
+        queue.push({id:crypto.randomUUID(),conversation_id:active,sender_id:session.user.id,body,created_at:new Date().toISOString()});
+        localStorage.setItem(key,JSON.stringify(queue));
+        setDraft("");setNotice("Message queued. It will send when your connection returns.");return;
+      }catch{setNotice("Offline queue is unavailable in this browser.");return;}
+    }
     if(scheduleAt){
       const sendAt=new Date(scheduleAt);
       if(Number.isNaN(sendAt.getTime())||sendAt.getTime()<=Date.now()){setNotice("Choose a future time to schedule this message.");return;}
@@ -902,6 +911,25 @@ export default function App() {
     if (metadataError) { setNotice(metadataError.message); return; }
     setMessages(rows => rows.some(row => row.id === message.id) ? rows : [...rows, message as Message]);
   }
+
+  useEffect(()=>{
+    if(!supabase||!session)return;
+    const flushOffline=async()=>{
+      if(!navigator.onLine)return;
+      let queue:any[]=[];
+      try{queue=JSON.parse(localStorage.getItem("gitmessage-offline-outbox")||"[]");}catch{return;}
+      const remaining:any[]=[];
+      for(const item of queue){
+        const {error}=await supabase!.from("messages").insert({conversation_id:item.conversation_id,sender_id:item.sender_id,body:item.body});
+        if(error)remaining.push(item);
+      }
+      try{localStorage.setItem("gitmessage-offline-outbox",JSON.stringify(remaining));}catch{/* Local storage may be unavailable. */}
+      if(queue.length!==remaining.length)setNotice(remaining.length?"Some queued messages are still waiting for a connection.":"Queued messages sent.");
+    };
+    window.addEventListener("online",flushOffline);
+    void flushOffline();
+    return()=>window.removeEventListener("online",flushOffline);
+  },[session?.user?.id]);
 
   useEffect(()=>{
     if(!supabase||!session)return;

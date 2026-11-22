@@ -1307,3 +1307,12 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
 .profile-preview-card .profile-banner-preview img{width:100%;height:100%;display:block;object-fit:cover}
 .profile-preview-card .public-profile-identity{align-items:center}
 .profile-preview-card .profile-photo{overflow:hidden}
+
+
+/* Keep both avatar crop controls together in one compact editor card. */
+.profile-photo-adjustments{display:grid;grid-template-columns:minmax(180px,auto) minmax(180px,1fr);grid-template-rows:auto auto;align-items:center;column-gap:22px;row-gap:10px;margin:14px 0 18px;padding:12px 14px;border:1px solid #45404e;border-radius:12px;background:#211a2c}
+.profile-photo-adjustments .profile-photo-row{grid-column:1;grid-row:1 / span 2;display:flex;align-items:center;gap:12px;margin:0}
+.profile-photo-adjustments .profile-photo{width:58px;height:58px;flex:0 0 58px}
+.profile-photo-adjustments .photo-crop-control{display:flex;flex-direction:column;gap:5px;min-width:0;margin:0;color:#c5c6ce;font-size:10px;font-weight:650}
+.profile-photo-adjustments .photo-crop-control input[type=range]{width:100%;margin:0;accent-color:#ed42a0}
+@media(max-width:520px){.profile-photo-adjustments{grid-template-columns:1fr;gap:10px}.profile-photo-adjustments .profile-photo-row{grid-column:1;grid-row:auto}.profile-photo-adjustments .photo-crop-control{grid-column:1}}

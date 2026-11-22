@@ -1113,13 +1113,13 @@ export default function App() {
     if(!supabase||!editingMessageDraft.trim()||editingMessageDraft.trim()===message.body){setEditingMessageId(null);return;}
     setSavingMessageEdit(true);
     const revision=await supabase.from("gitmessage_message_revisions").insert({message_id:message.id,editor_id:session.user.id,previous_body:message.body});
-    if(revision.error){setNotice("Could not save edit history: "+revision.error.message);setSavingMessageEdit(false);return;}
     const editedAt=new Date().toISOString();
     const {error}=await supabase.from("messages").update({body:editingMessageDraft.trim(),edited_at:editedAt}).eq("id",message.id);
     setSavingMessageEdit(false);
     if(error){setNotice(error.message);return;}
     setMessages(rows=>rows.map(row=>row.id===message.id?{...row,body:editingMessageDraft.trim(),edited_at:editedAt}:row));
     setEditingMessageId(null);setEditingMessageDraft("");
+    if(revision.error)setNotice("Message edited. Edit history was unavailable: "+revision.error.message);
   }
 
   async function deleteMessage(message: Message) {

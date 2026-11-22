@@ -106,6 +106,7 @@ export default function App() {
   const recordingChunks = useRef<Blob[]>([]);
   const [recording, setRecording] = useState(false);
   const [someoneTyping, setSomeoneTyping] = useState(false);
+  const [notificationLevel,setNotificationLevel]=useState<"all"|"mentions"|"muted">("all");
 
   const [lightMode, setLightMode] = useState(() => { try { return localStorage.getItem("gitmessage-theme") !== "dark"; } catch { return true; } });
   const mobileSwipeStart = useRef<{x:number;y:number}|null>(null);
@@ -332,6 +333,13 @@ export default function App() {
   },[active,session,conversations]);
 
   useEffect(() => {
+    if(!supabase||!active||!session?.user?.id){setNotificationLevel("all");return;}
+    let alive=true;
+    void supabase.from("gitmessage_conversation_preferences").select("notification_level").eq("conversation_id",active).eq("user_id",session.user.id).maybeSingle().then(({data})=>{if(alive)setNotificationLevel((data?.notification_level||"all") as "all"|"mentions"|"muted");});
+    return()=>{alive=false;};
+  },[active,session?.user?.id]);
+
+  useEffect(() => {
     if (!active || !supabase || !session?.user?.id) { setMessages([]); return; }
     let alive = true;
     const refreshMessages = async () => {
@@ -366,7 +374,7 @@ export default function App() {
           if (!alive) return;
           if (payload.eventType === "INSERT") {
             const incoming = payload.new as Message;
-            if (incoming.sender_id !== session.user.id && document.hidden && typeof Notification !== "undefined" && Notification.permission === "granted") {
+            if (incoming.sender_id !== session.user.id && document.hidden && notificationLevel!=="muted" && (notificationLevel!=="mentions" || incoming.body.includes("@"+profileUsername)) && typeof Notification !== "undefined" && Notification.permission === "granted") {
               new Notification("New GitMessage", { body: incoming.body });
             }
             setMessages(current => current.some(message => message.id === incoming.id) ? current : [...current, incoming].sort((a, b) => a.created_at.localeCompare(b.created_at)));
@@ -764,6 +772,13 @@ export default function App() {
     setAvatarBusy(false);
     if(updated.error){setNotice(updated.error.message);return;}
     setProfileBanner(supabase.storage.from("gitmessage-avatars").getPublicUrl(path).data.publicUrl);
+  }
+
+  async function saveConversationNotificationLevel(level:"all"|"mentions"|"muted"){
+    if(!supabase||!session||!active)return;
+    setNotificationLevel(level);
+    const {error}=await supabase.from("gitmessage_conversation_preferences").upsert({conversation_id:active,user_id:session.user.id,notification_level:level,updated_at:new Date().toISOString()},{onConflict:"conversation_id,user_id"});
+    if(error)setNotice(error.message);else setNotice(level==="muted"?"Conversation muted.":level==="mentions"?"Notifications set to mentions only.":"Conversation notifications enabled.");
   }
 
   async function saveProfileStatus(){
@@ -1231,7 +1246,7 @@ export default function App() {
         </div>
         {current && <>
           <div className="details-section">{current.is_group && <button className="settings-row" onClick={() => void openGroupAdmin()}><ShieldCheck size={15}/> Manage group <span>›</span></button>}
-            <div className="details-label">ABOUT</div>
+            <div className="details-label">NOTIFICATIONS</div><label className="details-notification-setting"><span>Alert me</span><select value={notificationLevel} onChange={e=>void saveConversationNotificationLevel(e.target.value as "all"|"mentions"|"muted")}><option value="all">All messages</option><option value="mentions">Mentions only</option><option value="muted">Muted</option></select></label><div className="details-label">ABOUT</div>
             <div className="details-row"><MessageCircle size={15}/><span>{current.is_group ? "Group chat" : "Private conversation"}</span></div>
             <div className="details-row"><ShieldCheck size={15}/><span>Conversation members only</span></div>
           </div>

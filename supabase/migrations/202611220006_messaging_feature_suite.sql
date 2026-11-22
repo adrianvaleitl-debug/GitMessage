@@ -218,3 +218,36 @@ create index if not exists gm_bookmarks_user_idx on public.gitmessage_message_bo
 create index if not exists gm_pins_conversation_idx on public.gitmessage_pinned_messages(conversation_id,created_at desc);
 create index if not exists gm_events_start_idx on public.gitmessage_events(conversation_id,starts_at);
 create index if not exists gm_threads_parent_idx on public.messages(parent_message_id);
+
+
+-- Any active conversation member can wake the scheduler; each row is locked and
+-- marked sent in the same transaction so multiple devices cannot send it twice.
+create or replace function public.send_due_gitmessage_scheduled_messages()
+returns integer
+language plpgsql
+security definer
+set search_path=public,auth
+as $$
+declare item record; created_id uuid; sent_count integer := 0;
+begin
+  if auth.uid() is null then raise exception 'Sign in required.'; end if;
+  for item in
+    select id,conversation_id,sender_id,body
+    from public.gitmessage_scheduled_messages
+    where sender_id=auth.uid() and sent_message_id is null and send_at<=now()
+    order by send_at
+    for update skip locked
+  loop
+    insert into public.messages(conversation_id,sender_id,body)
+    values(item.conversation_id,item.sender_id,item.body)
+    returning id into created_id;
+    update public.gitmessage_scheduled_messages
+    set sent_message_id=created_id
+    where id=item.id and sent_message_id is null;
+    if found then sent_count := sent_count+1; end if;
+  end loop;
+  return sent_count;
+end;
+$$;
+revoke all on function public.send_due_gitmessage_scheduled_messages() from public,anon;
+grant execute on function public.send_due_gitmessage_scheduled_messages() to authenticated;

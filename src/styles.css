@@ -2071,3 +2071,7 @@ select option{background:#202631;color:#eef2f8}
 .desktop-shell.gta-vi .translation-settings-panel label,
 .desktop-shell.gta-vi .privacy-settings-panel label,
 .desktop-shell.gta-vi .settings-customize>label{color:#d0a7c3!important}
+
+.call-banner .call-dismiss-button{width:34px;min-width:34px;height:34px;display:grid;place-items:center;padding:0;border:1px solid #646a76;background:transparent;color:inherit;border-radius:9px}
+.call-banner .call-dismiss-button:hover{background:#7f3038;color:#fff}
+.call-banner.active-call-banner .call-banner-copy small{opacity:.9}

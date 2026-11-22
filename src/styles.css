@@ -1982,3 +1982,19 @@ select option{background:#202631;color:#eef2f8}
   max-width:100%!important;
   margin:0!important;
 }
+
+
+/* Make the incoming-call action unmistakable on desktop and mobile. */
+.call-answer-header-button{
+  border-color:#278653!important;
+  background:linear-gradient(180deg,#26965c,#187244)!important;
+  color:#fff!important;
+  opacity:1!important;
+  min-width:112px!important;
+  box-shadow:0 3px 14px rgba(25,150,85,.28)!important;
+}
+.call-answer-header-button span{display:inline!important}
+@media(max-width:390px){
+  .call-answer-header-button{width:auto!important;min-width:104px!important;padding:0 10px!important}
+  .call-answer-header-button span{display:inline!important}
+}

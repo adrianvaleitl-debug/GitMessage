@@ -51,6 +51,7 @@ export default function App() {
   const [attachmentPreviews, setAttachmentPreviews] = useState<Record<string, AttachmentPreview>>({});
   const [imageViewerUrl, setImageViewerUrl] = useState("");
   const [draft, setDraft] = useState("");
+  const [scheduleAt,setScheduleAt]=useState("");
   const [query, setQuery] = useState("");
   const [modal, setModal] = useState<"new" | "group" | "profile" | "public-profile" | "friends" | "settings" | "group-admin" | "bookmarks" | "servers" | "server-chat" | null>(null);
   const [contactEmail, setContactEmail] = useState("");
@@ -766,6 +767,15 @@ export default function App() {
     event?.preventDefault();
     if (!supabase || !active || !session || !draft.trim() || sending) return;
     const body = draft.trim();
+    if(scheduleAt){
+      const sendAt=new Date(scheduleAt);
+      if(Number.isNaN(sendAt.getTime())||sendAt.getTime()<=Date.now()){setNotice("Choose a future time to schedule this message.");return;}
+      setSending(true);
+      const scheduled=await supabase.from("gitmessage_scheduled_messages").insert({conversation_id:active,sender_id:session.user.id,body,send_at:sendAt.toISOString()});
+      setSending(false);
+      if(scheduled.error){setNotice(scheduled.error.message);return;}
+      setDraft("");setScheduleAt("");setNotice("Message scheduled.");return;
+    }
     setSending(true);
     const { data, error } = await supabase.from("messages")
       .insert({ conversation_id: active, sender_id: session.user.id, body })
@@ -892,6 +902,14 @@ export default function App() {
     if (metadataError) { setNotice(metadataError.message); return; }
     setMessages(rows => rows.some(row => row.id === message.id) ? rows : [...rows, message as Message]);
   }
+
+  useEffect(()=>{
+    if(!supabase||!session)return;
+    const deliver=()=>{void supabase!.rpc("send_due_gitmessage_scheduled_messages").then(({error})=>{if(error)console.warn("Scheduled message delivery:",error.message);});};
+    deliver();
+    const timer=window.setInterval(deliver,15000);
+    return()=>window.clearInterval(timer);
+  },[session?.user?.id]);
 
   useEffect(() => {
     if (!supabase || messages.length === 0) { setReactions({}); return; }
@@ -1091,7 +1109,7 @@ export default function App() {
           }) : <div className="empty-conversation"><div className="empty-art"><div className="art-ring ring-one"/><div className="art-ring ring-two"/><div className="art-core"><MessageCircle size={27}/></div><span className="art-spark spark-one"/><span className="art-spark spark-two"/></div><div className="eyebrow">A SPACE OF YOUR OWN</div><h3>Every good conversation<br/><span>starts somewhere.</span></h3><p>Send the first message and let it unfold.</p></div> : <div className="empty-conversation"><div className="empty-art"><div className="art-ring ring-one"/><div className="art-ring ring-two"/><div className="art-core"><Sparkles size={27}/></div><span className="art-spark spark-one"/><span className="art-spark spark-two"/></div><div className="eyebrow">YOUR PEOPLE, YOUR PLACE</div><h3>Make room for<br/><span>the good stuff.</span></h3><p>Choose a conversation or create a new one.</p><button className="empty-create" onClick={() => setModal("new")}><Plus size={15}/> New conversation</button></div>}
           <audio ref={remoteAudioRef} autoPlay/><video ref={remoteVideoRef} autoPlay playsInline className={"remote-call-video" + (callState !== "idle" && callKind === "video" ? " visible" : "")}/><video ref={localVideoRef} autoPlay muted playsInline className={"local-call-video" + (callState !== "idle" && callKind === "video" ? " visible" : "")}/>
         </div>
-        <form className="composer-area" onSubmit={sendMessage}><input ref={fileInputRef} type="file" accept="image/*,video/mp4,audio/*,.mp4,.m4a,.mp3,.wav,.webm,.ogg" hidden onChange={event => { const file=event.target.files?.[0]; void uploadAttachment(file); event.target.value=""; }}/><div className="composer-glass"><button type="button" className="glass-icon" title={recording ? "Stop voice message" : "Record voice message"} disabled={!active || sending} onClick={() => void toggleVoiceRecording()}>{recording ? <MicOff size={17}/> : <Mic size={17}/>}</button><button type="button" className="glass-icon" title="Attach file" disabled={!active || sending} onClick={() => fileInputRef.current?.click()}><Paperclip size={17}/></button><textarea ref={composerInputRef} rows={1} value={draft} onChange={e => void updateDraft(e.target.value)} onKeyDown={event => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); void sendMessage(); } }} placeholder={active ? (gtaViTheme ? "Send it to Vice City…" : "Write a message…") : "Choose a conversation first"} disabled={!active}/><button className="send-button" type="submit" disabled={!active || !draft.trim() || sending} title="Send message"><ArrowUp size={18}/></button></div><div className="composer-caption"><span>{recording ? "Recording voice message…" : "Messages are synced in real time"}</span><span><kbd>ENTER</kbd> TO SEND <i>·</i> <kbd>SHIFT + ENTER</kbd> NEW LINE</span></div>{notice && <p className="notice inline">{notice}</p>}</form>
+        <form className="composer-area" onSubmit={sendMessage}><input ref={fileInputRef} type="file" accept="image/*,video/mp4,audio/*,.mp4,.m4a,.mp3,.wav,.webm,.ogg" hidden onChange={event => { const file=event.target.files?.[0]; void uploadAttachment(file); event.target.value=""; }}/><div className="composer-glass"><input className="schedule-message-time" aria-label="Schedule message time" type="datetime-local" value={scheduleAt} onChange={e=>setScheduleAt(e.target.value)} title="Choose a future send time"/><button type="button" className="glass-icon" title={recording ? "Stop voice message" : "Record voice message"} disabled={!active || sending} onClick={() => void toggleVoiceRecording()}>{recording ? <MicOff size={17}/> : <Mic size={17}/>}</button><button type="button" className="glass-icon" title="Attach file" disabled={!active || sending} onClick={() => fileInputRef.current?.click()}><Paperclip size={17}/></button><textarea ref={composerInputRef} rows={1} value={draft} onChange={e => void updateDraft(e.target.value)} onKeyDown={event => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); void sendMessage(); } }} placeholder={active ? (gtaViTheme ? "Send it to Vice City…" : "Write a message…") : "Choose a conversation first"} disabled={!active}/><button className="send-button" type="submit" disabled={!active || !draft.trim() || sending} title="Send message"><ArrowUp size={18}/></button></div><div className="composer-caption"><span>{recording ? "Recording voice message…" : "Messages are synced in real time"}</span><span><kbd>ENTER</kbd> TO SEND <i>·</i> <kbd>SHIFT + ENTER</kbd> NEW LINE</span></div>{notice && <p className="notice inline">{notice}</p>}</form>
       </section>
       <aside className={"conversation-details" + (detailsOpen ? " details-open" : "")}><button type="button" className="details-close glass-icon" title="Close conversation details" onClick={() => setDetailsOpen(false)}><X size={16}/></button>
         <div className="details-heading">CONVERSATION DETAILS</div>

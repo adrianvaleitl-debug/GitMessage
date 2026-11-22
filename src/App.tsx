@@ -1000,7 +1000,7 @@ export default function App() {
   async function loadGithubProjects(username:string){
     const clean=username.trim().replace(/^@/,"");if(!clean){setGithubProjects([]);return;}
     setGithubProjectsLoading(true);
-    try{const response=await fetch("https://api.github.com/users/"+encodeURIComponent(clean)+"/repos?sort=stars&direction=desc&per_page=3&type=owner");if(!response.ok)throw new Error(response.status===404?"GitHub account not found.":"GitHub projects are temporarily unavailable.");const repos=await response.json();setGithubProjects(Array.isArray(repos)?repos.slice(0,3):[]);}
+    try{const response=await fetch("https://api.github.com/search/repositories?q="+encodeURIComponent("user:"+clean)+"&sort=stars&order=desc&per_page=3");if(!response.ok)throw new Error(response.status===404?"GitHub account not found.":"GitHub projects are temporarily unavailable.");const result=await response.json();setGithubProjects(Array.isArray(result.items)?result.items.slice(0,3):[]);}
     catch(error){setGithubProjects([]);setNotice(error instanceof Error?error.message:"Could not load GitHub projects.");}
     finally{setGithubProjectsLoading(false);}
   }

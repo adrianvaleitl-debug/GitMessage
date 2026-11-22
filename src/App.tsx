@@ -811,6 +811,21 @@ export default function App() {
     setNotice(result.error?result.error.message:"Poll created. Poll options are saved.");
   }
 
+  async function browseConversationPolls(){
+    if(!supabase||!session||!active)return;
+    const {data,error}=await supabase.from("gitmessage_polls").select("id,question,created_at,gitmessage_poll_options(id,label,position),gitmessage_poll_votes(option_id,user_id)").eq("conversation_id",active).order("created_at",{ascending:false}).limit(30);
+    if(error){setNotice(error.message);return;}
+    if(!data?.length){setNotice("No polls in this conversation yet.");return;}
+    const poll=data[0] as any;
+    const options=(poll.gitmessage_poll_options||[]).sort((a:any,b:any)=>a.position-b.position);
+    const choice=window.prompt("Poll: "+poll.question+"\\n"+options.map((o:any,i:number)=>(i+1)+". "+o.label).join("\\n")+"\\nEnter an option number to vote.");
+    const index=Number(choice)-1;
+    if(!Number.isInteger(index)||index<0||index>=options.length)return;
+    await supabase.from("gitmessage_poll_votes").delete().eq("poll_id",poll.id).eq("user_id",session.user.id);
+    const vote=await supabase.from("gitmessage_poll_votes").insert({poll_id:poll.id,option_id:options[index].id,user_id:session.user.id});
+    setNotice(vote.error?vote.error.message:"Vote recorded.");
+  }
+
   async function createConversationEvent(){
     if(!supabase||!session||!active)return;
     const title=window.prompt("Event name");if(!title?.trim())return;
@@ -819,6 +834,18 @@ export default function App() {
     const description=window.prompt("Event description (optional)")||"";
     const {error}=await supabase.from("gitmessage_events").insert({conversation_id:active,creator_id:session.user.id,title:title.trim(),description,starts_at:date.toISOString()});
     setNotice(error?"Event could not be created: "+error.message:"Event created.");
+  }
+
+  async function browseConversationEvents(){
+    if(!supabase||!session||!active)return;
+    const {data,error}=await supabase.from("gitmessage_events").select("id,title,description,starts_at,location").eq("conversation_id",active).gte("starts_at",new Date().toISOString()).order("starts_at",{ascending:true}).limit(30);
+    if(error){setNotice(error.message);return;}
+    if(!data?.length){setNotice("No upcoming events in this conversation.");return;}
+    const event=data[0];
+    const response=window.prompt("Upcoming: "+event.title+"\\n"+new Date(event.starts_at).toLocaleString()+"\\n"+(event.description||"")+"\\nRSVP: going, maybe, or not_going");
+    if(!response||!["going","maybe","not_going"].includes(response))return;
+    const result=await supabase.from("gitmessage_event_rsvps").upsert({event_id:event.id,user_id:session.user.id,response,updated_at:new Date().toISOString()},{onConflict:"event_id,user_id"});
+    setNotice(result.error?result.error.message:"RSVP saved.");
   }
 
   async function addAnotherAccount(){
@@ -1300,7 +1327,7 @@ export default function App() {
         </div>
         {current && <>
           <div className="details-section">{current.is_group && <button className="settings-row" onClick={() => void openGroupAdmin()}><ShieldCheck size={15}/> Manage group <span>›</span></button>}
-            <div className="details-label">NOTIFICATIONS</div><label className="details-notification-setting"><span>Alert me</span><select value={notificationLevel} onChange={e=>void saveConversationNotificationLevel(e.target.value as "all"|"mentions"|"muted")}><option value="all">All messages</option><option value="mentions">Mentions only</option><option value="muted">Muted</option></select></label><label className="details-notification-setting"><span>Notification sound</span><select value={customSound} onChange={e=>setCustomSound(e.target.value)}><option value="default">Default</option><option value="subtle">Subtle</option><option value="none">Silent</option></select></label><label className="details-notification-setting"><span>Quiet hours start</span><input type="time" value={quietStart} onChange={e=>setQuietStart(e.target.value)}/></label><label className="details-notification-setting"><span>Quiet hours end</span><input type="time" value={quietEnd} onChange={e=>setQuietEnd(e.target.value)}/></label><button className="settings-row" onClick={()=>void saveCustomNotification()}>Save notification settings <span>›</span></button><div className="details-label">CHAT PERSONALISATION</div><label className="details-notification-setting"><span>Chat theme</span><select value={chatTheme} onChange={e=>{setChatTheme(e.target.value);void saveConversationFeatures({theme:{preset:e.target.value}},"Chat theme saved.");}}><option value="default">Default</option><option value="midnight">Midnight</option><option value="ocean">Ocean</option><option value="forest">Forest</option><option value="sunset">Sunset</option></select></label><label className="details-notification-setting"><span>Temporary messages</span><select value={temporaryAfter} onChange={e=>{setTemporaryAfter(e.target.value);void saveConversationFeatures({disappearing_after_seconds:e.target.value==="0"?null:Number(e.target.value)},"Temporary chat setting saved.");}}><option value="0">Off</option><option value="3600">1 hour</option><option value="86400">24 hours</option><option value="604800">7 days</option><option value="2592000">30 days</option></select></label><label className="details-notification-setting"><span>Read receipts</span><input type="checkbox" checked={readReceipts} onChange={e=>{setReadReceipts(e.target.checked);void saveConversationFeatures({read_receipts:e.target.checked},"Read receipt preference saved.");}}/></label><div className="details-label">CHAT TOOLS</div><button className="settings-row" onClick={()=>void createConversationPoll()}>Create a poll <span>＋</span></button><button className="settings-row" onClick={()=>void createConversationEvent()}>Create an event <span>＋</span></button><button className="settings-row" onClick={()=>void addAnotherAccount()}>Switch / add account <span>＋</span></button><div className="details-label">ABOUT</div>
+            <div className="details-label">NOTIFICATIONS</div><label className="details-notification-setting"><span>Alert me</span><select value={notificationLevel} onChange={e=>void saveConversationNotificationLevel(e.target.value as "all"|"mentions"|"muted")}><option value="all">All messages</option><option value="mentions">Mentions only</option><option value="muted">Muted</option></select></label><label className="details-notification-setting"><span>Notification sound</span><select value={customSound} onChange={e=>setCustomSound(e.target.value)}><option value="default">Default</option><option value="subtle">Subtle</option><option value="none">Silent</option></select></label><label className="details-notification-setting"><span>Quiet hours start</span><input type="time" value={quietStart} onChange={e=>setQuietStart(e.target.value)}/></label><label className="details-notification-setting"><span>Quiet hours end</span><input type="time" value={quietEnd} onChange={e=>setQuietEnd(e.target.value)}/></label><button className="settings-row" onClick={()=>void saveCustomNotification()}>Save notification settings <span>›</span></button><div className="details-label">CHAT PERSONALISATION</div><label className="details-notification-setting"><span>Chat theme</span><select value={chatTheme} onChange={e=>{setChatTheme(e.target.value);void saveConversationFeatures({theme:{preset:e.target.value}},"Chat theme saved.");}}><option value="default">Default</option><option value="midnight">Midnight</option><option value="ocean">Ocean</option><option value="forest">Forest</option><option value="sunset">Sunset</option></select></label><label className="details-notification-setting"><span>Temporary messages</span><select value={temporaryAfter} onChange={e=>{setTemporaryAfter(e.target.value);void saveConversationFeatures({disappearing_after_seconds:e.target.value==="0"?null:Number(e.target.value)},"Temporary chat setting saved.");}}><option value="0">Off</option><option value="3600">1 hour</option><option value="86400">24 hours</option><option value="604800">7 days</option><option value="2592000">30 days</option></select></label><label className="details-notification-setting"><span>Read receipts</span><input type="checkbox" checked={readReceipts} onChange={e=>{setReadReceipts(e.target.checked);void saveConversationFeatures({read_receipts:e.target.checked},"Read receipt preference saved.");}}/></label><div className="details-label">CHAT TOOLS</div><button className="settings-row" onClick={()=>void createConversationPoll()}>Create a poll <span>＋</span></button><button className="settings-row" onClick={()=>void createConversationEvent()}>Create an event <span>＋</span></button><button className="settings-row" onClick={()=>void browseConversationPolls()}>View polls / vote <span>›</span></button><button className="settings-row" onClick={()=>void browseConversationEvents()}>View events / RSVP <span>›</span></button><button className="settings-row" onClick={()=>void addAnotherAccount()}>Switch / add account <span>＋</span></button><div className="details-label">ABOUT</div>
             <div className="details-row"><MessageCircle size={15}/><span>{current.is_group ? "Group chat" : "Private conversation"}</span></div>
             <div className="details-row"><ShieldCheck size={15}/><span>Conversation members only</span></div>
           </div>

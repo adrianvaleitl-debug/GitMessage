@@ -95,7 +95,7 @@ export default function App() {
   const [privateAiMessages,setPrivateAiMessages]=useState<any[]>([]);
   const [privateAiDraft,setPrivateAiDraft]=useState("");
   const [privateAiBusy,setPrivateAiBusy]=useState(false);
-  const [aiPanelOpen,setAiPanelOpen]=useState(true);
+  const [aiPanelOpen,setAiPanelOpen]=useState(false);
   const [friendRequests, setFriendRequests] = useState<any[]>([]);
   const [friends, setFriends] = useState<any[]>([]);
   const [groupAdminMembers, setGroupAdminMembers] = useState<any[]>([]);

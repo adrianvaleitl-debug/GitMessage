@@ -908,10 +908,8 @@ export default function App() {
   async function unfriend(userId: string) {
     if (!supabase || !session || !userId || userId===session.user.id) return;
     if(!friends.some(row=>row.user_id===userId)){setNotice("This user is no longer in your friends list.");return;}
-    const {data,error}=await supabase.from("user_contacts").delete()
-      .eq("user_id",session.user.id).eq("contact_id",userId).select("contact_id");
+    const {error}=await supabase.rpc("unfriend_gitmessage_user",{target_user_id:userId});
     if(error){setNotice("Could not unfriend: "+error.message);return;}
-    if(!data?.length){setNotice("Friend link was not found. Check the user_contacts permissions migration in Supabase.");return;}
     setFriends(rows=>rows.filter(row=>row.user_id!==userId));
     setContactStatuses(rows=>{const next={...rows};delete next[userId];return next;});
     setNotice("Friend removed. Your existing chat was kept.");

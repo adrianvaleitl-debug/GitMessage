@@ -1620,3 +1620,14 @@ select:focus-visible,input:focus-visible,textarea:focus-visible,button:focus-vis
 .conversation-name-line{display:flex;align-items:center;gap:7px;min-width:0;flex-wrap:wrap}
 .conversation-name-line>b{min-width:0}
 .contact-status-bubble{display:inline-flex;align-items:center;max-width:125px;overflow:hidden;padding:3px 7px;border:1px solid #6474a044;border-radius:999px;background:linear-gradient(110deg,#6574c52b,#b05ca52b);color:#c8d2ff;font-size:8px;font-weight:750;line-height:1.2;text-overflow:ellipsis;white-space:nowrap;vertical-align:middle}
+
+/* Compact, consistent banner editor actions */
+.profile-banner-editor{gap:10px;padding:13px}
+.profile-banner-editor>label{display:grid;gap:7px;margin:0;color:var(--text);font-size:11px;font-weight:600}
+.profile-banner-editor>label input[type="range"]{width:100%;margin:0;accent-color:var(--blue)}
+.profile-banner-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.profile-banner-editor .profile-banner-change{width:auto;min-height:34px;display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;margin:0;padding:0 13px;border:1px solid var(--blue);border-radius:7px;background:var(--blue);color:#fff!important;font-size:11px;font-weight:650;line-height:1;cursor:pointer;transition:filter .15s ease,transform .15s ease}
+.profile-banner-editor .profile-banner-change:hover{filter:brightness(1.1);transform:translateY(-1px)}
+.profile-banner-editor .profile-banner-remove{min-height:34px;justify-self:auto;margin:0;padding:0 12px;border:1px solid rgba(225,139,145,.45);border-radius:7px;background:rgba(225,139,145,.08);color:#f09ba2;font-size:11px;font-weight:600;line-height:1;cursor:pointer;transition:background .15s ease,border-color .15s ease}
+.profile-banner-editor .profile-banner-remove:hover{background:rgba(225,139,145,.16);border-color:#e18b91}
+.profile-banner-editor>small{margin-top:-2px;line-height:1.4}

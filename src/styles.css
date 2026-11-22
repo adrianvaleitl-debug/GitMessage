@@ -1879,3 +1879,12 @@ html,body,#root{width:100%;height:100%;min-height:100%;margin:0;overflow:hidden}
 .github-profile-avatar-wrap .profile-photo{width:54px;height:54px}
 .github-avatar-shortcut{position:absolute;right:-3px;bottom:-3px;width:23px;height:23px;display:grid;place-items:center;border:2px solid #2b2d31;border-radius:50%;background:#41434a;color:#fff;text-decoration:none;box-shadow:0 2px 7px #0006}
 .github-avatar-shortcut:hover{background:#5865f2;color:#fff}
+
+
+/* Translation and group member access controls */
+.message-translation{margin:6px 0 4px;padding:9px 11px;border-left:2px solid var(--accent,#6d8cff);border-radius:0 9px 9px 0;background:rgba(120,140,190,.09);font-size:13px;line-height:1.5;overflow-wrap:anywhere}
+.message-translation small{display:block;margin-bottom:3px;opacity:.62;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
+.group-access-settings{display:grid;gap:7px;margin:14px 0;padding:12px;border:1px solid var(--glass-border,rgba(140,150,180,.2));border-radius:12px;background:rgba(120,140,190,.06)}
+.group-access-settings>label{font-size:10px;font-weight:800;letter-spacing:.1em;opacity:.7}
+.group-access-settings select{width:100%;min-height:40px;padding:9px 11px;border:1px solid var(--glass-border,rgba(140,150,180,.25));border-radius:9px;background:var(--input-bg,rgba(120,130,160,.1));color:inherit;font:inherit}
+.group-access-settings small{font-size:11px;line-height:1.4;opacity:.65}

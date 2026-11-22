@@ -2,7 +2,9 @@
 -- Owners can assign roles and permissions. Members with manage_members can
 -- manage non-owner members, but cannot promote themselves or assign ownership.
 
-create or replace function public.set_gitmessage_group_member_permissions(
+drop function if exists public.set_gitmessage_group_member_permissions(uuid,uuid,jsonb,text);
+
+create function public.set_gitmessage_group_member_permissions(
   target_conversation_id uuid,
   target_user_id uuid,
   new_permissions jsonb,

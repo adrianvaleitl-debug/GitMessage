@@ -20,7 +20,7 @@ Deno.serve(async (req) => {
     if (!openAiKey) return Response.json({ error: "AI is not configured yet. Set the OPENAI_API_KEY Supabase secret." }, { status: 503, headers: cors });
 
     const authClient = createClient(supabaseUrl, anonKey, { global: { headers: { Authorization: authorization } } });
-    const token = authorization.replace(/^Bearer\\s+/i, "");
+    const token = authorization.replace(/^Bearer\s+/i, "");
     const { data: { user }, error: authError } = await authClient.auth.getUser(token);
     if (authError || !user) return Response.json({ error: "Your session is invalid. Sign in again." }, { status: 401, headers: cors });
 

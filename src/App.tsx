@@ -196,6 +196,7 @@ export default function App() {
   const localStreamRef = useRef<MediaStream | null>(null);
   const remoteAudioRef = useRef<HTMLAudioElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
+  const remoteStreamRef = useRef<MediaStream | null>(null);
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const callRecipientRef = useRef<string>("");
   const callConversationRef = useRef<string>("");
@@ -1343,7 +1344,14 @@ export default function App() {
     const peer = new RTCPeerConnection({ iceServers: [{ urls: "stun:stun.l.google.com:19302" }, { urls: "stun:stun1.l.google.com:19302" }] });
     peerRef.current = peer;
     peer.onicecandidate = event => { if (event.candidate) void sendCallSignal(recipientId, "ice", { candidate: event.candidate.toJSON() }, conversationId); };
-    peer.ontrack = event => { if (remoteAudioRef.current) remoteAudioRef.current.srcObject = event.streams[0]; if (remoteVideoRef.current) remoteVideoRef.current.srcObject = event.streams[0]; setCallState("connected"); };
+    peer.ontrack = event => {
+      const stream = event.streams[0] || remoteStreamRef.current || new MediaStream();
+      remoteStreamRef.current = stream;
+      if (!event.streams[0] && !stream.getTracks().some(track => track.id === event.track.id)) stream.addTrack(event.track);
+      if (remoteAudioRef.current) remoteAudioRef.current.srcObject = stream;
+      if (remoteVideoRef.current) remoteVideoRef.current.srcObject = stream;
+      setCallState("connected");
+    };
     peer.onconnectionstatechange = () => {
       if (peerRef.current !== peer) return;
       if (peer.connectionState === "connected") {
@@ -1475,6 +1483,8 @@ export default function App() {
     if (localVideoRef.current) localVideoRef.current.srcObject = null;
     if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
     if (remoteAudioRef.current) remoteAudioRef.current.srcObject = null;
+    remoteStreamRef.current = null;
+    if (callDisconnectTimerRef.current !== null) window.clearTimeout(callDisconnectTimerRef.current);
     const peer = peerRef.current;
     peerRef.current = null;
     if (peer) peer.close();
@@ -1486,7 +1496,11 @@ export default function App() {
     const channel = supabase.channel("gitmessage-call-signals-" + session.user.id)
       .on("postgres_changes",{event:"INSERT",schema:"public",table:"gitmessage_call_signals",filter:"recipient_id=eq."+session.user.id},async payload => {
         const signal = payload.new as any;
-        if (signal.signal_type === "offer" && callState === "idle" && !dismissedCallIdsRef.current.has(signal.id)) { setPendingCall(signal); setCallKind(signal.payload?.kind === "video" ? "video" : "audio"); setCallState("incoming"); return; }
+        if (signal.signal_type === "offer") {
+          if (callState === "idle" && !dismissedCallIdsRef.current.has(signal.id)) { setPendingCall(signal); setCallKind(signal.payload?.kind === "video" ? "video" : "audio"); setCallState("incoming"); }
+          else if (callState !== "idle") void sendCallSignal(signal.sender_id,"reject",{},signal.conversation_id);
+          return;
+        }
         if (signal.signal_type === "answer" && peerRef.current && signal.sender_id) {
           await peerRef.current.setRemoteDescription(new RTCSessionDescription(signal.payload.description));
           await applyQueuedCallIce(signal.sender_id, signal.conversation_id);
@@ -1497,7 +1511,11 @@ export default function App() {
           } else {
             pendingIceCandidatesRef.current.push(signal);
           }
-        } else if (["hangup","reject"].includes(signal.signal_type)) { await endCall(false); }
+        } else if (["hangup","reject"].includes(signal.signal_type)) {
+          if (signal.signal_type === "reject") setNotice("The other person declined the call.");
+          else setNotice("The other person ended the call.");
+          await endCall(false);
+        }
       }).subscribe();
     return () => { void supabase!.removeChannel(channel); };
   }, [session, callState]);

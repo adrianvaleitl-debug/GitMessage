@@ -1643,3 +1643,15 @@ select:focus-visible,input:focus-visible,textarea:focus-visible,button:focus-vis
 @keyframes gm-typing-bounce{0%,60%,100%{transform:translateY(0);opacity:.55}30%{transform:translateY(-3px);opacity:1}}
 .conversation-seen-indicator{display:inline-flex;align-items:center;justify-content:center;color:#70c9e9;opacity:.95}
 @media(prefers-reduced-motion:reduce){.conversation-typing-indicator i{animation:none}}
+
+
+/* In-call controls and expanded call view */
+.call-banner .call-control-button{width:34px;height:32px;display:grid;place-items:center;padding:0;border:1px solid #555963;background:#343740;color:#f1f3f6;border-radius:7px}
+.call-banner .call-control-button:hover{background:#454955}
+.call-banner .call-control-button.is-off{background:#7f3038;border-color:#a64a54;color:#fff}
+.call-banner.call-banner-maximized{position:fixed;inset:12px;z-index:80;align-items:flex-start;justify-content:flex-end;padding:18px;background:#17191ff2;border:1px solid #555963;border-radius:14px;box-shadow:0 18px 70px #000b}
+.call-banner.call-banner-maximized .call-banner-copy{margin-right:auto}
+.call-banner.call-banner-maximized~*{pointer-events:none}
+.call-banner.call-banner-maximized~* .remote-call-video.visible{position:fixed;z-index:81;inset:70px 5vw 100px;width:90vw;height:calc(100vh - 190px);max-height:none;object-fit:contain;background:#08090c}
+.call-banner.call-banner-maximized~* .local-call-video.visible{position:fixed;z-index:82;right:7vw;bottom:125px;width:min(220px,22vw);height:auto;max-height:25vh;object-fit:cover}
+@media(max-width:700px){.call-banner.call-banner-maximized{inset:6px;padding:12px;gap:6px;flex-wrap:wrap}.call-banner.call-banner-maximized .call-banner-copy{flex-basis:100%}.call-banner.call-banner-maximized~* .remote-call-video.visible{inset:125px 10px 100px;width:calc(100vw - 20px);height:calc(100dvh - 240px)}.call-banner.call-banner-maximized~* .local-call-video.visible{right:18px;bottom:112px;width:110px}}

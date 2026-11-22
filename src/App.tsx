@@ -44,6 +44,7 @@ export default function App() {
   const [busy, setBusy] = useState(false);
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [contactStatuses,setContactStatuses]=useState<Record<string,string>>({});
+  const [conversationContactIds,setConversationContactIds]=useState<Record<string,string>>({});
   const [conversationTyping,setConversationTyping]=useState<Record<string,boolean>>({});
   const [conversationSeen,setConversationSeen]=useState<Record<string,boolean>>({});
   const [active, setActive] = useState("");
@@ -358,17 +359,29 @@ export default function App() {
   },[conversations,session?.user?.id]);
 
   useEffect(() => {
-    if(!supabase||!session||!conversations.length){setContactStatuses({});return;}
+    if(!supabase||!session||!conversations.length){setContactStatuses({});setConversationContactIds({});return;}
     let alive=true;
-    const ids=Array.from(new Set([...conversations.flatMap(row=>(row.members||[]).map(member=>member.user_id)),...friends.map((friend:any)=>friend.user_id)].filter(id=>id&&id!==session.user.id)));
-    if(!ids.length){setContactStatuses({});return;}
-    void supabase.from("gitmessage_user_status").select("user_id,status_text").in("user_id",ids).then(({data,error})=>{
-      if(!alive||error)return;
-      const next:Record<string,string>={};
-      (data||[]).forEach((row:any)=>{if(row.status_text?.trim())next[row.user_id]=row.status_text.trim();});
+    const refreshContactStatuses=async()=>{
+      const conversationIds=conversations.map(row=>row.id);
+      const {data:members,error:membersError}=await supabase!.from("conversation_members").select("conversation_id,user_id").in("conversation_id",conversationIds).neq("user_id",session.user.id);
+      if(!alive)return;
+      if(membersError){console.warn("Could not load contact list members:",membersError.message);return;}
+      const contactByConversation:Record<string,string>={};
+      (members||[]).forEach((row:any)=>{if(!contactByConversation[row.conversation_id])contactByConversation[row.conversation_id]=row.user_id;});
+      setConversationContactIds(contactByConversation);
+      const ids=Array.from(new Set(Object.values(contactByConversation)));
+      if(!ids.length){setContactStatuses({});return;}
+      const {data,error}=await supabase!.from("gitmessage_user_status").select("user_id,status_text,expires_at").in("user_id",ids);
+      if(!alive)return;
+      if(error){console.warn("Could not load contact statuses:",error.message);return;}
+      const now=Date.now();const next:Record<string,string>={};
+      (data||[]).forEach((row:any)=>{if(row.status_text?.trim()&&(!row.expires_at||new Date(row.expires_at).getTime()>now))next[row.user_id]=row.status_text.trim();});
       setContactStatuses(next);
-    });
-    return()=>{alive=false;};
+    };
+    void refreshContactStatuses();
+    const timer=window.setInterval(()=>void refreshContactStatuses(),15000);
+    const channel=supabase.channel("gitmessage-contact-statuses").on("postgres_changes",{event:"*",schema:"public",table:"gitmessage_user_status"},()=>void refreshContactStatuses()).subscribe();
+    return()=>{alive=false;window.clearInterval(timer);void supabase!.removeChannel(channel);};
   },[conversations,session?.user?.id]);
 
   useEffect(() => {
@@ -1417,7 +1430,7 @@ export default function App() {
         <div className="list-heading"><span>{gtaViTheme ? "THE CONTACTS" : "DIRECT MESSAGES"}</span><button className="glass-icon tiny" title="New conversation" onClick={() => setModal("new")}><Plus size={17}/></button></div>
         <div className="conversation-list">
           {filtered.map((conversation, index) => <div key={conversation.id} role="button" tabIndex={0} className={"conversation-item" + (active === conversation.id ? " active" : "")} onContextMenu={event=>{event.preventDefault();event.stopPropagation();setChatContextMenu({x:Math.min(event.clientX,window.innerWidth-220),y:Math.min(event.clientY,window.innerHeight-100),conversation});}} onClick={() => {setChatContextMenu(null);setActive(conversation.id)}} onTouchEnd={event => { event.preventDefault(); event.stopPropagation(); setActive(conversation.id); }} onKeyDown={event => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); setActive(conversation.id); } }}>
-            <div className={"conversation-avatar avatar-tone-" + (index % 4)}>{conversation.avatar_path && supabase ? <img src={supabase.storage.from(conversation.is_group ? "gitmessage-group-avatars" : "gitmessage-avatars").getPublicUrl(conversation.avatar_path).data.publicUrl} alt=""/> : <MessageCircle size={17}/>}</div><div className="conversation-meta"><div className="conversation-name-line"><b>{conversation.title || "Conversation"}</b>{(conversation.members||[]).filter(member=>member.user_id!==session.user.id).slice(0,1).map(member=>contactStatuses[member.user_id] ? <span key={member.user_id} className="contact-status-bubble conversation-contact-status" title="Status">{contactStatuses[member.user_id]}</span> : null)}{conversationTyping[conversation.id] && <span className="conversation-typing-indicator" title="Typing"><i/><i/><i/></span>}{conversationSeen[conversation.id] && <span className="conversation-seen-indicator" title="Seen"><CheckCheck size={13}/></span>}</div><small>{conversation.is_group ? (conversation.description || "Group conversation") : "Open conversation"}</small>{conversation.is_group && <div className="conversation-member-avatars">{(conversation.members || []).slice(0,5).map(member=><span key={member.user_id} title={member.display_name || member.username || "Member"}>{member.avatar_path && supabase ? <img src={supabase.storage.from("gitmessage-avatars").getPublicUrl(member.avatar_path).data.publicUrl} alt="" style={{objectPosition:member.avatar_position||"50% 50%"}}/> : (member.display_name || member.username || "?").slice(0,1).toUpperCase()}</span>)}{(conversation.members || []).length>5 && <span className="conversation-member-extra">+{(conversation.members || []).length-5}</span>}</div>}</div>{active === conversation.id && <span className="active-indicator"/>}
+            <div className={"conversation-avatar avatar-tone-" + (index % 4)}>{conversation.avatar_path && supabase ? <img src={supabase.storage.from(conversation.is_group ? "gitmessage-group-avatars" : "gitmessage-avatars").getPublicUrl(conversation.avatar_path).data.publicUrl} alt=""/> : <MessageCircle size={17}/>}</div><div className="conversation-meta"><div className="conversation-name-line"><b>{conversation.title || "Conversation"}</b>{conversationContactIds[conversation.id] && contactStatuses[conversationContactIds[conversation.id]] && <span className="contact-status-bubble conversation-contact-status" title="Status">{contactStatuses[conversationContactIds[conversation.id]]}</span>}{conversationTyping[conversation.id] && <span className="conversation-typing-indicator" title="Typing"><i/><i/><i/></span>}{conversationSeen[conversation.id] && <span className="conversation-seen-indicator" title="Seen"><CheckCheck size={13}/></span>}</div><small>{conversation.is_group ? (conversation.description || "Group conversation") : "Open conversation"}</small>{conversation.is_group && <div className="conversation-member-avatars">{(conversation.members || []).slice(0,5).map(member=><span key={member.user_id} title={member.display_name || member.username || "Member"}>{member.avatar_path && supabase ? <img src={supabase.storage.from("gitmessage-avatars").getPublicUrl(member.avatar_path).data.publicUrl} alt="" style={{objectPosition:member.avatar_position||"50% 50%"}}/> : (member.display_name || member.username || "?").slice(0,1).toUpperCase()}</span>)}{(conversation.members || []).length>5 && <span className="conversation-member-extra">+{(conversation.members || []).length-5}</span>}</div>}</div>{active === conversation.id && <span className="active-indicator"/>}
           </div>)}
           {filtered.length === 0 && <div className="list-empty"><div className="empty-orb"><MessageCircle size={19}/></div><b>{query ? "Nothing found" : "A quiet beginning"}</b><p>{query ? "Try another name." : "Start a conversation to see it here."}</p>{!query && <button onClick={() => setModal("new")}>Start a conversation <Plus size={14}/></button>}</div>}
         </div>

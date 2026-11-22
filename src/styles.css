@@ -1228,3 +1228,35 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
 .server-list-avatar{overflow:hidden;border-radius:50%}
 .server-list-avatar img{display:block}
 #group-description,#server-description{min-height:72px;padding:10px 11px;resize:vertical}
+
+
+/* Larger profile workspace and full-screen server directory. */
+.modal-backdrop:has(.servers-fullscreen){padding:0;place-items:stretch}
+.modal-card.servers-fullscreen{width:100vw!important;max-width:none!important;height:100dvh;max-height:100dvh!important;min-height:100dvh;box-sizing:border-box;overflow:auto;border-radius:0!important;padding:clamp(24px,4vw,64px)!important}
+.modal-card.servers-fullscreen>form,.modal-card.servers-fullscreen>.contact-result,.modal-card.servers-fullscreen>.eyebrow,.modal-card.servers-fullscreen>.modal-description{max-width:900px}
+.modal-card.profile-expanded{width:min(50vw,920px)!important;min-width:min(560px,calc(100vw - 28px));max-width:920px!important;max-height:92dvh!important;padding:clamp(24px,3vw,42px)!important}
+.modal-card.profile-expanded:has(.public-profile-card){width:min(50vw,760px)!important;min-width:min(520px,calc(100vw - 28px));max-width:760px!important;padding:0!important}
+.profile-expanded .profile-editor{gap:13px}
+.profile-expanded .profile-customize{display:grid;grid-template-columns:1fr 1fr;gap:10px 18px;padding:18px;border-radius:16px}
+.profile-expanded .profile-customize h3,.profile-expanded .profile-customize p{grid-column:1/-1}
+.profile-expanded .profile-customize label{margin:0}
+.profile-expanded .profile-banner-editor-preview{height:150px}
+.profile-expanded .public-profile-card{min-height:460px;padding:clamp(28px,4vw,52px)!important}
+.profile-expanded .public-profile-heading h2{font-size:clamp(26px,3vw,38px)!important}
+.profile-expanded .public-profile-identity{margin:30px 0 24px}
+.profile-expanded .public-profile-identity .profile-photo{width:96px;height:96px;flex-basis:96px}
+.profile-expanded .profile-bio{font-size:14px;line-height:1.7}
+.profile-card-gta-vice-city{position:relative;isolation:isolate;overflow:hidden;border-color:rgba(255,113,177,.42)!important;background:radial-gradient(ellipse at 92% 5%,rgba(255,74,155,.32),transparent 44%),radial-gradient(ellipse at 0% 100%,rgba(79,113,255,.28),transparent 48%),linear-gradient(145deg,#21142e 0%,#17172f 52%,#101b36 100%)!important;color:#fff!important}
+.profile-card-gta-vice-city:before{content:"VICE CITY";display:block;margin:0 0 18px;color:#ff83ba;font:900 clamp(30px,5vw,58px)/.9 'Barlow Condensed',Inter,sans-serif;letter-spacing:.13em;text-shadow:0 4px 25px rgba(255,75,158,.3)}
+.profile-card-gta-vice-city .public-profile-heading{border-color:rgba(255,126,187,.28)}
+.profile-card-gta-vice-city .public-profile-heading .eyebrow{color:#ff9cc8!important}
+.profile-card-gta-vice-city .profile-photo{border-color:#ff68ad!important;box-shadow:0 0 0 5px rgba(255,104,173,.2),0 0 28px rgba(255,104,173,.25)!important}
+.profile-card-gta-vice-city .public-profile-message{background:linear-gradient(110deg,#ff4f9a,#a64dce 55%,#536eff)!important;color:#fff!important}
+.profile-card-gta-vice-city .profile-special-tag{border-color:rgba(255,133,190,.35);background:rgba(255,91,160,.16);color:#ffc0dc}
+@media(max-width:760px){
+ .modal-card.servers-fullscreen{padding:22px 16px!important}
+ .modal-card.profile-expanded,.modal-card.profile-expanded:has(.public-profile-card){width:calc(100vw - 20px)!important;min-width:0;max-width:none!important;max-height:94dvh!important;padding:20px!important}
+ .modal-card.profile-expanded:has(.public-profile-card){padding:0!important}
+ .profile-expanded .profile-customize{grid-template-columns:1fr}
+ .profile-expanded .profile-customize h3,.profile-expanded .profile-customize p{grid-column:auto}
+}

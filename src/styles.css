@@ -1541,3 +1541,27 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
 @media(max-width:1120px) and (min-width:761px){.desktop-shell{grid-template-columns:64px 230px minmax(0,1fr) 300px!important}}
 @media(max-width:760px){.desktop-shell{grid-template-columns:64px minmax(0,1fr) 290px!important}.desktop-shell>.conversation-details{grid-column:3!important}}
 @media(max-width:560px){.desktop-shell{grid-template-columns:minmax(0,1fr)!important}.desktop-shell>.conversation-details{grid-column:1!important}}
+
+/* Final desktop grid correction: chat, details and contacts occupy separate tracks. */
+@media(min-width:1101px){
+  .desktop-shell{
+    display:grid!important;
+    grid-template-columns:64px minmax(300px,1fr) 300px 258px!important;
+    grid-template-rows:minmax(0,1fr)!important;
+    gap:10px!important;
+    padding:10px!important;
+  }
+  .desktop-shell>.app-rail{grid-column:1!important;grid-row:1!important}
+  .desktop-shell>.conversation-pane{grid-column:2!important;grid-row:1!important;display:flex!important;min-width:0!important}
+  .desktop-shell>.sidebar{grid-column:3!important;grid-row:1!important;min-width:0!important}
+  .desktop-shell>.conversation-details{grid-column:4!important;grid-row:1!important;display:none!important;position:relative!important;inset:auto!important;width:auto!important;max-width:none!important;min-width:0!important;height:100%!important;max-height:100%!important;box-sizing:border-box!important;overflow-y:auto!important}
+  .desktop-shell>.conversation-details.details-open{display:flex!important}
+  .desktop-shell .mobile-back{display:none!important}
+}
+@media(max-width:1100px){
+  .desktop-shell{grid-template-columns:56px minmax(0,1fr) 230px!important}
+  .desktop-shell>.app-rail{grid-column:1!important;grid-row:1!important}
+  .desktop-shell>.conversation-pane{grid-column:2!important;grid-row:1!important;display:flex!important}
+  .desktop-shell>.sidebar{grid-column:3!important;grid-row:1!important}
+  .desktop-shell>.conversation-details{display:none!important}
+}

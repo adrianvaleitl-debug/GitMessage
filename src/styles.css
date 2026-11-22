@@ -1434,3 +1434,8 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
 .settings-back-button{position:absolute;top:14px;left:16px;z-index:4;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:30px;padding:6px 10px;border:1px solid #41434a;border-radius:8px;background:#383a40;color:#e1e3e7;font:inherit;font-size:10px;font-weight:650;cursor:pointer}
 .settings-back-button:hover{background:#454850;color:#fff}
 .modal-card:has(.settings-back-button)>.modal-close{top:14px;right:16px;z-index:5;width:30px;height:30px}
+
+/* Keep the conversation-details close control inside the heading, opposite Back. */
+.desktop-shell>.conversation-details .details-heading{position:relative!important;padding-right:34px!important}
+.desktop-shell>.conversation-details .details-heading .details-back-button{position:absolute!important;left:0!important;top:50%!important;right:auto!important;transform:translateY(-50%)!important}
+.desktop-shell>.conversation-details .details-close{position:absolute!important;right:0!important;top:50%!important;left:auto!important;transform:translateY(-50%)!important;z-index:5!important}

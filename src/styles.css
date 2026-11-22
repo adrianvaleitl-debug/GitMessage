@@ -1565,3 +1565,19 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
   .desktop-shell>.sidebar{grid-column:3!important;grid-row:1!important}
   .desktop-shell>.conversation-details{display:none!important}
 }
+
+/* Collapse the details track entirely when the conversation details panel is closed. */
+@media(min-width:1101px){
+  .desktop-shell:not(.has-details-open){
+    grid-template-columns:64px minmax(0,1fr) 258px!important;
+  }
+  .desktop-shell:not(.has-details-open)>.conversation-pane{grid-column:2!important}
+  .desktop-shell:not(.has-details-open)>.sidebar{grid-column:3!important}
+  .desktop-shell:not(.has-details-open)>.conversation-details{display:none!important}
+  .desktop-shell.has-details-open{
+    grid-template-columns:64px minmax(0,1fr) 300px 258px!important;
+  }
+  .desktop-shell.has-details-open>.conversation-pane{grid-column:2!important}
+  .desktop-shell.has-details-open>.conversation-details{grid-column:3!important}
+  .desktop-shell.has-details-open>.sidebar{grid-column:4!important}
+}

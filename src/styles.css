@@ -1171,3 +1171,41 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
 .public-profile-banner{height:132px;margin:-25px -25px 18px;width:calc(100% + 50px);border-radius:22px 22px 0 0}
 .profile-banner-preview{height:86px;margin:0 0 12px;border-radius:11px}
 .public-profile-card .public-profile-heading{min-height:56px}
+
+
+/* Optional GTA VI-inspired Vice City theme. */
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap');
+.desktop-shell.gta-vi{
+  --bg:#100d20;--panel:#17132b;--panel-2:#211632;--panel-3:#302044;
+  --line:rgba(255,126,184,.25);--text:#fff2f8;--muted:#d0a7c3;--subtle:#9b789c;
+  --blue:#ff4f9a;--blue-hover:#e63b88;
+  background:radial-gradient(ellipse at 75% -15%,rgba(255,92,166,.34),transparent 43%),radial-gradient(ellipse at 15% 100%,rgba(69,91,220,.28),transparent 45%),linear-gradient(135deg,#100d20 0%,#21132f 52%,#11152d 100%);
+  color:var(--text);font-family:'Barlow Condensed',Inter,sans-serif;
+}
+.desktop-shell.gta-vi .app-rail{background:linear-gradient(180deg,#1d1230 0%,#11152d 100%);border-color:rgba(255,108,178,.22)}
+.desktop-shell.gta-vi>.sidebar{background:linear-gradient(160deg,rgba(45,23,55,.98),rgba(19,22,48,.98));border-color:rgba(255,108,178,.2)}
+.desktop-shell.gta-vi>.conversation-pane{background:linear-gradient(145deg,#1d1735 0%,#17152f 55%,#111a35 100%)}
+.desktop-shell.gta-vi .conversation-header{background:linear-gradient(100deg,rgba(255,72,151,.16),rgba(91,112,255,.12)),rgba(22,18,43,.94);border-bottom-color:rgba(255,118,183,.25)!important}
+.desktop-shell.gta-vi .message-canvas{background:linear-gradient(180deg,rgba(33,22,54,.92),rgba(18,24,49,.96))}
+.desktop-shell.gta-vi .sidebar-brand{background:linear-gradient(105deg,rgba(255,73,153,.17),rgba(91,112,255,.13));border-color:rgba(255,118,183,.2)}
+.desktop-shell.gta-vi .brand-lockup,.desktop-shell.gta-vi .header-person h2,.desktop-shell.gta-vi .message-author{font-family:'Barlow Condensed',Inter,sans-serif;font-weight:800;letter-spacing:.045em;text-transform:uppercase}
+.desktop-shell.gta-vi .brand-lockup{font-size:21px;background:linear-gradient(90deg,#ff79b7,#ffd0e5 48%,#8db4ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.desktop-shell.gta-vi .list-heading,.desktop-shell.gta-vi .eyebrow{color:#ff91c2;letter-spacing:.16em}
+.desktop-shell.gta-vi .conversation-item.active{background:linear-gradient(100deg,rgba(255,70,150,.24),rgba(92,113,255,.22));box-shadow:inset 2px 0 #ff65a9}
+.desktop-shell.gta-vi .conversation-item:hover{background:linear-gradient(100deg,rgba(255,70,150,.13),rgba(92,113,255,.12))}
+.desktop-shell.gta-vi .rail-button:hover,.desktop-shell.gta-vi .rail-button.selected{background:linear-gradient(145deg,#ff4f9a,#a64dce 55%,#536eff);box-shadow:0 5px 18px rgba(255,79,154,.3)}
+.desktop-shell.gta-vi .rail-add{color:#7ce9df}
+.desktop-shell.gta-vi .account-avatar,.desktop-shell.gta-vi .message-avatar{background:linear-gradient(145deg,#ff5ca5,#9657d9 58%,#547dff)}
+.desktop-shell.gta-vi .search-field,.desktop-shell.gta-vi .composer-glass{background:linear-gradient(115deg,rgba(255,89,164,.1),rgba(94,119,255,.1)),rgba(12,15,35,.72);border:1px solid rgba(255,126,184,.22)}
+.desktop-shell.gta-vi .composer-area{background:linear-gradient(0deg,rgba(14,17,39,.98),rgba(14,17,39,.72))}
+.desktop-shell.gta-vi .send-button,.desktop-shell.gta-vi .primary-button{background:linear-gradient(115deg,#ff4f9a,#b14ed1 55%,#587bff);color:#fff;box-shadow:0 5px 18px rgba(255,79,154,.2)}
+.desktop-shell.gta-vi .glass-icon:hover,.desktop-shell.gta-vi .preference-row:hover{background:rgba(255,93,165,.14);color:#fff}
+.desktop-shell.gta-vi .settings-customize select,.desktop-shell.gta-vi input,.desktop-shell.gta-vi textarea{accent-color:#ff5ca5}
+.desktop-shell.gta-vi .message-bubble{color:#f4e8f4}
+.desktop-shell.gta-vi .gta-theme-toggle{padding:11px;border:1px solid rgba(255,111,177,.3);border-radius:12px;background:linear-gradient(110deg,rgba(255,77,153,.12),rgba(91,112,255,.12))}
+.desktop-shell.gta-vi .gta-theme-toggle small{display:block;color:#c9a6c4;font-size:10px;font-weight:400;margin-top:3px}
+.desktop-shell.gta-vi.light{color-scheme:dark}
+@media(max-width:760px){
+ .desktop-shell.gta-vi{background:linear-gradient(160deg,#24132f,#11152d 75%)!important}
+ .desktop-shell.gta-vi>.sidebar,.desktop-shell.gta-vi>.conversation-pane{background:linear-gradient(160deg,#24132f,#11152d)!important}
+}

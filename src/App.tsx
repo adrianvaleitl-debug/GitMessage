@@ -352,6 +352,7 @@ export default function App() {
       const { data, error } = await supabase!.from("messages")
         .select("id,body,sender_id,created_at,edited_at,deleted_at,parent_message_id")
         .eq("conversation_id", active)
+        .or("expires_at.is.null,expires_at.gt."+new Date().toISOString())
         .order("created_at", { ascending: true })
         .limit(300);
       if (!alive) return;

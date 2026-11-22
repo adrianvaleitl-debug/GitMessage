@@ -1,3 +1,43 @@
+
+/* Translation preferences: compact, aligned settings card. */
+.translation-settings-panel{
+  display:flex!important;flex-direction:column;gap:15px!important;
+  margin:16px 0!important;padding:17px!important;
+  border:1px solid var(--line)!important;border-radius:15px!important;
+  background:var(--panel-2)!important;color:var(--text)!important;
+}
+.translation-settings-heading{display:flex;align-items:center;gap:12px;min-width:0}
+.translation-settings-icon{
+  width:40px;height:40px;flex:0 0 40px;display:grid;place-items:center;
+  border-radius:12px;background:color-mix(in srgb,var(--blue) 15%,transparent);
+  color:var(--blue);
+}
+.translation-settings-heading h3{margin:0 0 3px!important;font-size:13px!important;font-weight:700;letter-spacing:.01em}
+.translation-settings-heading p{margin:0!important;color:var(--muted)!important;font-size:11px;line-height:1.45}
+.translation-language-control{display:grid;gap:7px}
+.translation-language-control label{margin:0!important;color:var(--muted)!important;font-size:10px;font-weight:650}
+.translation-language-control select{
+  appearance:auto;width:100%;height:42px;padding:0 12px!important;
+  border:1px solid var(--line)!important;border-radius:10px!important;
+  background:var(--panel)!important;color:var(--text)!important;
+  font:500 12px Inter,ui-sans-serif,system-ui,sans-serif!important;
+  outline:none;transition:border-color .16s,box-shadow .16s;
+}
+.translation-language-control select:focus{border-color:var(--blue)!important;box-shadow:0 0 0 3px color-mix(in srgb,var(--blue) 16%,transparent)}
+.translation-settings-footnote{
+  display:flex;align-items:flex-start;gap:8px;padding-top:11px;
+  border-top:1px solid var(--line);color:var(--muted);font-size:10px;line-height:1.5;
+}
+.translation-active-dot{width:7px;height:7px;flex:0 0 7px;margin-top:3px;border-radius:50%;background:var(--green);box-shadow:0 0 0 3px color-mix(in srgb,var(--green) 14%,transparent)}
+.desktop-shell.gta-vi .translation-settings-panel{
+  border-color:rgba(255,126,184,.3)!important;
+  background:linear-gradient(125deg,rgba(255,77,153,.12),rgba(91,112,255,.12)),rgba(33,22,50,.96)!important;
+  box-shadow:0 8px 24px rgba(8,5,22,.14),inset 0 1px 0 rgba(255,255,255,.04);
+}
+.desktop-shell.gta-vi .translation-settings-icon{background:linear-gradient(135deg,rgba(255,79,154,.2),rgba(88,112,255,.2));color:#ff83bd}
+.desktop-shell.gta-vi .translation-language-control select{border-color:rgba(255,126,184,.28)!important;background:rgba(20,15,37,.9)!important;color:#fff2f8!important}
+.desktop-shell.gta-vi .translation-settings-footnote{border-color:rgba(255,126,184,.18)}
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;650;700;750&display=swap');
 
 :root{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;color-scheme:dark;--bg:#1e1f22;--panel:#2b2d31;--panel-2:#232428;--panel-3:#383a40;--line:#3f4148;--text:#f2f3f5;--muted:#aeb1b8;--subtle:#777b84;--blue:#5865f2;--blue-hover:#4752c4;--green:#23a55a}

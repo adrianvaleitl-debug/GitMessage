@@ -1926,3 +1926,21 @@ html,body,#root{width:100%;height:100%;min-height:100%;margin:0;overflow:hidden}
   .profile-expanded .public-profile-identity{margin:18px 0}
   .profile-expanded .public-profile-identity .profile-photo{width:72px;height:72px;flex-basis:72px}
 }
+
+
+/* Consistent dropdowns and balanced group creation layout. */
+select{appearance:none;-webkit-appearance:none;min-width:0;max-width:100%;box-sizing:border-box;padding-right:36px!important;color-scheme:dark;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23aeb8ca' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E")!important;background-repeat:no-repeat!important;background-position:right 12px center!important;background-size:14px!important}
+select option{background:#202631;color:#eef2f8}
+.group-create-modal{width:min(560px,calc(100vw - 32px))!important;min-width:0!important;max-width:560px!important;max-height:min(88dvh,820px)!important;box-sizing:border-box;overflow-y:auto!important;padding:28px!important}
+.group-create-modal .group-access-settings{grid-template-columns:minmax(0,1fr);gap:9px;margin:12px 0;padding:13px 14px}
+.group-create-modal .group-access-settings select{display:block;width:100%;min-height:44px;padding:10px 38px 10px 12px!important;border-radius:10px;font-size:13px;line-height:1.35}
+.group-create-modal .group-access-settings small{display:block;max-width:100%;font-size:11px;line-height:1.45}
+.group-create-modal .group-friend-picker{max-height:230px;overflow-y:auto;overscroll-behavior:contain;padding:2px 4px 2px 0}
+.group-create-modal .group-friend-option,.group-create-modal .group-friend-name{min-width:0}
+.group-create-modal .group-friend-name{overflow:hidden}
+.group-create-modal .group-friend-name .contact-name-status{min-width:0;max-width:100%;overflow:hidden}
+.group-create-modal .group-friend-name .contact-name-status b{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.group-create-modal form{display:grid;gap:9px}
+.group-create-modal form .contact-search-input{min-width:0}
+.group-create-modal form .primary-button{justify-self:start}
+@media(max-width:600px){.group-create-modal{width:calc(100vw - 20px)!important;max-height:92dvh!important;padding:18px!important}.group-create-modal .group-friend-picker{max-height:190px}}

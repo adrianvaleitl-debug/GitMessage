@@ -1811,3 +1811,66 @@ html,body,#root{width:100%;height:100%;min-height:100%;margin:0;overflow:hidden}
 
 .details-unfriend-button{width:100%;min-height:36px;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:10px;padding:7px 10px;border:1px solid #75434b;border-radius:9px;background:#39252d;color:#ffb8c0;font-size:10px;font-weight:750;cursor:pointer;transition:background .18s,border-color .18s}
 .details-unfriend-button:hover{background:#512b35;border-color:#a75b68}
+
+
+/* GitHub profile cards and AI workspaces */
+.desktop-shell{grid-template-columns:64px 258px minmax(360px,1fr) 320px 250px}
+.conversation-pane{grid-column:3}
+.shared-ai-panel{grid-column:4;grid-row:1;min-width:0;min-height:0;display:flex;flex-direction:column;background:#292b30;border-left:1px solid #202126;border-right:1px solid #202126;overflow:hidden}
+.conversation-details{grid-column:5;grid-row:1}
+.shared-ai-heading{height:58px;min-height:58px;display:flex;align-items:center;gap:10px;padding:0 13px;border-bottom:1px solid #41434a}
+.shared-ai-mark{width:30px;height:30px;display:grid;place-items:center;border-radius:8px;background:#41434a;color:#c4caff}
+.shared-ai-heading>div:nth-child(2){display:flex;min-width:0;flex:1;flex-direction:column;gap:3px}
+.shared-ai-heading b{font-size:12px;color:#f2f3f5}
+.shared-ai-heading small{font-size:9px;color:#aeb1b8}
+.shared-ai-close{display:none}
+.shared-ai-thread,.private-ai-thread{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:12px;padding:14px 12px;scrollbar-width:thin;scrollbar-color:#45474e transparent}
+.shared-ai-empty{margin:auto;max-width:230px;display:flex;flex-direction:column;align-items:center;gap:9px;text-align:center;color:#aeb1b8}
+.shared-ai-empty svg{color:#aebeff}
+.shared-ai-empty b{font-size:12px;color:#e4e6eb}
+.shared-ai-empty span{font-size:10px;line-height:1.6}
+.ai-message{max-width:100%;padding:9px 10px;border:1px solid #41434a;border-radius:9px;background:#303238}
+.ai-message-assistant{background:#25272d;border-color:#45485b}
+.ai-message-user{margin-left:12px;background:#343a51;border-color:#4c567b}
+.ai-message-meta{margin-bottom:5px;font-size:8px;font-weight:750;letter-spacing:.7px;color:#aebeff}
+.ai-message p{margin:0;color:#e2e4e9;font-size:11px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
+.ai-message time{display:block;margin-top:6px;color:#8e929b;font-size:8px}
+.ai-thinking{display:flex;align-items:center;gap:4px;color:#aeb1b8;font-size:10px;padding:3px 2px}
+.ai-thinking i{width:5px;height:5px;border-radius:50%;background:#aebeff;animation:ai-pulse .9s infinite alternate}
+.ai-thinking i:nth-child(2){animation-delay:.2s}.ai-thinking i:nth-child(3){animation-delay:.4s}
+@keyframes ai-pulse{to{opacity:.25;transform:translateY(-3px)}}
+.shared-ai-composer,.private-ai-composer{display:flex;align-items:flex-end;gap:7px;padding:10px;border-top:1px solid #41434a;background:#24262b}
+.shared-ai-composer textarea,.private-ai-composer textarea{flex:1;min-width:0;max-height:120px;resize:vertical;padding:9px 10px;border:1px solid #45474e;border-radius:7px;outline:0;background:#1e1f22;color:#f2f3f5;font-size:11px;line-height:1.45}
+.shared-ai-composer textarea:focus,.private-ai-composer textarea:focus{border-color:#5865f2}
+.shared-ai-composer button,.private-ai-composer button{width:33px;height:33px;flex:0 0 33px;display:grid;place-items:center;border:0;border-radius:7px;background:#5865f2;color:#fff}
+.ai-mobile-toggle{display:none}
+.private-ai-nav{color:#c4caff}
+.private-ai-screen{height:min(76vh,760px);min-height:440px;display:flex;flex-direction:column}
+.private-ai-title{display:flex;align-items:center;gap:12px;padding:0 0 14px;border-bottom:1px solid #41434a}
+.private-ai-title .modal-icon{margin:0}
+.private-ai-title h2{margin:0 0 4px}
+.private-ai-title p{margin:0;color:#aeb1b8;font-size:10px}
+.private-ai-thread{padding:16px 5px}
+.private-ai-thread .ai-message{max-width:85%;min-width:180px}
+.private-ai-composer{margin:0 -28px -28px}
+.github-profile-section{margin:16px 0;padding:14px;border:1px solid #41434a;border-radius:9px;background:#232428}
+.github-profile-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:11px}
+.github-profile-heading>div,.github-profile-heading>a{display:flex;align-items:center;gap:7px}
+.github-profile-heading>div{font-size:11px;color:#e5e7eb}
+.github-profile-heading>div svg{color:#c4caff}
+.github-profile-heading>a{font-size:10px;color:#aebeff;text-decoration:none}
+.github-project-list{display:flex;flex-direction:column;gap:6px}
+.github-project-card{display:flex;align-items:center;gap:9px;padding:9px;border:1px solid #3d4048;border-radius:7px;background:#2b2d31;color:#e5e7eb;text-decoration:none;transition:border-color .15s,background .15s}
+.github-project-card:hover{border-color:#747fdc;background:#343741}
+.github-project-rank{width:22px;height:22px;flex:0 0 22px;display:grid;place-items:center;border-radius:6px;background:#41434a;color:#c4caff;font-size:10px;font-weight:700}
+.github-project-copy{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
+.github-project-copy b{font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.github-project-copy small{font-size:9px;color:#aeb1b8;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.github-project-copy em{font-size:8px;color:#858992;font-style:normal}
+.github-project-card>svg{flex:0 0 14px;color:#aebeff}
+.github-project-state{margin:0;color:#aeb1b8;font-size:10px;line-height:1.5}
+.github-field-hint{display:block;margin-top:6px;color:#969aa3;font-size:9px;line-height:1.5}
+.modal-card:has(.private-ai-screen){width:min(760px,96vw);max-height:88vh;padding:28px!important}
+@media(max-width:1400px) and (min-width:1121px){.desktop-shell{grid-template-columns:58px 220px minmax(330px,1fr) 300px}.shared-ai-panel{grid-column:4}.conversation-details{display:none}}
+@media(max-width:1120px){.desktop-shell{grid-template-columns:58px 220px minmax(0,1fr)}.shared-ai-panel{display:none;position:fixed;z-index:30;top:0;right:0;bottom:0;width:min(360px,92vw);box-shadow:-20px 0 55px #0008}.shared-ai-panel.ai-panel-open{display:flex}.shared-ai-close,.ai-mobile-toggle{display:grid}.conversation-details{display:none}}
+@media(max-width:760px){.desktop-shell{grid-template-columns:54px 205px minmax(0,1fr)}.shared-ai-panel{width:min(100vw,390px)}.private-ai-screen{height:calc(82vh - 30px);min-height:350px}.private-ai-composer{margin:0 -28px -28px}.github-profile-section{padding:11px}}

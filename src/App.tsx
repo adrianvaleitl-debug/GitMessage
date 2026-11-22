@@ -817,15 +817,23 @@ export default function App() {
 
   async function browseConversationPolls(){
     if(!supabase||!session||!active)return;
-    const {data,error}=await supabase.from("gitmessage_polls").select("id,question,created_at,gitmessage_poll_options(id,label,position),gitmessage_poll_votes(option_id,user_id)").eq("conversation_id",active).order("created_at",{ascending:false}).limit(30);
-    if(error){setNotice(error.message);return;}
-    if(!data?.length){setNotice("No polls in this conversation yet.");return;}
-    const poll=data[0] as any;
-    const options=(poll.gitmessage_poll_options||[]).sort((a:any,b:any)=>a.position-b.position);
+    const {data:polls,error:pollError}=await supabase.from("gitmessage_polls")
+      .select("id,question,created_at").eq("conversation_id",active)
+      .order("created_at",{ascending:false}).limit(30);
+    if(pollError){setNotice(pollError.message);return;}
+    if(!polls?.length){setNotice("No polls in this conversation yet.");return;}
+    const poll=polls[0] as any;
+    const {data:optionsData,error:optionsError}=await supabase.from("gitmessage_poll_options")
+      .select("id,label,position").eq("poll_id",poll.id).order("position",{ascending:true});
+    if(optionsError){setNotice(optionsError.message);return;}
+    const options=optionsData||[];
+    if(options.length<2){setNotice("This poll does not have enough options to vote.");return;}
     const choice=window.prompt("Poll: "+poll.question+"\\n"+options.map((o:any,i:number)=>(i+1)+". "+o.label).join("\\n")+"\\nEnter an option number to vote.");
+    if(choice===null)return;
     const index=Number(choice)-1;
     if(!Number.isInteger(index)||index<0||index>=options.length)return;
-    await supabase.from("gitmessage_poll_votes").delete().eq("poll_id",poll.id).eq("user_id",session.user.id);
+    const {error:deleteError}=await supabase.from("gitmessage_poll_votes").delete().eq("poll_id",poll.id).eq("user_id",session.user.id);
+    if(deleteError){setNotice(deleteError.message);return;}
     const vote=await supabase.from("gitmessage_poll_votes").insert({poll_id:poll.id,option_id:options[index].id,user_id:session.user.id});
     setNotice(vote.error?vote.error.message:"Vote recorded.");
   }
@@ -1332,8 +1340,7 @@ export default function App() {
         </div>
         <form className="composer-area" onSubmit={sendMessage}><input ref={fileInputRef} type="file" accept="image/*,video/mp4,audio/*,.mp4,.m4a,.mp3,.wav,.webm,.ogg" hidden onChange={event => { const file=event.target.files?.[0]; void uploadAttachment(file); event.target.value=""; }}/>{replyTo && <div className="replying-to-bar"><span>Replying to {replyTo.sender_id===session.user.id ? "yourself" : (messageProfiles[replyTo.sender_id]?.display_name || messageProfiles[replyTo.sender_id]?.username || "member")}: {replyTo.body.slice(0,110)}</span><button type="button" onClick={()=>setReplyTo(null)} aria-label="Cancel reply"><X size={14}/></button></div>}{showSchedulePicker && <div className="schedule-message-popover"><label htmlFor="schedule-message-time">Schedule this message</label><input id="schedule-message-time" type="datetime-local" min={new Date(Date.now()+60000).toISOString().slice(0,16)} value={scheduleAt} onChange={e=>setScheduleAt(e.target.value)}/><button type="button" onClick={()=>{setScheduleAt("");setShowSchedulePicker(false);}}>Cancel</button><button type="button" disabled={!scheduleAt} onClick={()=>setShowSchedulePicker(false)}>Done</button></div>}<div className="composer-glass"><button type="button" className={"glass-icon schedule-message-trigger"+(scheduleAt?" active":"")} title="Schedule message" aria-label="Schedule message" onClick={()=>setShowSchedulePicker(v=>!v)}>◷</button><button type="button" className="glass-icon" title={recording ? "Stop voice message" : "Record voice message"} disabled={!active || sending} onClick={() => void toggleVoiceRecording()}>{recording ? <MicOff size={17}/> : <Mic size={17}/>}</button><button type="button" className="glass-icon" title="Attach file" disabled={!active || sending} onClick={() => fileInputRef.current?.click()}><Paperclip size={17}/></button><textarea ref={composerInputRef} rows={1} value={draft} onChange={e => void updateDraft(e.target.value)} onKeyDown={event => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); void sendMessage(); } }} placeholder={active ? (gtaViTheme ? "Send it to Vice City…" : "Write a message…") : "Choose a conversation first"} disabled={!active}/><button className="send-button" type="submit" disabled={!active || !draft.trim() || sending} title="Send message"><ArrowUp size={18}/></button></div><div className="composer-caption"><span>{recording ? "Recording voice message…" : "Messages are synced in real time"}{lastSentMessage && <button type="button" className="undo-send-button" onClick={()=>void undoLastSend()}>Undo send</button>}</span><span><kbd>ENTER</kbd> TO SEND <i>·</i> <kbd>SHIFT + ENTER</kbd> NEW LINE</span></div>{notice && <p className="notice inline">{notice}</p>}</form>
       </section>
-      <aside className={"conversation-details" + (detailsOpen ? " details-open" : "")}><button type="button" className="details-close glass-icon" title="Close conversation details" onClick={() => setDetailsOpen(false)}><X size={16}/></button>
-        <div className="details-heading"><span>CONVERSATION DETAILS</span><button type="button" className="details-back-button" onClick={()=>setDetailsOpen(false)}><ArrowLeft size={14}/> Back</button></div>
+      <aside className={"conversation-details" + (detailsOpen ? " details-open" : "")}><div className="details-heading"><button type="button" className="details-back-button" onClick={()=>setDetailsOpen(false)}><ArrowLeft size={14}/> Back</button><span>CONVERSATION DETAILS</span><button type="button" className="details-close glass-icon" title="Close conversation details" aria-label="Close conversation details" onClick={() => setDetailsOpen(false)}><X size={16}/></button></div>
         <div className="details-profile">
           <button type="button" className="details-avatar profile-trigger" title="View profile" onClick={() => void openConversationProfile()}>{current?.avatar_path && supabase ? <img src={supabase.storage.from(current.is_group ? "gitmessage-group-avatars" : "gitmessage-avatars").getPublicUrl(current.avatar_path).data.publicUrl} alt=""/> : <UserRound size={20} strokeWidth={1.8}/>}</button>
           <h3><button type="button" className="profile-name-trigger" onClick={() => void openConversationProfile()}>{current?.title || "No conversation selected"}</button></h3>

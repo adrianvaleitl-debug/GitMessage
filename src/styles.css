@@ -1961,3 +1961,24 @@ select option{background:#202631;color:#eef2f8}
     min-width:72px;
   }
 }
+
+
+/* Voice messages should not inherit the large generic file-card background. */
+.audio-message-attachment{
+  display:block!important;
+  width:max-content!important;
+  max-width:100%!important;
+  min-width:0!important;
+  margin-top:5px!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  overflow:visible!important;
+}
+.audio-message-attachment .voice-note-player{
+  width:min(330px,100%)!important;
+  max-width:100%!important;
+  margin:0!important;
+}

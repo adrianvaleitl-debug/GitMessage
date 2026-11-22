@@ -290,8 +290,6 @@ export default function App() {
       setProfileAvatarRing(profile?.profile_avatar_ring || "accent");
       setProfileShowBio(profile?.profile_show_bio ?? true);
       setProfileShowUsername(profile?.profile_show_username ?? true);
-    const status=await supabase.from("gitmessage_user_status").select("status_text").eq("user_id",session.user.id).maybeSingle();
-    setProfileStatusText(status.data?.status_text || "");
     });
     return () => { alive = false; };
   }, [session]);
@@ -639,6 +637,8 @@ export default function App() {
     setProfileAvatarRing(profile?.profile_avatar_ring || "accent");
     setProfileShowBio(profile?.profile_show_bio ?? true);
     setProfileShowUsername(profile?.profile_show_username ?? true);
+    const status=await supabase.from("gitmessage_user_status").select("status_text").eq("user_id",session.user.id).maybeSingle();
+    setProfileStatusText(status.data?.status_text || "");
   }
 
   async function sendFriendRequest(user: ContactMatch) {

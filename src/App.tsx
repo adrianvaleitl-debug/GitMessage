@@ -129,10 +129,10 @@ export default function App() {
   useEffect(()=>{try{localStorage.setItem("gitmessage-avatar-crop",avatarCrop);localStorage.setItem("gitmessage-banner-crop",bannerCrop)}catch{/* Storage may be unavailable. */}},[avatarCrop,bannerCrop]);
   const [accentChoice, setAccentChoice] = useState(() => { try { return localStorage.getItem("gitmessage-accent") || "blue"; } catch { return "blue"; } });
   const [density, setDensity] = useState(() => { try { return localStorage.getItem("gitmessage-density") || "comfortable"; } catch { return "comfortable"; } });
-  const [messageSize, setMessageSize] = useState(() => { try { return localStorage.getItem("gitmessage-message-size") || "medium"; } catch { return "medium"; } });
+  
   const [animations, setAnimations] = useState(() => { try { return localStorage.getItem("gitmessage-animations") !== "off"; } catch { return true; } });
   const [gtaViTheme, setGtaViTheme] = useState(() => { try { return localStorage.getItem("gitmessage-gta-vi") === "on"; } catch { return false; } });
-  useEffect(() => { try { localStorage.setItem("gitmessage-accent",accentChoice); localStorage.setItem("gitmessage-density",density); localStorage.setItem("gitmessage-message-size",messageSize); localStorage.setItem("gitmessage-animations",animations?"on":"off"); localStorage.setItem("gitmessage-gta-vi",gtaViTheme?"on":"off"); } catch { /* Storage may be unavailable. */ } },[accentChoice,density,messageSize,animations,gtaViTheme]);
+  useEffect(() => { try { localStorage.setItem("gitmessage-accent",accentChoice); localStorage.setItem("gitmessage-density",density); localStorage.setItem("gitmessage-animations",animations?"on":"off"); localStorage.setItem("gitmessage-gta-vi",gtaViTheme?"on":"off"); } catch { /* Storage may be unavailable. */ } },[accentChoice,density,animations,gtaViTheme]);
   const [profileCardStyle,setProfileCardStyle]=useState(()=>{try{return localStorage.getItem("gitmessage-profile-card-style")||"glass"}catch{return "glass"}});
   const [profileAvatarRing,setProfileAvatarRing]=useState(()=>{try{return localStorage.getItem("gitmessage-profile-avatar-ring")||"accent"}catch{return "accent"}});
   const [profileShowBio,setProfileShowBio]=useState(()=>{try{return localStorage.getItem("gitmessage-profile-show-bio")!=="off"}catch{return true}});
@@ -1319,7 +1319,7 @@ export default function App() {
   );
 
   return (
-    <main onTouchStart={e=>{const t=e.touches[0];mobileSwipeStart.current={x:t.clientX,y:t.clientY};}} onTouchEnd={handleMobileSwipeEnd} className={"desktop-shell accent-" + accentChoice + " density-" + density + " text-" + messageSize + (gtaViTheme ? " gta-vi" : "") + " profile-card-" + profileCardStyle + " profile-ring-" + profileAvatarRing + (profileShowBio ? " profile-show-bio" : " profile-hide-bio") + (profileShowUsername ? " profile-show-username" : " profile-hide-username") + (!animations ? " no-animations" : "") + (lightMode ? " light" : "") + (active ? " mobile-chat-open" : "") + (detailsOpen ? " has-details-open" : "") + (navigator.userAgent.includes("Electron") ? " electron-shell" : "")}>
+    <main onTouchStart={e=>{const t=e.touches[0];mobileSwipeStart.current={x:t.clientX,y:t.clientY};}} onTouchEnd={handleMobileSwipeEnd} className={"desktop-shell accent-" + accentChoice + " density-" + density +  (gtaViTheme ? " gta-vi" : "") + " profile-card-" + profileCardStyle + " profile-ring-" + profileAvatarRing + (profileShowBio ? " profile-show-bio" : " profile-hide-bio") + (profileShowUsername ? " profile-show-username" : " profile-hide-username") + (!animations ? " no-animations" : "") + (lightMode ? " light" : "") + (active ? " mobile-chat-open" : "") + (detailsOpen ? " has-details-open" : "") + (navigator.userAgent.includes("Electron") ? " electron-shell" : "")}>
       <nav className="app-rail" aria-label="Main navigation">
 
         <button className="rail-button selected" title="Messages" onClick={() => { setQuery(""); setActive(conversations[0]?.id || ""); }}><MessageCircle size={20}/></button>

@@ -1275,3 +1275,26 @@ button.profile-name-trigger:hover b,button.profile-name-trigger:hover{color:#b8c
 .profile-preview-card .profile-banner-preview{height:160px!important;}
 .profile-banner img,.profile-banner-editor-preview img{width:100%;height:100%;object-fit:cover;}
 .message-avatar img,.account-avatar img,.rail-user img,.conversation-member-avatars img,.conversation-avatar img,.header-avatar img,.details-avatar img{object-fit:cover;}
+
+
+/* Compact conversation details and consistent group description field. */
+.conversation-details{padding-left:12px;padding-right:12px}
+.details-heading{height:46px;min-height:46px}
+.details-profile{padding:18px 6px 16px}
+.details-avatar{width:62px;height:62px;margin-bottom:10px;border-width:4px}
+.details-section{padding:14px 0 12px}
+.details-label{margin-bottom:9px}
+.details-row{margin:8px 0}
+.group-description-input{display:block;width:100%;min-height:39px;box-sizing:border-box;margin:0;padding:10px 11px;border:1px solid #1e1f22;border-radius:5px;outline:0;background:#1e1f22;color:#f2f3f5;font:12px Inter,ui-sans-serif,system-ui,sans-serif;line-height:1.45;resize:vertical}
+.group-description-input:focus{border-color:var(--blue)}
+.group-friend-picker{display:grid;gap:6px;margin:14px 0 8px}
+.group-friend-picker>label{margin:0 0 3px!important;color:#aeb1b8!important;font-size:9px!important;font-weight:800!important;letter-spacing:.8px}
+.group-friend-option{width:100%;min-height:46px;display:flex;align-items:center;gap:10px;padding:6px 9px;border:1px solid #383a40;border-radius:8px;background:#23252b;color:#f2f3f5;text-align:left}
+.group-friend-option:hover,.group-friend-option.selected{border-color:var(--blue);background:#2c303a}
+.group-friend-avatar{width:30px;height:30px;flex:0 0 30px;display:grid;place-items:center;overflow:hidden;border-radius:50%;background:#5865f2;color:white}
+.group-friend-avatar img{width:100%;height:100%;object-fit:cover}
+.group-friend-name{display:flex;flex:1;min-width:0;flex-direction:column;gap:3px}
+.group-friend-name b{font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.group-friend-name small{font-size:9px;color:#aeb1b8}
+.group-friend-check{width:21px;height:21px;display:grid;place-items:center;border-radius:6px;background:#383b44;color:#dfe2e8;font-size:13px;font-weight:800}
+.group-friend-option.selected .group-friend-check{background:var(--blue);color:white}

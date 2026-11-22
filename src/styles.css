@@ -1707,3 +1707,27 @@ select:focus-visible,input:focus-visible,textarea:focus-visible,button:focus-vis
  .header-tools .glass-icon{width:32px!important;height:32px!important;min-width:32px!important}
  .conversation-header{gap:5px!important;padding-inline:8px!important}
 }
+
+
+/* Make incoming-call actions unmistakable and easy to tap */
+.call-banner.incoming-call-banner{gap:12px!important;align-items:center!important}
+.call-banner.incoming-call-banner .call-banner-copy{min-width:150px}
+.call-banner.incoming-call-banner .call-answer-button{
+  min-width:150px!important;min-height:54px!important;padding:14px 24px!important;
+  border:1px solid #54d995!important;border-radius:15px!important;
+  background:linear-gradient(180deg,#26a968,#16834d)!important;color:#fff!important;
+  font-size:16px!important;font-weight:800!important;letter-spacing:.01em;
+  box-shadow:0 5px 18px #16834d55!important
+}
+.call-banner.incoming-call-banner .call-answer-button:hover{background:#2cbd78!important;transform:translateY(-1px)}
+.call-banner.incoming-call-banner .call-answer-button svg{width:20px;height:20px}
+.call-banner.incoming-call-banner .call-decline-button{min-height:48px!important;padding:12px 18px!important;font-size:14px!important}
+.call-message-accept{min-width:142px;min-height:48px;padding:12px 18px!important;font-size:15px!important;font-weight:800!important;border-radius:13px!important;box-shadow:0 4px 14px #16834d44}
+@media(max-width:760px){
+  .call-banner.incoming-call-banner{display:grid!important;grid-template-columns:42px minmax(0,1fr)!important;gap:10px!important;padding:14px!important}
+  .call-banner.incoming-call-banner .call-banner-copy{min-width:0}
+  .call-banner.incoming-call-banner .call-answer-button{grid-column:1/-1;width:100%!important;min-height:58px!important;font-size:17px!important}
+  .call-banner.incoming-call-banner .call-decline-button{grid-column:1/-1;width:100%!important;min-height:44px!important}
+  .call-message-card{flex-wrap:wrap}
+  .call-message-accept{width:100%;min-height:52px;font-size:16px!important}
+}

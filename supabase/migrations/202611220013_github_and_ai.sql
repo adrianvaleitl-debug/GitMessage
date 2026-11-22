@@ -11,7 +11,7 @@ returns table(
   profile_card_style text, profile_avatar_ring text, profile_show_bio boolean, profile_show_username boolean,
   banner_path text, avatar_position text, banner_position text, github_username text
 )
-language plpgsql security definer set search_path=public,auth as $
+language plpgsql security definer set search_path=public,auth as $$
 declare uid uuid := auth.uid(); mail text; base_name text;
 begin
   if uid is null then raise exception 'Sign in required.'; end if;

@@ -80,3 +80,14 @@ drop policy if exists gm_private_ai_owner_all on public.gitmessage_private_ai_me
 create policy gm_private_ai_owner_all on public.gitmessage_private_ai_messages for all to authenticated
 using(user_id=auth.uid()) with check(user_id=auth.uid() and role='user');
 grant select,insert on public.gitmessage_private_ai_messages to authenticated;
+
+-- Enable realtime delivery for the two isolated AI histories when available.
+do $$
+begin
+  if not exists(select 1 from pg_publication_tables where pubname='supabase_realtime' and schemaname='public' and tablename='gitmessage_shared_ai_messages') then
+    alter publication supabase_realtime add table public.gitmessage_shared_ai_messages;
+  end if;
+  if not exists(select 1 from pg_publication_tables where pubname='supabase_realtime' and schemaname='public' and tablename='gitmessage_private_ai_messages') then
+    alter publication supabase_realtime add table public.gitmessage_private_ai_messages;
+  end if;
+end $$;

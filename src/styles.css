@@ -1635,3 +1635,11 @@ select:focus-visible,input:focus-visible,textarea:focus-visible,button:focus-vis
 .contact-name-status{display:flex;align-items:center;gap:7px;min-width:0;flex-wrap:wrap}
 .contact-name-status>b{min-width:0}
 .contact-result-copy .contact-status-bubble{max-width:120px}
+
+.conversation-typing-indicator{display:inline-flex;align-items:center;gap:2px;height:18px;padding:0 6px;border:1px solid rgba(104,190,164,.28);border-radius:999px;background:rgba(74,170,139,.11)}
+.conversation-typing-indicator i{width:3px;height:3px;border-radius:50%;background:#75d6b4;animation:gm-typing-bounce .85s ease-in-out infinite}
+.conversation-typing-indicator i:nth-child(2){animation-delay:.12s}
+.conversation-typing-indicator i:nth-child(3){animation-delay:.24s}
+@keyframes gm-typing-bounce{0%,60%,100%{transform:translateY(0);opacity:.55}30%{transform:translateY(-3px);opacity:1}}
+.conversation-seen-indicator{display:inline-flex;align-items:center;justify-content:center;color:#70c9e9;opacity:.95}
+@media(prefers-reduced-motion:reduce){.conversation-typing-indicator i{animation:none}}

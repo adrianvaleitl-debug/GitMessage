@@ -1741,3 +1741,8 @@ select:focus-visible,input:focus-visible,textarea:focus-visible,button:focus-vis
 .privacy-settings-panel select:focus{outline:1px solid var(--blue)}
 .privacy-settings-panel .primary-button{margin-top:15px}
 .privacy-settings-panel button:disabled,.privacy-settings-panel select:disabled{opacity:.6;cursor:wait}
+
+/* Contact list status sits at the far right of the name row */
+.conversation-name-line{width:100%;min-width:0;flex-wrap:nowrap!important;gap:7px}
+.conversation-name-line>b{min-width:0;max-width:calc(100% - 90px)}
+.conversation-name-line>.conversation-contact-status{margin-left:auto;flex:0 0 auto;max-width:112px}

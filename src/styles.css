@@ -1998,3 +1998,36 @@ select option{background:#202631;color:#eef2f8}
   .call-answer-header-button{width:auto!important;min-width:104px!important;padding:0 10px!important}
   .call-answer-header-button span{display:inline!important}
 }
+
+
+/* Keep every settings card on the same selected app theme. */
+.translation-settings-panel,.privacy-settings-panel,.settings-customize{
+  border:1px solid var(--line)!important;
+  border-radius:14px!important;
+  background:var(--panel-2)!important;
+  color:var(--text)!important;
+}
+.translation-settings-panel,.privacy-settings-panel{margin:16px 0;padding:14px;display:grid;gap:8px}
+.translation-settings-panel h3,.privacy-settings-panel h3,.settings-customize h3{color:var(--text)!important}
+.translation-settings-panel>p,.privacy-settings-panel>p{color:var(--muted)!important;margin:0 0 8px}
+.translation-settings-panel label,.privacy-settings-panel label,.settings-customize>label{color:var(--muted)!important}
+.translation-settings-panel select,.privacy-settings-panel select,.settings-customize select{
+  width:100%;min-height:38px;padding:9px 11px;border:1px solid var(--line)!important;
+  border-radius:9px;background:var(--panel)!important;color:var(--text)!important;
+}
+.translation-settings-panel .settings-help-text{color:var(--muted);font-size:10px;line-height:1.5}
+.desktop-shell.gta-vi .translation-settings-panel,
+.desktop-shell.gta-vi .privacy-settings-panel,
+.desktop-shell.gta-vi .settings-customize{
+  border-color:rgba(255,126,184,.3)!important;
+  background:linear-gradient(120deg,rgba(255,77,153,.13),rgba(91,112,255,.13)),rgba(33,22,50,.94)!important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.035),0 8px 24px rgba(8,5,22,.12);
+}
+.desktop-shell.gta-vi .translation-settings-panel select,
+.desktop-shell.gta-vi .privacy-settings-panel select,
+.desktop-shell.gta-vi .settings-customize select{
+  border-color:rgba(255,126,184,.3)!important;background:rgba(20,15,37,.88)!important;color:#fff2f8!important;
+}
+.desktop-shell.gta-vi .translation-settings-panel label,
+.desktop-shell.gta-vi .privacy-settings-panel label,
+.desktop-shell.gta-vi .settings-customize>label{color:#d0a7c3!important}

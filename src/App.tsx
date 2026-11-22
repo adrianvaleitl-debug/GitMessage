@@ -116,7 +116,6 @@ export default function App() {
   const [profileAvatarRing,setProfileAvatarRing]=useState(()=>{try{return localStorage.getItem("gitmessage-profile-avatar-ring")||"accent"}catch{return "accent"}});
   const [profileShowBio,setProfileShowBio]=useState(()=>{try{return localStorage.getItem("gitmessage-profile-show-bio")!=="off"}catch{return true}});
   const [profileShowUsername,setProfileShowUsername]=useState(()=>{try{return localStorage.getItem("gitmessage-profile-show-username")!=="off"}catch{return true}});
-  const [profilePreviewOpen,setProfilePreviewOpen]=useState(false);
 
   const messageCanvasRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);

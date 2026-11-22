@@ -7,7 +7,7 @@ import {
   RefreshCw, UserRoundPlus, Paperclip, Pencil, Trash2, Mic, MicOff, Phone, Video, PhoneOff
 } from "lucide-react";
 
-type Conversation = { id: string; title: string | null; updated_at?: string; is_group?: boolean; avatar_path?: string | null; description?: string | null; members?: {user_id:string;username?:string;display_name?:string;avatar_path?:string|null}[] };
+type Conversation = { id: string; title: string | null; updated_at?: string; is_group?: boolean; avatar_path?: string | null; description?: string | null; members?: {user_id:string;username?:string;display_name?:string;avatar_path?:string|null;avatar_position?:string|null}[] };
 type Message = { id: string; body: string; sender_id: string; created_at: string; edited_at?: string | null; deleted_at?: string | null };
 type AttachmentPreview = { file_name: string; mime_type: string; size_bytes: number; url: string };
 type ContactMatch = { user_id: string; email: string; username?: string; display_name?: string; avatar_path?: string | null };
@@ -47,7 +47,7 @@ export default function App() {
   const [detailsOpen, setDetailsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [canManageGroupMessages, setCanManageGroupMessages] = useState(false);
-  const [messageProfiles, setMessageProfiles] = useState<Record<string, {display_name?:string;username?:string;avatar_path?:string|null}>>({});
+  const [messageProfiles, setMessageProfiles] = useState<Record<string, {display_name?:string;username?:string;avatar_path?:string|null;avatar_position?:string|null}>>({});
   const [attachmentPreviews, setAttachmentPreviews] = useState<Record<string, AttachmentPreview>>({});
   const [imageViewerUrl, setImageViewerUrl] = useState("");
   const [draft, setDraft] = useState("");

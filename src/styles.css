@@ -2996,3 +2996,54 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
  .desktop-shell.light:not(.gta-vi) .preferences-grid{gap:10px}
  .desktop-shell.light:not(.gta-vi) .modal-card{background:#fff}
 }
+
+
+/* Consistent image-upload controls across profile, banner and group settings. */
+.profile-editor .media-upload-control{
+  min-height:40px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  box-sizing:border-box;
+  padding:0 15px;
+  border:1px solid color-mix(in srgb,var(--accent) 48%,var(--line));
+  border-radius:10px;
+  background:color-mix(in srgb,var(--accent) 11%,var(--panel));
+  color:var(--text)!important;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.1px;
+  line-height:1;
+  cursor:pointer;
+  transition:background .16s ease,border-color .16s ease,transform .16s ease,box-shadow .16s ease;
+}
+.profile-editor .media-upload-control svg{flex:0 0 auto;color:var(--accent)}
+.profile-editor .media-upload-control:hover{
+  border-color:var(--accent);
+  background:color-mix(in srgb,var(--accent) 18%,var(--panel));
+  box-shadow:0 4px 14px color-mix(in srgb,var(--accent) 13%,transparent);
+  transform:translateY(-1px);
+}
+.profile-editor .profile-banner-change{width:auto;min-height:40px;margin:0;padding:0 15px;border-radius:10px}
+.profile-editor .profile-photo-row{gap:13px;align-items:center}
+.profile-editor .profile-photo-row .profile-photo{width:58px;height:58px;flex:0 0 58px}
+.profile-editor .profile-photo-row .media-upload-control{min-width:132px}
+.profile-editor .media-upload-tile{
+  border-style:solid;
+  border-color:var(--line);
+  background:var(--panel-2);
+  transition:border-color .16s ease,background .16s ease,transform .16s ease;
+}
+.profile-editor .media-upload-tile:hover{
+  border-color:var(--accent);
+  background:color-mix(in srgb,var(--accent) 8%,var(--panel));
+  transform:translateY(-1px);
+}
+.profile-editor .media-upload-tile .group-action-symbol{color:var(--accent)}
+.profile-editor .upload-spinner{animation:media-upload-spin 1s linear infinite}
+@keyframes media-upload-spin{to{transform:rotate(360deg)}}
+@media(max-width:520px){
+  .profile-editor .profile-photo-row{flex-wrap:wrap}
+  .profile-editor .profile-photo-row .media-upload-control{flex:1}
+}

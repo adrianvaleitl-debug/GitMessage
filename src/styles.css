@@ -3066,3 +3066,49 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 .group-control-panel .media-upload-tile>strong{padding:7px 11px;border:1px solid var(--line);border-radius:8px;background:var(--panel-2);color:var(--text);font-size:10px;font-weight:600}
 .group-control-panel .media-upload-tile:hover{border-color:var(--muted);background:var(--panel-2);transform:none}
 @media(max-width:520px){.profile-editor .profile-photo-adjustments{grid-template-columns:1fr}.profile-editor .profile-photo-adjustments .profile-photo-row{grid-column:1/-1}.profile-editor .profile-photo-adjustments .photo-crop-control{grid-column:1}}
+
+
+/* Match profile editor surfaces to the standard settings cards. */
+.profile-editor .profile-customize,
+.profile-editor .profile-banner-editor,
+.profile-editor .profile-photo-adjustments,
+.profile-editor .profile-preview-toggle,
+.profile-editor .profile-editor-note{
+  background:var(--panel-2)!important;
+  border:1px solid var(--line)!important;
+  border-radius:14px!important;
+  box-shadow:none!important;
+}
+.profile-editor .profile-photo-adjustments{padding:14px!important}
+.profile-editor .profile-banner-editor{padding:14px!important}
+.profile-editor .profile-photo-adjustments .profile-photo-row{border-bottom:1px solid var(--line)!important}
+.profile-editor .profile-photo-row .media-upload-control{
+  min-width:116px!important;
+  width:auto!important;
+  min-height:36px!important;
+  flex:0 0 auto!important;
+  display:inline-flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:0 14px!important;
+  white-space:nowrap!important;
+  line-height:1!important;
+  font-size:12px!important;
+  font-weight:600!important;
+  letter-spacing:0!important;
+}
+.profile-editor .profile-photo-row .media-upload-control svg{
+  display:none!important;
+}
+.profile-editor .profile-photo-row .media-upload-control input{display:none}
+.profile-editor .profile-customize select,
+.profile-editor form input,
+.profile-editor form textarea{
+  background:var(--panel)!important;
+  border-color:var(--line)!important;
+}
+.profile-editor .profile-banner-editor-preview{background:var(--panel)!important}
+@media(max-width:520px){
+  .profile-editor .profile-photo-row{flex-wrap:nowrap!important}
+  .profile-editor .profile-photo-row .media-upload-control{flex:0 0 auto!important}
+}

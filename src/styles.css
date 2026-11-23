@@ -2710,3 +2710,127 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 }
 
 .public-profile-card .public-profile-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:14px 0 0}.public-profile-card .public-profile-actions .public-profile-message{width:100%;grid-column:1/-1}.public-profile-card .public-profile-friend-action,.public-profile-card .public-profile-unfriend{width:100%;min-height:42px;display:flex;align-items:center;justify-content:center;gap:7px;margin:0;padding:10px 12px;border:1px solid var(--profile-line)!important;border-radius:11px!important;background:#00000012!important;color:var(--profile-text)!important;font-size:12px;font-weight:650}.public-profile-card .public-profile-friend-action:disabled{opacity:.7;cursor:default}
+
+
+/* Light mode finishing pass: consistent surfaces, typography and controls in every workspace. */
+.desktop-shell.light:not(.gta-vi){
+  --bg:#f4f6fa!important;--panel:#ffffff!important;--panel-2:#f7f8fc!important;
+  --panel-3:#edf1f7!important;--line:#e2e7ef!important;--text:#202b3c!important;
+  --muted:#66748a!important;--subtle:#8792a4!important;
+  --accent:#536bd8!important;--blue:#536bd8!important;
+  --ui-shadow:0 14px 38px rgba(35,49,75,.09)!important;
+  color:#202b3c!important;color-scheme:light!important;
+}
+.desktop-shell.light:not(.gta-vi) .preferences-dashboard,
+.desktop-shell.light:not(.gta-vi) .group-control-panel,
+.desktop-shell.light:not(.gta-vi) .profile-editor,
+.desktop-shell.light:not(.gta-vi) .details-redesign{color:var(--text)!important}
+.desktop-shell.light:not(.gta-vi) .preferences-section,
+.desktop-shell.light:not(.gta-vi) .preferences-account-card,
+.desktop-shell.light:not(.gta-vi) .profile-customize,
+.desktop-shell.light:not(.gta-vi) .profile-preview-card,
+.desktop-shell.light:not(.gta-vi) .profile-banner-editor,
+.desktop-shell.light:not(.gta-vi) .profile-photo-adjustments,
+.desktop-shell.light:not(.gta-vi) .group-access-settings,
+.desktop-shell.light:not(.gta-vi) .group-friend-picker,
+.desktop-shell.light:not(.gta-vi) .group-bio-field,
+.desktop-shell.light:not(.gta-vi) .details-hero,
+.desktop-shell.light:not(.gta-vi) .details-section,
+.desktop-shell.light:not(.gta-vi) .details-row,
+.desktop-shell.light:not(.gta-vi) .translation-settings-panel{
+  background:#fff!important;border-color:#e2e7ef!important;color:#202b3c!important;
+  box-shadow:0 2px 9px rgba(35,49,75,.035)!important;
+}
+.desktop-shell.light:not(.gta-vi) .preferences-section-heading h3,
+.desktop-shell.light:not(.gta-vi) .preferences-action-row b,
+.desktop-shell.light:not(.gta-vi) .preferences-account-copy b,
+.desktop-shell.light:not(.gta-vi) .settings-toggle,
+.desktop-shell.light:not(.gta-vi) .settings-toggle b,
+.desktop-shell.light:not(.gta-vi) .group-control-hero h2,
+.desktop-shell.light:not(.gta-vi) .group-members-heading b,
+.desktop-shell.light:not(.gta-vi) .group-member-identity b,
+.desktop-shell.light:not(.gta-vi) .profile-customize h3,
+.desktop-shell.light:not(.gta-vi) .profile-preview-toggle-title,
+.desktop-shell.light:not(.gta-vi) .details-topbar h2{
+  color:#202b3c!important;
+}
+.desktop-shell.light:not(.gta-vi) .preferences-section-heading p,
+.desktop-shell.light:not(.gta-vi) .preferences-action-row small,
+.desktop-shell.light:not(.gta-vi) .preferences-inline-note,
+.desktop-shell.light:not(.gta-vi) .preferences-field label,
+.desktop-shell.light:not(.gta-vi) .settings-toggle small,
+.desktop-shell.light:not(.gta-vi) .group-access-settings small,
+.desktop-shell.light:not(.gta-vi) .group-bio-foot,
+.desktop-shell.light:not(.gta-vi) .group-friend-name small,
+.desktop-shell.light:not(.gta-vi) .group-member-identity small,
+.desktop-shell.light:not(.gta-vi) .profile-customize p,
+.desktop-shell.light:not(.gta-vi) .profile-customize label,
+.desktop-shell.light:not(.gta-vi) .profile-preview-toggle>span:nth-child(2),
+.desktop-shell.light:not(.gta-vi) .details-eyebrow{
+  color:#66748a!important;
+}
+.desktop-shell.light:not(.gta-vi) .preferences-action-row,
+.desktop-shell.light:not(.gta-vi) .preference-row,
+.desktop-shell.light:not(.gta-vi) .group-permission-grid{border-color:#e7ebf2!important}
+.desktop-shell.light:not(.gta-vi) .preferences-action-row:hover,
+.desktop-shell.light:not(.gta-vi) .preference-row:hover,
+.desktop-shell.light:not(.gta-vi) .group-action-tile:hover,
+.desktop-shell.light:not(.gta-vi) .group-friend-option:hover,
+.desktop-shell.light:not(.gta-vi) .profile-preview-toggle:hover{
+  background:#f3f6fc!important;
+}
+.desktop-shell.light:not(.gta-vi) .preferences-pill,
+.desktop-shell.light:not(.gta-vi) .group-action-symbol,
+.desktop-shell.light:not(.gta-vi) .group-role-pill,
+.desktop-shell.light:not(.gta-vi) .group-member-more,
+.desktop-shell.light:not(.gta-vi) .group-friend-check,
+.desktop-shell.light:not(.gta-vi) .group-admin-back,
+.desktop-shell.light:not(.gta-vi) .details-close,
+.desktop-shell.light:not(.gta-vi) .profile-preview-toggle{
+  background:#f5f7fb!important;border-color:#e2e7ef!important;color:#526178!important;
+}
+.desktop-shell.light:not(.gta-vi) .preferences-heading-icon,
+.desktop-shell.light:not(.gta-vi) .preferences-section-heading .preference-icon,
+.desktop-shell.light:not(.gta-vi) .translation-settings-icon,
+.desktop-shell.light:not(.gta-vi) .group-control-icon{
+  background:#edf1ff!important;border-color:#dce4ff!important;color:#536bd8!important;
+}
+.desktop-shell.light:not(.gta-vi) .group-member-card,
+.desktop-shell.light:not(.gta-vi) .group-action-tile,
+.desktop-shell.light:not(.gta-vi) .group-friend-option,
+.desktop-shell.light:not(.gta-vi) .group-role-select,
+.desktop-shell.light:not(.gta-vi) .group-permission{
+  background:#fff!important;border-color:#e2e7ef!important;color:#344258!important;
+}
+.desktop-shell.light:not(.gta-vi) .group-role-select select,
+.desktop-shell.light:not(.gta-vi) .preferences-field select,
+.desktop-shell.light:not(.gta-vi) .translation-language-control select,
+.desktop-shell.light:not(.gta-vi) .profile-customize select{
+  background:#f8f9fc!important;border:1px solid #dfe5ee!important;color:#263449!important;
+}
+.desktop-shell.light:not(.gta-vi) .primary-button,
+.desktop-shell.light:not(.gta-vi) .preferences-save-button,
+.desktop-shell.light:not(.gta-vi) .empty-create{background:#536bd8!important;color:#fff!important}
+.desktop-shell.light:not(.gta-vi) .preferences-signout{background:#fff7f7!important;border-color:#f2d8da!important;color:#b94e59!important}
+.desktop-shell.light:not(.gta-vi) .preferences-signout small{color:#8b6870!important}
+.desktop-shell.light:not(.gta-vi) .message-actions{background:#fff!important;border-color:#e2e7ef!important;box-shadow:0 5px 18px rgba(35,49,75,.12)!important}
+.desktop-shell.light:not(.gta-vi) .message-actions button{color:#59677d!important}
+.desktop-shell.light:not(.gta-vi) .reaction-strip button{background:#f7f8fc!important;border-color:#e2e7ef!important;color:#40506a!important}
+.desktop-shell.light:not(.gta-vi) .server-channel-sidebar,
+.desktop-shell.light:not(.gta-vi) .server-channel-panel{color:#344258!important}
+.desktop-shell.light:not(.gta-vi) .server-channel-item{color:#66748a!important}
+.desktop-shell.light:not(.gta-vi) .server-channel-item.active{background:#eaf0ff!important;color:#4059c0!important}
+.desktop-shell.light:not(.gta-vi) .server-channel-item:hover{background:#f0f3fa!important;color:#263449!important}
+.desktop-shell.light:not(.gta-vi) .conversation-details,
+.desktop-shell.light:not(.gta-vi) .conversation-details *{--text:#202b3c}
+.desktop-shell.light:not(.gta-vi) .modal-backdrop{background:rgba(26,37,57,.34)!important;backdrop-filter:blur(8px)}
+.desktop-shell.light:not(.gta-vi) .modal-card{background:#fff!important;color:#202b3c!important;border-color:#e2e7ef!important}
+.desktop-shell.light:not(.gta-vi) .modal-card .profile-editor,
+.desktop-shell.light:not(.gta-vi) .modal-card .public-profile-card{color:#202b3c!important}
+.desktop-shell.light:not(.gta-vi) button:not(.primary-button):not(.send-button):not(.preferences-save-button):not(.empty-create){text-shadow:none}
+.desktop-shell.light:not(.gta-vi) ::selection{background:#dce5ff;color:#263b91}
+@media(max-width:680px){
+ .desktop-shell.light:not(.gta-vi) .preferences-section{padding:15px!important}
+ .desktop-shell.light:not(.gta-vi) .preferences-grid{gap:10px!important}
+ .desktop-shell.light:not(.gta-vi) .modal-card{background:#fff!important}
+}

@@ -3112,3 +3112,38 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   .profile-editor .profile-photo-row{flex-wrap:nowrap!important}
   .profile-editor .profile-photo-row .media-upload-control{flex:0 0 auto!important}
 }
+
+
+/* Unify card surfaces across the app with the same treatment as Preferences cards. */
+.desktop-shell :is(
+  .settings-account,.preferences-account-card,.preferences-section,
+  .translation-settings-panel,.privacy-settings-panel,.settings-customize,
+  .profile-editor .profile-customize,.profile-editor .profile-banner-editor,
+  .profile-editor .profile-photo-adjustments,.profile-editor .profile-editor-note,
+  .details-section,.details-control-list,.conversation-details,
+  .server-hub-card,.server-channel-sidebar,.server-channel-panel,.server-workspace-title,
+  .sync-card,.github-profile-section,.profile-preview-card,.profile-preview-toggle,
+  .group-access-settings,.group-friend-picker,.group-bio-field,.media-upload-tile,
+  .attachment-file-row,.voice-message-card,.voice-message-player
+){
+  background:var(--panel)!important;
+  border-color:var(--line)!important;
+  box-shadow:none!important;
+}
+.desktop-shell :is(.profile-editor .profile-customize,.profile-editor .profile-banner-editor,
+.profile-editor .profile-photo-adjustments,.profile-editor .profile-editor-note,
+.profile-preview-toggle){border-radius:14px!important}
+.desktop-shell :is(.details-section .settings-row,.conversation-details .settings-row){
+  background:var(--panel-2)!important;border-color:var(--line)!important;color:var(--text)!important;
+}
+.desktop-shell :is(.details-control select,.details-control input[type=time],.profile-editor select,
+.profile-editor input:not([type=file]):not([type=range]),.profile-editor textarea){
+  background:var(--panel-2)!important;border-color:var(--line)!important;color:var(--text)!important;
+}
+.desktop-shell.gta-vi :is(.preferences-section,.preferences-account-card,.server-hub-card,
+.profile-editor .profile-customize,.profile-editor .profile-banner-editor,
+.profile-editor .profile-photo-adjustments,.profile-editor .profile-editor-note,
+.translation-settings-panel,.privacy-settings-panel,.settings-customize,
+.details-section,.conversation-details,.sync-card){
+  background:var(--panel)!important;border-color:var(--line)!important;box-shadow:none!important;
+}

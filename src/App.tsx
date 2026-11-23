@@ -603,6 +603,15 @@ export default function App() {
   },[active,session?.user?.id]);
 
   useEffect(()=>{
+    const input=composerInputRef.current;
+    if(!input)return;
+    input.style.height="auto";
+    const maxHeight=Math.max(120,Math.floor(window.innerHeight*0.4));
+    input.style.height=Math.min(input.scrollHeight,maxHeight)+"px";
+    input.style.overflowY=input.scrollHeight>maxHeight?"auto":"hidden";
+  },[draft]);
+
+  useEffect(()=>{
     if(!supabase||!session||!active||draftConversationRef.current!==active)return;
     const timer=window.setTimeout(()=>{
       void supabase!.from("gitmessage_drafts").upsert({conversation_id:active,user_id:session.user.id,body:draft,updated_at:new Date().toISOString()},{onConflict:"conversation_id,user_id"}).then(({error})=>{if(error)console.warn("Draft sync:",error.message);});
@@ -768,8 +777,10 @@ export default function App() {
   }
 
   function renderMessageText(value: string) {
-    const pattern=/(https?:\/\/[^\s<]+|www\.[^\s<]+|@[a-zA-Z0-9_]{3,24})/g;
+    const pattern=/(\*\*[^*\n]+?\*\*|(?<!\*)\*[^*\n]+?\*(?!\*)|https?:\/\/[^\s<]+|www\.[^\s<]+|@[a-zA-Z0-9_]{3,24})/g;
     return value.split(pattern).filter(Boolean).map((part,index)=>{
+      if (part.startsWith("**") && part.endsWith("**") && part.length>4) return <strong key={index}>{renderMessageText(part.slice(2,-2))}</strong>;
+      if (part.startsWith("*") && part.endsWith("*") && part.length>2) return <em key={index}>{renderMessageText(part.slice(1,-1))}</em>;
       if (/^https?:\/\//i.test(part) || /^www\./i.test(part)) {
         const href=part.startsWith("www.") ? "https://"+part : part;
         return <a key={index} className="message-inline-link" href={href} target="_blank" rel="noopener noreferrer" onClick={event=>event.stopPropagation()}>{part}</a>;

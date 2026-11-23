@@ -3147,3 +3147,21 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
 .details-section,.conversation-details,.sync-card){
   background:var(--panel)!important;border-color:var(--line)!important;box-shadow:none!important;
 }
+
+/* Message composer expands with its content instead of clipping long drafts. */
+.desktop-shell .composer-glass{align-items:flex-end!important}
+.desktop-shell .composer-glass textarea{
+  display:block!important;
+  flex:1 1 auto!important;
+  min-width:0!important;
+  height:auto!important;
+  min-height:34px!important;
+  max-height:40vh!important;
+  overflow-y:hidden;
+  resize:none!important;
+  white-space:pre-wrap!important;
+  overflow-wrap:anywhere!important;
+  line-height:1.45!important;
+}
+.message-bubble strong{font-weight:750}
+.message-bubble em{font-style:italic}

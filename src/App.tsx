@@ -1381,7 +1381,20 @@ export default function App() {
   }
 
   async function makePeer(recipientId: string, conversationId: string | null = active) {
-    const peer = new RTCPeerConnection({ iceServers: [{ urls: "stun:stun.l.google.com:19302" }, { urls: "stun:stun1.l.google.com:19302" }] });
+    const fallbackIceServers: RTCIceServer[] = [
+      { urls: "stun:stun.l.google.com:19302" },
+      { urls: "stun:stun1.l.google.com:19302" }
+    ];
+    let iceServers: RTCIceServer[] = fallbackIceServers;
+    if (supabase) {
+      const { data, error } = await supabase.functions.invoke("gitmessage-ice-servers");
+      if (!error && Array.isArray(data?.iceServers) && data.iceServers.length) {
+        iceServers = data.iceServers as RTCIceServer[];
+      } else {
+        setNotice("Call relay is not configured yet. Calls may fail on restricted networks until TURN credentials are added.");
+      }
+    }
+    const peer = new RTCPeerConnection({ iceServers, iceCandidatePoolSize: 10 });
     peerRef.current = peer;
     peer.onicecandidate = event => { if (event.candidate) void sendCallSignal(recipientId, "ice", { candidate: event.candidate.toJSON() }, conversationId); };
     peer.ontrack = event => {

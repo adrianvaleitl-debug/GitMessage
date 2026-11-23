@@ -918,8 +918,9 @@ export default function App() {
     const {error}=await supabase.rpc("unfriend_gitmessage_user",{target_user_id:userId});
     if(error){setNotice("Could not unfriend: "+error.message);return;}
     setFriends(rows=>rows.filter(row=>row.user_id!==userId));
+    if(publicProfile?.user_id===userId)setPublicProfileFriendState({status:"none"});
     setContactStatuses(rows=>{const next={...rows};delete next[userId];return next;});
-    setNotice("Friend removed. Your existing chat was kept.");
+    setNotice("Friend removed for both accounts. Your existing chat was kept.");
   }
 
   async function removeConversation(conversation: Conversation) {

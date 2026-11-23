@@ -540,7 +540,7 @@ button:disabled{cursor:not-allowed;opacity:.45}
 .desktop-shell:not(.light) .search-field,.desktop-shell:not(.light) .composer-glass{background:#1c2025!important}
 .desktop-shell:not(.light) .conversation-item.active,.desktop-shell:not(.light) .conversation-item:hover{background:#303740;color:#f2f3f5}
 .desktop-shell:not(.light) .conversation-header,.desktop-shell:not(.light) .sidebar,.desktop-shell:not(.light) .conversation-details{border-color:#3b424b!important}
-.desktop-shell.electron-shell::before{content:"";position:fixed;z-index:9999;top:0;left:0;right:138px;height:36px;-webkit-app-region:drag;pointer-events:none}
+.desktop-shell.electron-shell::before{content:"";position:fixed;z-index:9999;top:0;left:0;right:138px;height:38px;-webkit-app-region:drag;pointer-events:auto;user-select:none}
 
 
 /* Group controls: responsive, card-based administration layout. */

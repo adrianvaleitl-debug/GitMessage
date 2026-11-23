@@ -3047,3 +3047,22 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   .profile-editor .profile-photo-row{flex-wrap:wrap}
   .profile-editor .profile-photo-row .media-upload-control{flex:1}
 }
+
+/* Final pass: quieter, tighter image controls with consistent geometry. */
+.profile-editor .profile-photo-adjustments{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px 18px;margin:10px 0 16px;padding:16px;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+.profile-editor .profile-photo-adjustments .profile-photo-row{grid-column:1/-1;display:flex;align-items:center;gap:16px;min-height:76px;margin:0 0 3px;padding:0 0 14px;border:0;border-bottom:1px solid var(--line);background:transparent}
+.profile-editor .profile-photo-adjustments .profile-photo{width:68px;height:68px;flex:0 0 68px;border:2px solid var(--panel);box-shadow:0 0 0 1px var(--line)}
+.profile-editor .media-upload-control,.profile-editor .profile-banner-editor .profile-banner-change{min-height:34px;display:inline-flex;align-items:center;justify-content:center;gap:7px;box-sizing:border-box;padding:0 12px;border:1px solid var(--line)!important;border-radius:8px!important;background:var(--panel-2)!important;color:var(--text)!important;font-size:11px;font-weight:600;line-height:1;box-shadow:none!important;transform:none!important;transition:background .15s ease,border-color .15s ease}
+.profile-editor .media-upload-control svg{color:var(--muted)!important}
+.profile-editor .media-upload-control:hover,.profile-editor .profile-banner-editor .profile-banner-change:hover{border-color:var(--muted)!important;background:var(--panel-3)!important;box-shadow:none!important;filter:none!important;transform:none!important}
+.profile-editor .profile-photo-adjustments .photo-crop-control{display:grid;gap:7px;margin:0;color:var(--muted);font-size:10px;font-weight:600}
+.profile-editor .profile-photo-adjustments .photo-crop-control input[type=range]{width:100%;max-width:100%;margin:0}
+.profile-editor .profile-banner-editor{gap:12px;padding:14px;border-radius:12px;background:var(--panel)}
+.profile-editor .profile-banner-editor-preview{height:116px!important;border:1px solid var(--line);border-radius:9px;background:var(--panel-2)}
+.profile-editor .profile-banner-actions{gap:8px;margin-top:2px}
+.profile-editor .profile-banner-editor .profile-banner-change{width:auto;min-height:34px}
+.profile-editor .profile-banner-editor .profile-banner-remove{min-height:34px;padding:0 12px;border-radius:8px;font-size:11px}
+.group-control-panel .media-upload-tile{border:1px solid var(--line);border-radius:12px;background:var(--panel);box-shadow:none}
+.group-control-panel .media-upload-tile>strong{padding:7px 11px;border:1px solid var(--line);border-radius:8px;background:var(--panel-2);color:var(--text);font-size:10px;font-weight:600}
+.group-control-panel .media-upload-tile:hover{border-color:var(--muted);background:var(--panel-2);transform:none}
+@media(max-width:520px){.profile-editor .profile-photo-adjustments{grid-template-columns:1fr}.profile-editor .profile-photo-adjustments .profile-photo-row{grid-column:1/-1}.profile-editor .profile-photo-adjustments .photo-crop-control{grid-column:1}}

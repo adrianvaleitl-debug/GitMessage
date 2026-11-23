@@ -3154,7 +3154,6 @@ button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,
   display:block!important;
   flex:1 1 auto!important;
   min-width:0!important;
-  height:auto!important;
   min-height:34px!important;
   max-height:60vh!important;
   overflow-y:hidden;
